@@ -1,0 +1,12 @@
+FLASK_APP=main.py
+FLASK_DEBUG=1
+FLASK_RUN_PORT=8080
+FLASK_RUN_HOST=0.0.0.0
+MYSQL_IP='127.0.0.1'
+MYSQL_USER='root'
+MYSQL_PASS='235rules'
+MYSQL_DB='fit'
+API_HOST='data.usajobs.gov'
+API_URL='https://data.usajobs.gov/api/search'
+EMAIL='shrimpedin@gmail.com'
+API_KEY='nRTr9lBXqeVnxk+nG8NMXGuNifqbYtwJrl6xZgCKGBY='

@@ -1,1 +1,1 @@
-#main file
+from app import app
