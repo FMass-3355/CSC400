@@ -90,15 +90,37 @@ db.drop_all()
 db.create_all()
 
 
-user = User.query.filter_by(username='admin').first()
+user = User.query.filter_by(username='fm').first()
 if user is None:
-    user_admin = User(username='admin', role='admin')
-    user_admin.set_password('csc330sp22')
+    user_admin = User(username='fm', role='admin')
+    user_admin.set_password('csc400sp23')
     db.session.add(user_admin)
+    db.session.commit()
+
+user = User.query.filter_by(username='kb').first()
+if user is None:
+    user_regular = User(username='kb', role='regular')
+    user_regular.set_password('csc400sp23')
+    db.session.add(user_regular)
     db.session.commit()
 
 track = Track.query.filter_by(height=169).first()
 if track is None:
     track_shit = Track(fk_user_id=1, height=169, weight=200)
     db.session.add(track_shit)
+    db.session.commit()
+
+#need to query by both id's
+# friend_q1 = Friend.query.filter_by(fk_user_id=1, fk_friend_id=2).first()
+# friend_q2 = Friend.query.filter_by(fk_user_id=2, fk_friend_id=1).first()
+# friend_q = db.union(friend_q1, friend_q2)
+# from sqlalchemy import union_all
+# friend_q = union_all(select(Friend).where(Friend.fk_user_id==1, Friend.fk_friend_id==2), select(Friend).where(Friend.fk_user_id==2, Friend.fk_friend_id==1))
+# friend_q = select(Friend).from_statement(friend_q)
+friend_q = Friend.query.filter_by(fk_user_id=1, fk_friend_id=2).first()
+if friend_q is None:
+    friendship_1 = Friend(fk_user_id=1, fk_friend_id=2, status=2)
+    friendship_2 = Friend(fk_user_id=2, fk_friend_id=1, status=2)
+    db.session.add(friendship_1)
+    db.session.add(friendship_2)
     db.session.commit()

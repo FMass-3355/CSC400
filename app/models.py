@@ -38,6 +38,8 @@ class User(UserMixin, db.Model):
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
     
+    #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
+    # primaryjoin='User.id==Friendship.user_id',
     #Password Salting
     def set_password(self, password):
         #Store hashed (encrypted) password in database
@@ -75,16 +77,16 @@ class Calorie(db.Model):
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
 
-class Friend(UserMixin, db.Model):
+class Friend(db.Model):
     __tablename__ = 'friends'
     id = db.Column(db.Integer, primary_key=True)
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    #fk_friend_id = relationship()
+    fk_friend_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     #friend ID ~ probably need some sort of relationship
     date_added = db.Column(db.Date)
     status = db.Column(db.Integer)
 
-
+User.friends = relationship(User, secondary='friends', primaryjoin=User.id==Friend.fk_user_id, secondaryjoin=User.id==Friend.fk_friend_id)
 
 
 #===================================================================================================
