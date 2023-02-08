@@ -6,7 +6,7 @@ from wtforms import *
 from wtforms.validators import *
 from wtforms.widgets import TextArea
 from flask_wtf.file import FileField
-from app import *
+#from app import *
 
 
 #----------------------New User Creation--------------------------------------------------#

@@ -9,7 +9,7 @@ from os import environ
 from app import db
 from app.models import *
 #------flask------#
-from flask import render_template, redirect, url_for, flash, send_file, flash
+from flask import render_template, redirect, url_for, flash, send_file
 from flask_login import login_user, logout_user, login_required, current_user
 #------WTFForms---------#
 from app.forms import *
@@ -54,9 +54,9 @@ def index():
     return redirect(url_for('login'))
     
 #Login Method
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Authenticated users are redirected to home page.
+    #Authenticated users are redirected to home page.
     if current_user.is_authenticated:
         return redirect(url_for('homepage'))
         
@@ -66,13 +66,14 @@ def login():
         user = db.session.query(User).filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             print('Login failed', file=sys.stderr)
-            flash("wrong username/password")
+            flash("Wrong username and/or password. Please make sure your account details are correct and try again.")
             return redirect(url_for('login'))
         # login_user is a flask_login function that starts a session
-        login_user(user)
-        print('Login successful', file=sys.stderr)
-        return redirect(url_for('homepage'))
-    return render_template('index.html', form=form)
+        else:
+            login_user(user)
+            print('Login successful', file=sys.stderr)
+            return redirect(url_for('homepage'))
+    return render_template('login.html', form=form)
 
 #Logging out
 @app.route('/logout')
