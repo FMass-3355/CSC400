@@ -277,25 +277,24 @@ def profile():
         fname = current_user.fname
         lname = current_user.lname
         email = current_user.email
-        mname = current_user.mname
-
+        # mname = current_user.mname
         dob = current_user.date_of_birth
-
-        address = current_user.address
-        city = current_user.city
-        state = current_user.state
-        zip_code = current_user.zip_code
-        phone_number = current_user.phone_number
-        user_bio = current_user.user_bio
+        # height = current_user.height
+        # weight = current_user.weight
+        # address = current_user.address
+        # city = current_user.city
+        # state = current_user.state
+        # zip_code = current_user.zip_code
+        # phone_number = current_user.phone_number
+        # user_bio = current_user.user_bio
         # image_file = url_for('static', filename='images/' + current_user.image_file)
-        exists = db.session.query(Upload.id).filter_by(user_id=current_user.id, doc_type="profile_pic").first()
-        if exists:
-            image_file = db.session.query(Upload).filter_by(user_id=current_user.id, doc_type="profile_pic").with_entities(Upload.data).first()
-        else:
-            image_file = url_for('static', filename='images/' + current_user.image_file)
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, 
-                            mname=mname, date_of_birth=dob, address=address, city=city, state=state,
-                            zip_code=zip_code, phone_number=phone_number, user_bio=user_bio, image_file=image_file)
+        # exists = db.session.query(Upload.id).filter_by(user_id=current_user.id, doc_type="profile_pic").first()
+        # if exists:
+        #    image_file = db.session.query(Upload).filter_by(user_id=current_user.id, doc_type="profile_pic").with_entities(Upload.data).first()
+        # else:
+        #     image_file = url_for('static', filename='images/' + current_user.image_file)
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob)
+    #height=height, weight=weight
     #image_file=image_file
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
@@ -314,64 +313,33 @@ def recover_account():
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm(state=current_user.state, user_bio=current_user.user_bio)
+    form = EditProfileForm()
     if form.validate_on_submit():
         #---------------------------# 
-        address = form.address.data
-        city = form.city.data
-        state = form.state.data
-        zip_code = form.zip_code.data
-        #---------------------------# 
-        phone_number = form.phone_number.data
         fname = form.fname.data
-        mname = form.mname.data
         lname = form.lname.data
-        user_bio = form.user_bio.data
+        #height = form.height.data
+        #weight = form.weight.data
         #---------------------------# 
         if fname == '':
             current_user.fname = current_user.fname
         else:
             current_user.fname = fname
-            
-        if mname == '':
-            current_user.mname = current_user.mname
-        else:
-            current_user.mname = mname
 
         if lname == '':
             current_user.lname = current_user.lname
         else:
             current_user.lname = lname
 
-        if zip_code == '':
-            current_user.zip_code = current_user.zip_code
-        else:
-            current_user.zip_code = zip_code
+        # if height == '':
+        #     current_user.height = current_user.height
+        # else:
+        #     current_user.height = height
 
-        if phone_number == '':
-            current_user.phone_number = current_user.phone_number
-        else:
-            current_user.phone_number = phone_number
-
-        if user_bio == '':
-            current_user.user_bio = current_user.user_bio
-        else:
-            current_user.user_bio = user_bio
-
-        if state == '':
-            current_user.state = current_user.state
-        else:
-            current_user.state = state
-
-        if city == '':
-            current_user.city = current_user.city       
-        else:
-            current_user.city = city
-
-        if address == '':
-            current_user.address = current_user.address
-        else:
-            current_user.address = address
+        # if weight == '':
+        #     current_user.weight = current_user.weight
+        # else:
+        #     current_user.weight = weight
 
         db.session.add(current_user)
         db.session.commit()
