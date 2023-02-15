@@ -37,6 +37,8 @@ class User(UserMixin, db.Model):
     fname = db.Column(db.String(64))
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
+    #height = db.Column(db.String(32))
+    #weight = db.Column(db.String(32))
     
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
     # primaryjoin='User.id==Friendship.user_id',
