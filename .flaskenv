@@ -4,9 +4,15 @@ FLASK_RUN_PORT=8080
 FLASK_RUN_HOST=0.0.0.0
 MYSQL_IP='127.0.0.1'
 MYSQL_USER='root'
-MYSQL_PASS='#########'
+MYSQL_PASS='mylover201'
 MYSQL_DB='fit'
-API_HOST='data.usajobs.gov'
-API_URL='https://data.usajobs.gov/api/search'
-EMAIL='shrimpedin@gmail.com'
-API_KEY='nRTr9lBXqeVnxk+nG8NMXGuNifqbYtwJrl6xZgCKGBY='
+
+EMAIL   ='k.bevis01@gmail.com'
+#---------------------------------workout----------------------------------------------------------------------------------
+API_HOST='https://api-ninjas.com/'
+API_URL ='https://api.api-ninjas.com/v1/exercises'
+API_KEY ='lAoyv2xDhzmedTOJc6bn9A==XUdmv84oWvckWrhN'
+#--------------------------------nutrition---------------------------------------------------------------------------------
+API_HOST2='https://wger.de/'
+API_URL2 ='https://wger.de/api/v2/'
+API_KEY2 ='1439c7a4111bb4e38569278bb2d2c6d4906ac129'

@@ -9,7 +9,7 @@ from os import environ
 from app import db
 from app.models import *
 #------flask------#
-from flask import render_template, redirect, url_for, flash, send_file
+from flask import render_template, redirect, url_for, flash, send_file, Response
 from flask_login import login_user, logout_user, login_required, current_user
 #------WTFForms---------#
 from app.forms import *
@@ -20,14 +20,18 @@ import requests
 from io import BytesIO
 
 from flask_wtf.file import FileField
+import json
 
-
-# #API (needed for the USAjobs stuff and other APIs)
-# API_KEY = environ.get('API_KEY')
-# API_HOST = environ.get('API_HOST')
-# API_URL = environ.get('API_URL')
-# EMAIL = environ.get('EMAIL')
-
+# #API 
+#------------------------------------------------------------ Workouts ----------------------------------------------------------------#
+#API_KEY  = environ.get('API_KEY')
+#API_HOST = environ.get('API_HOST')
+#API_URL  = environ.get('API_URL')
+#EMAIL    = environ.get('EMAIL')
+API_HOST='https://api-ninjas.com/'
+API_URL='https://api.api-ninjas.com/v1/exercises'
+EMAIL='k.bevis01@gmail.com'
+API_KEY='lAoyv2xDhzmedTOJc6bn9A==XUdmv84oWvckWrhN'
 
 
 
@@ -187,7 +191,7 @@ def add_user():
             email = form.email.data
             fname = form.fname.data
             lname = form.lname.data
-            mname = form.mname.data
+            #mname = form.mname.data
             role = form.role.data
             company_name = form.company_name.data 
             date_of_birth = form.date_of_birth.data
@@ -274,29 +278,15 @@ def view_users():
 def profile():
     if current_user.is_authenticated:
         username = current_user.username
+        email = current_user.email
+        role = current_user.role
         fname = current_user.fname
         lname = current_user.lname
-        email = current_user.email
-        mname = current_user.mname
 
         dob = current_user.date_of_birth
 
-        address = current_user.address
-        city = current_user.city
-        state = current_user.state
-        zip_code = current_user.zip_code
-        phone_number = current_user.phone_number
-        user_bio = current_user.user_bio
-        # image_file = url_for('static', filename='images/' + current_user.image_file)
-        exists = db.session.query(Upload.id).filter_by(user_id=current_user.id, doc_type="profile_pic").first()
-        if exists:
-            image_file = db.session.query(Upload).filter_by(user_id=current_user.id, doc_type="profile_pic").with_entities(Upload.data).first()
-        else:
-            image_file = url_for('static', filename='images/' + current_user.image_file)
     return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, 
-                            mname=mname, date_of_birth=dob, address=address, city=city, state=state,
-                            zip_code=zip_code, phone_number=phone_number, user_bio=user_bio, image_file=image_file)
-    #image_file=image_file
+                            date_of_birth=dob, role=role)
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
@@ -381,9 +371,44 @@ def edit_profile():
     return render_template('edit_profile.html', form=form, image_file=image_file)
   
 
+#Workouts
+@app.route('/workouts', methods=['GET', 'POST'])
+@login_required
+def workouts():
+    user_id = current_user.id
+    form = WorkoutNameSearch()
+    if request.method == "GET":
+        workouts = db.session.query(Exercise).filter_by(fk_user_id=user_id)
+        if len(request.args) > 0:
+            date_of_workout = request.args.get('date')
+            if date_of_workout is not None:
+                workouts = workouts.filter_by(e_input_date=date_of_workout)
+            exercise_name = request.args.get('name')
+            if exercise_name is not None:
+                workouts = workouts.filter_by(e_name=exercise_name)
+            
+            workouts = workouts.all()
+        return render_template('workouts.html', workouts=workouts, form=form)
 
-
-
+@app.route('/workouts_api', methods=['GET'])
+@login_required
+def ninja_api_search_by_name():
+    if request.method == "GET":
+        name = request.args.get('name')
+        response = requests.get(f"{API_URL}?name={name}", headers={'X-Api-Key': API_KEY})
+        response_data = response.json()
+        for ex in response_data:
+            del ex['instructions']
+            del ex['type']
+            del ex['muscle']
+            del ex['equipment']
+            del ex['difficulty']
+        if response.status_code != requests.codes.ok:
+            return Response({
+            "status": "error", 
+            "message": "Got an error from API"
+            }, mimetype="application/json")
+    return Response(json.dumps(response_data),  mimetype='application/json')
 #---------------------App Error--------------------------------------------------------------------#
 #page not found
 @app.errorhandler(404)

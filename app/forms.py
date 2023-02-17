@@ -105,14 +105,8 @@ class RemoveUser(FlaskForm):
 
 
 
-#--------------- Search Form -------------------------#
-# class SearchForm(FlaskForm):
-#      keyword = StringField('Keyword', validators=[DataRequired()])
-#      city = StringField('City', validators=[DataRequired()])
-#      state = StringField('State', validators=[DataRequired()])
-#      submit = SubmitField('Search')
-
-# class SearchForm2(FlaskForm):
-#     keyword = StringField('Keyword', validators=[DataRequired()])
-#     submit = SubmitField('Search')
-#--------------- Search Form -------------------------#
+# --------------- Search Form -------------------------#
+class WorkoutNameSearch(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    search = SubmitField('Search')
+# --------------- Search Form -------------------------#
