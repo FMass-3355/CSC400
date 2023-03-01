@@ -64,6 +64,27 @@
             {% endwith %}
             <p style="display: flex; justify-content: center;"> {{ form.search(class="btn btn-success") }} </p>
         </form>
+        
+        <!-- food seach bar Name -->
+        <form action="/food_api" method="GET" class="food_search_form">
+            {{ form.hidden_tag() }}
+            <p style="width: fit-content; margin: auto;">
+                {{ form.name.label(class="form-control-label") }}<br>
+                {{ form.name(class="form-control form-control-md food_name") }}
+            </p>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <p style="display: flex; justify-content: center;"> {{ form.search(class="btn btn-success") }} </p>
+        </form>
+
+
     </body>
     <script>
         let activityOptions = [];
@@ -79,6 +100,21 @@
         workout_search_form.addEventListener("submit", (e) => {
             e.preventDefault();
             fetchActivities(workout_name.value)
+        <!----Food-->
+        });
+        let nameOptions = [];
+        const fetchName = (name) => {
+            const url = `/food_api?activity=${name}`;
+            fetch(url).then((response) => response.json()).then(res => {
+                nameOptions = [...res]
+                console.log(nameOptions);
+            });
+        }
+        const food_search_form = document.getElementsByClassName("food_search_form")[0];
+        const food_name = document.getElementsByClassName("name")[0];
+        food_search_form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            fetchName(food_name.value)
         });
     </script>
 </html>

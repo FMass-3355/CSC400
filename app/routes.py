@@ -424,6 +424,7 @@ def ninja_api_search_by_food():
             }, mimetype="application/json")
     return Response(json.dumps(response_data),  mimetype='application/json')
 #---------------------App Error--------------------------------------------------------------------#
+
 #page not found
 @app.errorhandler(404)
 def error404(error):
