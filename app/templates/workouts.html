@@ -66,19 +66,19 @@
         </form>
     </body>
     <script>
-        let nameOptions = [];
-        const fetchNames = (name) => {
-            const url = `/workouts_api?name=${name}`;
+        let activityOptions = [];
+        const fetchActivities = (activity) => {
+            const url = `/workouts_api?activity=${activity}`;
             fetch(url).then((response) => response.json()).then(res => {
-                nameOptions = [...res]
-                console.log(nameOptions);
+                activityOptions = [...res]
+                console.log(activityOptions);
             });
         }
         const workout_search_form = document.getElementsByClassName("workout_search_form")[0];
         const workout_name = document.getElementsByClassName("workout_name")[0];
         workout_search_form.addEventListener("submit", (e) => {
             e.preventDefault();
-            fetchNames(workout_name.value)
+            fetchActivities(workout_name.value)
         });
     </script>
 </html>

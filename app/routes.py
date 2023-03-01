@@ -9,7 +9,7 @@ from os import environ
 from app import db
 from app.models import *
 #------flask------#
-from flask import render_template, redirect, url_for, flash, send_file, Response
+from flask import render_template, redirect, url_for, flash, send_file, Response, request
 from flask_login import login_user, logout_user, login_required, current_user
 #------WTFForms---------#
 from app.forms import *
@@ -23,17 +23,19 @@ from flask_wtf.file import FileField
 import json
 
 # #API 
-#------------------------------------------------------------ Workouts ----------------------------------------------------------------#
-#API_KEY  = environ.get('API_KEY')
-#API_HOST = environ.get('API_HOST')
-#API_URL  = environ.get('API_URL')
-#EMAIL    = environ.get('EMAIL')
-API_HOST='https://api-ninjas.com/'
-API_URL='https://api.api-ninjas.com/v1/exercises'
+#------------------------------------------------------------ API ----------------------------------------------------------------#
+#API_KEY=environ.get('API_KEY')
+#API_HOST=environ.get('API_HOST')
+#CALORIES_API_URL= environ.get('CALORIES_API_URL')
+#NUTRITION_API_URL= environ.get('NUTRITION_API_URL')
+#EMAIL= environ.get('EMAIL')
 EMAIL='k.bevis01@gmail.com'
+API_HOST='https://api-ninjas.com/'
 API_KEY='lAoyv2xDhzmedTOJc6bn9A==XUdmv84oWvckWrhN'
-
-
+#---------------------------------workout----------------------------------------------------------------------------------
+CALORIES_API_URL='https://api.api-ninjas.com/v1/caloriesburned'
+#--------------------------------nutrition---------------------------------------------------------------------------------
+NUTRITION_API_URL='https://api.api-ninjas.com/v1/nutrition'
 
 
 
@@ -392,17 +394,29 @@ def workouts():
 
 @app.route('/workouts_api', methods=['GET'])
 @login_required
-def ninja_api_search_by_name():
+def ninja_api_search_by_activity():
     if request.method == "GET":
-        name = request.args.get('name')
-        response = requests.get(f"{API_URL}?name={name}", headers={'X-Api-Key': API_KEY})
+        activity = request.args.get('activity')
+        response = requests.get(f"{CALORIES_API_URL}?activity={activity}", headers={'X-Api-Key': API_KEY})
         response_data = response.json()
         for ex in response_data:
-            del ex['instructions']
-            del ex['type']
-            del ex['muscle']
-            del ex['equipment']
-            del ex['difficulty']
+            del ex['total_calories']
+
+        if response.status_code != requests.codes.ok:
+            return Response({
+            "status": "error", 
+            "message": "Got an error from API"
+            }, mimetype="application/json")
+    return Response(json.dumps(response_data),  mimetype='application/json')
+
+@app.route('/food_api', methods=['GET'])
+@login_required
+def ninja_api_search_by_food():
+    if request.method == "GET":
+        food_name = request.args.get('name')
+        response = requests.get(f"{NUTRITION_API_URL}?query={food_name}", headers={'X-Api-Key': API_KEY})
+        response_data = response.json()
+
         if response.status_code != requests.codes.ok:
             return Response({
             "status": "error", 
