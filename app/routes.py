@@ -19,6 +19,7 @@ import sys
 import requests
 from io import BytesIO
 
+from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 
 
@@ -28,10 +29,10 @@ from flask_wtf.file import FileField
 # API_URL = environ.get('API_URL')
 # EMAIL = environ.get('EMAIL')
 
-
-
-
-
+actualDay1 = datetime.now()
+actualDay2 = actualDay1.strftime("%B %d, %Y")
+thisDay = datetime.now()
+today = thisDay.strftime("%B %d, %Y")
 
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
@@ -45,8 +46,35 @@ def chat():
     return render_template('chat.html')
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 
+@app.route('/yesterday', methods=['GET', 'POST'])
+def setYesterday():
+    global thisDay
+    global actualDay2
+    yesterday = timedelta(days=-1)
+    thisDay = thisDay + yesterday
+    yesterday2 = thisDay.strftime("%B %d, %Y")
+    return render_template('tracker.html', pdate=yesterday2, actualDay=actualDay2)
 
+@app.route('/tomorrow', methods=['GET', 'POST'])
+def setTomorrow():
+    global actualDay2
+    global thisDay
+    tomorrow = timedelta(days=+1)
+    thisDay = thisDay + tomorrow
+    tomorrow2 = thisDay.strftime("%B %d, %Y")
+    return render_template('tracker.html', pdate=tomorrow2, actualDay=actualDay2)
 
+@app.route('/tracker', methods=['GET', 'POST'])
+def tracker():
+    global actualDay2
+    global thisDay
+    thisDay = datetime.now()
+    today = thisDay.strftime("%B %d, %Y")
+    return render_template('tracker.html', pdate=today, actualDay=actualDay2)
+
+@app.route('/edit_tracker', methods=['GET', 'POST'])
+def edit_tracker():
+    return render_template('edit_tracker.html')
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
 @app.route('/')
@@ -122,8 +150,7 @@ def change_password():
     Verify that old password matches and the new password and retype also match.
     '''
     return render_template('change_password.html', form = form)
-  
-  
+
 #Create user (User Method)
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user(): 

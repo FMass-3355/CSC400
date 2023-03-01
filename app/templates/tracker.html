@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="../static/js/navbar.js"></script>
+    </head>
+
+    <body>
+        <div id="myNav" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+              <a href="/homepage">Home</a>
+              <a href="/tracker">Tracker</a>
+              <a href="/profile">Profile</a>
+              <a href="/logout">Logout</a>
+            </div>
+        </div>
+
+        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+
+        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
+            <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left;">&#x3c;</span></a>
+            <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
+            <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right;">&#x3e;</span></a>
+        </div>
+        <br>
+        <h1 style="text-align: center;"> Day Tracker</h1>
+        {% if pdate == actualDay %}
+        <br><button><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
+        {% endif %}
+        <h3>Calories</h3>
+        <table id="table1">
+            <tr>
+                <th>Food</th>
+                <th>Servings</th>
+                <th>Calories</th>
+            </tr>
+        </table>
+
+
+        <h3>Exercise</h3>
+        <table id="table2">
+            <tr>
+                <th>Exercise</th>
+                <th>Reps/Time</th>
+                <th>Calories Burned</th>
+            </tr>
+        </table>
+ 
+
+        <script>
+            var n = new Date();
+            year = n.getFullYear();
+            month = n.getMonth() + 1;
+            day = n.getDate();
+            document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+
+            function setYesterday() {
+                var yesterday = n;
+                yesterday.setDate(yesterday.getDate() - 1);
+                var year = yesterday.getFullYear();
+                var month = yesterday.getMonth() + 1;
+                var day = yesterday.getDate();
+                document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+            }
+
+            function setTomorrow() {
+                var tomorrow = n;
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                var year = tomorrow.getFullYear();
+                var month = tomorrow.getMonth() + 1;
+                var day = tomorrow.getDate();
+                document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+            }
+
+        </script>
+    </body>
+</html>
