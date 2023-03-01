@@ -71,21 +71,23 @@ class CreateUserForm(FlaskForm):
     #         raise ValueError('TAKEN')
 
 class EditProfileForm(FlaskForm):
-    phone_number = StringField('Phone Number')
-    address = StringField('Street Address')
-    city = StringField('City')
-    state = SelectField('State', choices=['', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 
-                                        'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS',
-                                         'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 
-                                         'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 
-                                         'WI', 'WY'])
-    zip_code = StringField('Zip Code')
-    phone_number = StringField('Phone Number')
+    # phone_number = StringField('Phone Number')
+    # address = StringField('Street Address')
+    # city = StringField('City')
+    # state = SelectField('State', choices=['', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 
+    #                                     'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS',
+    #                                      'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 
+    #                                      'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 
+    #                                      'WI', 'WY'])
+    # zip_code = StringField('Zip Code')
+    # phone_number = StringField('Phone Number')
     fname = StringField('First Name')
-    mname = StringField('Middle Initial')
-    user_bio = StringField('User Bio', widget=TextArea())
+    # mname = StringField('Middle Initial')
+    # user_bio = StringField('User Bio', widget=TextArea())
     lname = StringField('Last Name')
-    profile_pic = FileField('Profile Picture')
+    #height = StringField('Height')
+    #weight = StringField('Weight')
+    # profile_pic = FileField('Profile Picture')
     submit = SubmitField('Update Profile')
 
    
