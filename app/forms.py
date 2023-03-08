@@ -102,10 +102,9 @@ class RemoveUser(FlaskForm):
     submit = SubmitField('Submit')
 #----------------------Account settings----------------------------------------------------#
 
-
-
-
-
+class EditTracker(FlaskForm):
+    c_name = StringField('Food')
+    submit = SubmitField('Done')
 
 # --------------- Search Form -------------------------#
 class WorkoutNameSearch(FlaskForm):

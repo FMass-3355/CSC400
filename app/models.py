@@ -2,16 +2,16 @@
 #-------From SQLAlchemy---------#
 from email.policy import default
 from app import db, login
-from sqlalchemy import *
+from sqlalchemy import*
 from sqlalchemy.orm import *
-# from sqlalchemy.ext.declarative import *
+from sqlalchemy.ext.declarative import *
 #------From Flask Login---------#
 from flask_login import UserMixin, current_user
-#from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
+from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 #--------Python Library---------#
-#import requests
-#from io import BytesIO
+import requests
+from io import BytesIO
 
 
 
@@ -32,14 +32,13 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(128), unique=True)
+    gender = db.Column(db.String(32))
     role = db.Column(db.String(32))
     password_hash = db.Column(db.String(256), unique=True)
     fname = db.Column(db.String(64))
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
-    #height = db.Column(db.String(32))
-    #weight = db.Column(db.String(32))
-    
+    #tracks = db.relationship('Track', backref='fk_user_id')
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
     # primaryjoin='User.id==Friendship.user_id',
     #Password Salting
@@ -71,6 +70,10 @@ class Exercise(db.Model):
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     e_input_date = db.Column(db.Date)
     e_name = db.Column(db.String(64))
+    e_calories_per_hour = db.Column(db.Float)
+    e_duration_minutes = db.Column(db.Float)
+    e_total_calories = db.Column(db.Float)
+    
 
 class Calorie(db.Model):
     __tablename__ = 'calorie'
@@ -78,13 +81,23 @@ class Calorie(db.Model):
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
+    c_total_calories = db.Column(db.Float)
+    c_serving_size_g = db.Column(db.Float)
+    c_fat_saturated_g = db.Column(db.Float)
+    c_protein_g = db.Column(db.Float)
+    c_sodium_mg = db.Column(db.Float)
+    c_potassium_mg = db.Column(db.Float)
+    c_cholesterol_mg = db.Column(db.Float)
+    c_carbohydrates_total_g = db.Column(db.Float)
+    c_fiber_g = db.Column(db.Float)
+    c_sugar_g = db.Column(db.Float)
+    
 
 class Friend(db.Model):
     __tablename__ = 'friends'
     id = db.Column(db.Integer, primary_key=True)
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     fk_friend_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    #friend ID ~ probably need some sort of relationship
     date_added = db.Column(db.Date)
     status = db.Column(db.Integer)
 
@@ -98,5 +111,3 @@ User.friends = relationship(User, secondary='friends', primaryjoin=User.id==Frie
 def load_user(id):
     return db.session.query(User).get(int(id))
 #===================================================================================================
-
-

@@ -1,7 +1,7 @@
 #Imports
 from operator import methodcaller
 #from app import app as appl
-from app import API_KEY, CALORIES_API_URL, NUTRITION_API_URL, app
+from app import API_KEY, app
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ
@@ -111,7 +111,16 @@ def tracker():
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
-    return render_template('edit_tracker.html')
+    global databaseToday
+    form = EditTracker()
+    if form.validate_on_submit():
+        c_name = form.c_name.data
+        c_input_date = databaseToday
+        user_id = current_user.id
+        food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+        db.session.add(food)
+        db.session.commit()
+    return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
 @app.route('/')

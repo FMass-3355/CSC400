@@ -4,7 +4,8 @@ FLASK_RUN_PORT=8080
 FLASK_RUN_HOST='0.0.0.0'
 MYSQL_IP='127.0.0.1'
 MYSQL_USER='root'
-MYSQL_PASS='FVMassimi3355!'
+MYSQL_PASS='#####################'
+#235rules - emma's password
 MYSQL_DB='fit'
 #---------------------------------API--------------------------------------------------------------------------------------
 EMAIL='k.bevis01@gmail.com'

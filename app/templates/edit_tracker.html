@@ -42,6 +42,17 @@
         <button onclick="insertFoodRow()">add</button>
 
         <h3>Exercise</h3>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.c_name.label(class="form-control-label")}}
+                {{ form.c_name(class="form-control form-control-md")}}
+            </p>
+            <p>
+                {{ form.submit(class="form-control form-control-md btn btn-primary") }}
+            </p>
+           
+        </form>
         <table id="table2">
             <tr>
                 <th>Exercise</th>
