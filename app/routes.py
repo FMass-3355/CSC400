@@ -1,7 +1,7 @@
 #Imports
 from operator import methodcaller
 #from app import app as appl
-from app import app
+from app import API_KEY, CALORIES_API_URL, NUTRITION_API_URL, app
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ
@@ -34,6 +34,7 @@ actualDay1 = datetime.now()
 actualDay2 = actualDay1.strftime("%B %d, %Y")
 thisDay = datetime.now()
 today = thisDay.strftime("%B %d, %Y")
+databaseToday = thisDay.strftime("%Y-%m-%d")
 
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
@@ -49,29 +50,64 @@ def chat():
 
 @app.route('/yesterday', methods=['GET', 'POST'])
 def setYesterday():
-    global thisDay
     global actualDay2
+    global thisDay
+
+    user_id = current_user.id
     yesterday = timedelta(days=-1)
     thisDay = thisDay + yesterday
     yesterday2 = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=yesterday2, actualDay=actualDay2)
+    databaseYesterday = thisDay.strftime("%Y-%m-%d")
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseYesterday, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseYesterday, fk_user_id=user_id)
+        workouts = workouts.all()
+        foods = foods.all()
+
+    if yesterday2 == actualDay2:
+        return redirect(url_for('tracker'))
+    else:
+        return render_template('tracker.html', pdate=yesterday2, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/tomorrow', methods=['GET', 'POST'])
 def setTomorrow():
     global actualDay2
     global thisDay
+
+    user_id = current_user.id
     tomorrow = timedelta(days=+1)
     thisDay = thisDay + tomorrow
     tomorrow2 = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=tomorrow2, actualDay=actualDay2)
+    databaseTomorrow = thisDay.strftime("%Y-%m-%d")
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseTomorrow, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseTomorrow, fk_user_id=user_id)
+        foods = foods.all()
+        workouts = workouts.all()
+
+    if tomorrow2 == actualDay2:
+        return redirect(url_for('tracker'))
+    else:
+        return render_template('tracker.html', pdate=tomorrow2, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/tracker', methods=['GET', 'POST'])
 def tracker():
     global actualDay2
     global thisDay
+    global databaseToday
+
+    user_id = current_user.id
     thisDay = datetime.now()
     today = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=today, actualDay=actualDay2)
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+        foods = foods.all()
+        workouts = workouts.all()
+    return render_template('tracker.html', pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():

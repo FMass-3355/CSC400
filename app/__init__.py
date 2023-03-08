@@ -33,6 +33,8 @@ DB_NAME = environ.get('MYSQL_DB')
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
 API_URL = environ.get('API_URL')
+CALORIES_API_URL = environ.get('CALORIES_API_URL')
+NUTRITION_API_URL = environ.get('NUTRITION_API_URL')
 EMAIL = environ.get('EMAIL')
 #===================================================================================================
 #===================================================================================================
@@ -147,23 +149,21 @@ with app.app_context():
         db.session.commit()
 
     #EXERCISE#
-    exercise = Exercise.query.filter_by(e_input_date='2021-02-02', fk_user_id=1).first()
-    if exercise is None:
-        exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2021-02-02')
-        db.session.add(exercise_1)
-        db.session.commit()
+    exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-03-08')
+    db.session.add(exercise_1)
+    db.session.commit()
 
-    exercise = Exercise.query.filter_by(e_input_date='2022-12-22', fk_user_id=1).first()
-    if exercise is None:
-        exercise_2 = Exercise(fk_user_id=1, e_name = 'push ups', e_input_date='2022-12-22')
-        db.session.add(exercise_2)
-        db.session.commit()
+    exercise_2 = Exercise(fk_user_id=1, e_name = 'push ups', e_input_date='2023-03-08')
+    db.session.add(exercise_2)
+    db.session.commit()
 
-    exercise = Exercise.query.filter_by(e_input_date='2023-01-12', fk_user_id=1).first()
-    if exercise is None:
-        exercise_3 = Exercise(fk_user_id=1, e_name = 'running', e_input_date='2023-01-12')
-        db.session.add(exercise_3)
-        db.session.commit()
+    exercise_3 = Exercise(fk_user_id=1, e_name = 'running', e_input_date='2023-03-05')
+    db.session.add(exercise_3)
+    db.session.commit()
+
+    exercise_3 = Exercise(fk_user_id=1, e_name = 'sprinting', e_input_date='2023-03-010')
+    db.session.add(exercise_3)
+    db.session.commit()
 
     exercise = Exercise.query.filter_by(e_input_date='2022-02-02', fk_user_id=2).first()
     if exercise is None:
@@ -185,23 +185,17 @@ with app.app_context():
 
     #CALORIE#
 
-    calorie = Calorie.query.filter_by(c_input_date='2021-02-02', fk_user_id=1).first()
-    if calorie is None:
-        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2021-02-02')
-        db.session.add(calorie_1)
-        db.session.commit()
+    calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-03-08')
+    db.session.add(calorie_1)
+    db.session.commit()
 
-    calorie = Calorie.query.filter_by(c_input_date='2022-12-22', fk_user_id=1).first()
-    if calorie is None:
-        calorie_2 = Calorie(fk_user_id=1, c_name = 'lettuce', c_input_date='2022-12-22')
-        db.session.add(calorie_2)
-        db.session.commit()
+    calorie_2 = Calorie(fk_user_id=1, c_name = 'lettuce', c_input_date='2023-03-05')
+    db.session.add(calorie_2)
+    db.session.commit()
 
-    calorie = Calorie.query.filter_by(c_input_date='2023-01-12', fk_user_id=1).first()
-    if calorie is None:
-        calorie_3 = Calorie(fk_user_id=1, c_name = 'berries', c_input_date='2023-01-12')
-        db.session.add(calorie_3)
-        db.session.commit()
+    calorie_3 = Calorie(fk_user_id=1, c_name = 'berries', c_input_date='2023-03-10')
+    db.session.add(calorie_3)
+    db.session.commit()
 
     calorie = Calorie.query.filter_by(c_input_date='2022-02-02', fk_user_id=2).first()
     if calorie is None:
