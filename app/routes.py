@@ -112,14 +112,45 @@ def tracker():
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
     global databaseToday
-    form = EditTracker()
+    # form1 = EditCal()
+    # form2 = EditEx()
+    # if form1.validate_on_submit():
+    #     c_name = form1.c_name.data
+    #     c_input_date = databaseToday
+    #     user_id = current_user.id
+    #     food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+    #     db.session.add(food)
+    #     db.session.commit()
+    #     print('cal')
+    # elif form2.validate_on_submit():
+    #     e_name = form2.e_name.data
+    #     e_input_date = databaseToday
+    #     user_id = current_user.id
+    #     exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
+    #     db.session.add(exercise)
+    #     db.session.commit()
+    #     print('ex')
+    # return render_template('edit_tracker.html', form1=form1, form2=form2)
+    form=EditTracker()
     if form.validate_on_submit():
         c_name = form.c_name.data
         c_input_date = databaseToday
+        c_submit = form.c_submit.data
+        e_name = form.e_name.data
+        e_input_date = databaseToday
+        e_submit = form.e_submit.data
         user_id = current_user.id
-        food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
-        db.session.add(food)
-        db.session.commit()
+        if c_name != '' and c_submit:
+            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+            db.session.add(food)
+            db.session.commit()
+            print(c_name)
+        elif e_name != '' and e_submit:
+            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
+            db.session.add(exercise)
+            db.session.commit()    
+            print(e_name)
+        # print('cal')
     return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
