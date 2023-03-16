@@ -99,14 +99,14 @@ class RemoveUser(FlaskForm):
     submit = SubmitField('Submit')
 #----------------------Account settings----------------------------------------------------#
 
-class EditCal(FlaskForm):
-    c_name = StringField('Food')
-    #e_name = StringField('Exercise')
-    submit = SubmitField('Done')
-class EditEx(FlaskForm):
-    #c_name = StringField('Food')
-    e_name = StringField('Exercise')
-    submit = SubmitField('Done')
+# class EditCal(FlaskForm):
+#     c_name = StringField('Food')
+#     #e_name = StringField('Exercise')
+#     submit = SubmitField('Done')
+# class EditEx(FlaskForm):
+#     #c_name = StringField('Food')
+#     e_name = StringField('Exercise')
+#     submit = SubmitField('Done')
 class EditTracker(FlaskForm):
     c_name = StringField('Food')
     #c_serv = IntegerField('Serving Size')

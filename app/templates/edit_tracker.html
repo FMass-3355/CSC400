@@ -38,8 +38,28 @@
                 <th>Servings</th>
                 <th>Calories</th>
             </tr>
+            {% for food in foods %}
+            <tr>
+                <td>{{food.c_name}}</td>
+                <td>{{food.c_input_date}}</td>
+            </tr>
+            {% endfor %}
         </table>
-        <button onclick="insertFoodRow()">add</button>
+
+        <h3>Exercise</h3>
+        <table id="table2">
+            <tr>
+                <th>Exercise</th>
+                <th>Reps/Time</th>
+                <th>Calories Burned</th>
+            </tr>
+            {% for exercise in workouts %}
+            <tr>
+                <td>{{exercise.e_name}}</td>
+                <td>{{exercise.e_input_date}}</td>
+            </tr>
+            {% endfor %}
+        </table>
 
         
         
@@ -61,15 +81,7 @@
             </p>
         </form>
 
-        <h3>Exercise</h3>
-        <table id="table2">
-            <tr>
-                <th>Exercise</th>
-                <th>Reps/Time</th>
-                <th>Calories Burned</th>
-            </tr>
-        </table>
-        <button onclick="insertExerciseRow()">add</button>
+
 
         <script>
             var n = new Date();
