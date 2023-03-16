@@ -205,39 +205,22 @@ def create_user():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        role = form.role.data
         fname = form.fname.data
         lname = form.lname.data
-        mname = form.mname.data
-        company_name = form.company_name.data
         date_of_birth = form.date_of_birth.data
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
         if (email_exists is None) and (user_exists is None):
-            user = User(username=username, email=email, role=role, fname=fname, lname=lname, mname=mname,date_of_birth=date_of_birth)
+            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
             user.set_password(password)
             db.session.add(user)
-            if role == 'recruiter': 
-                Comp_exist = Company.query.filter_by(company_name=company_name).first()
-                if Comp_exist is None:
-                    company = Company(company_name=company_name)
-                    db.session.add(company)
-                else:
-                    company = db.session.query(Company.id).filter_by(company_name=company_name).first()
-                if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
-                    recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
-                    db.session.add(recruiter_Add)
-                    db.session.commit()
-            
-            
             db.session.commit()
             
             return redirect(url_for('login'))
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
-        
         
     all_usernames= db.session.query(User.username).all()
     print(all_usernames, file=sys.stderr)

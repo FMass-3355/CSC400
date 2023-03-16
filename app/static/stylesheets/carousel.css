@@ -1,0 +1,54 @@
+.login_button{
+    padding: 0%; display: flex; justify-content: center; 
+        background-image: linear-gradient(15deg,rgb(99, 99, 242),rgb(25, 215, 25)); 
+        width:fit-content; margin: auto;
+}
+
+.carousel { z-index: -99; } /* keeps this behind all content */
+
+.carousel .item {
+    position: fixed; 
+    width: 100%; height: 100%;
+}
+
+.carousel .one{
+    background: url(https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77701934912.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .two{
+    background: url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_854725372_391824.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .three{
+    background: url(https://wallpapercave.com/wp/wp1873140.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .four{
+    background: url(https://media.khou.com/assets/KHOU/images/39396f9f-d1cc-4309-bef2-9382b9cf9997/39396f9f-d1cc-4309-bef2-9382b9cf9997_1920x1080.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .five{
+    background: url(https://cdn.mos.cms.futurecdn.net/qP8pHeKtPLQUiADNPZLv9f.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .six{
+    background: url(https://www.pixelstalk.net/wp-content/uploads/2016/08/Food-Pictures.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
+
+.carousel .seven{
+    background: url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_901096798_200013332000928080_415454.jpg);
+    background-size: cover;
+    -moz-background-size: cover;
+}
