@@ -57,12 +57,9 @@ class CreateUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
-    role = SelectField('Role', choices=[('student', 'student'), ('faculty', 'faculty'), ('recruiter', 'recruiter')])
     fname = StringField('First Name', validators=[DataRequired()])#length(min=2, max=64) Testing stuff with min and max length
     lname = StringField('Last Name', validators=[DataRequired()])
-    mname = StringField('MI')
-    company_name = StringField('Company (Not relevant if not recruiter)')
-    profile_pic = FileField('Profile Picture')
+    gender = SelectField('Gender', choices=['', 'Male', 'Female'])
     date_of_birth = DateField('Date of Birth')
     submit = SubmitField('Create Account')
     # def validate_username(self, username):
@@ -102,10 +99,22 @@ class RemoveUser(FlaskForm):
     submit = SubmitField('Submit')
 #----------------------Account settings----------------------------------------------------#
 
-
-
-
-
+# class EditCal(FlaskForm):
+#     c_name = StringField('Food')
+#     #e_name = StringField('Exercise')
+#     submit = SubmitField('Done')
+# class EditEx(FlaskForm):
+#     #c_name = StringField('Food')
+#     e_name = StringField('Exercise')
+#     submit = SubmitField('Done')
+class EditTracker(FlaskForm):
+    c_name = StringField('Food')
+    #c_serv = IntegerField('Serving Size')
+    #c_done = BooleanField('Add Food')
+    e_name = StringField('Exercise')
+    #e_done = BooleanField('Add Exercise')
+    c_submit = SubmitField('Add Food')
+    e_submit = SubmitField('Add Exercise')
 
 # --------------- Search Form -------------------------#
 class WorkoutNameSearch(FlaskForm):

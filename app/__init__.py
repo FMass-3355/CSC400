@@ -8,7 +8,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
 from os import environ
+import mysql.connector
+import requests
+import sys
 from wtforms.validators import DataRequired
+import json
 #===================================================================================================
 
 
