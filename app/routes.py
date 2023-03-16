@@ -112,25 +112,10 @@ def tracker():
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
     global databaseToday
-    # form1 = EditCal()
-    # form2 = EditEx()
-    # if form1.validate_on_submit():
-    #     c_name = form1.c_name.data
-    #     c_input_date = databaseToday
-    #     user_id = current_user.id
-    #     food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
-    #     db.session.add(food)
-    #     db.session.commit()
-    #     print('cal')
-    # elif form2.validate_on_submit():
-    #     e_name = form2.e_name.data
-    #     e_input_date = databaseToday
-    #     user_id = current_user.id
-    #     exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
-    #     db.session.add(exercise)
-    #     db.session.commit()
-    #     print('ex')
-    # return render_template('edit_tracker.html', form1=form1, form2=form2)
+    global actualDay2
+    global thisDay
+    user_id = current_user.id    
+
     form=EditTracker()
     if form.validate_on_submit():
         c_name = form.c_name.data
@@ -139,7 +124,7 @@ def edit_tracker():
         e_name = form.e_name.data
         e_input_date = databaseToday
         e_submit = form.e_submit.data
-        user_id = current_user.id
+        
         if c_name != '' and c_submit:
             food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
             db.session.add(food)
@@ -151,6 +136,16 @@ def edit_tracker():
             db.session.commit()    
             print(e_name)
         # print('cal')
+
+    # thisDay = datetime.now()
+    # today = thisDay.strftime("%B %d, %Y")
+    # # if request.method == "GET":
+    # foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+    # workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+    # foods = foods.all()
+    # workouts = workouts.all()
+
+    #return render_template('edit_tracker.html', form=form, pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
     return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
