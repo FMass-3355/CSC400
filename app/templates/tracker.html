@@ -25,9 +25,9 @@
         <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
 
         <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
-            <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left;">&#x3c;</span></a>
+            <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left; color: black;">&#x3c;</span></a>
             <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
-            <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right;">&#x3e;</span></a>
+            <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right; color: black;">&#x3e;</span></a>
         </div>
         <br>
         <h1 style="text-align: center;"> Day Tracker</h1>
@@ -41,8 +41,13 @@
                 <th>Servings</th>
                 <th>Calories</th>
             </tr>
+            {% for food in foods %}
+            <tr>
+                <td>{{food.c_name}}</td>
+                <td>{{food.c_input_date}}</td>
+            </tr>
+            {% endfor %}
         </table>
-
 
         <h3>Exercise</h3>
         <table id="table2">
@@ -51,6 +56,12 @@
                 <th>Reps/Time</th>
                 <th>Calories Burned</th>
             </tr>
+            {% for exercise in workouts %}
+            <tr>
+                <td>{{exercise.e_name}}</td>
+                <td>{{exercise.e_input_date}}</td>
+            </tr>
+            {% endfor %}
         </table>
  
 

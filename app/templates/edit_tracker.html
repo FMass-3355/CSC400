@@ -38,8 +38,13 @@
                 <th>Servings</th>
                 <th>Calories</th>
             </tr>
+            {% for food in foods %}
+            <tr>
+                <td>{{food.c_name}}</td>
+                <td>{{food.c_input_date}}</td>
+            </tr>
+            {% endfor %}
         </table>
-        <button onclick="insertFoodRow()">add</button>
 
         <h3>Exercise</h3>
         <table id="table2">
@@ -48,8 +53,35 @@
                 <th>Reps/Time</th>
                 <th>Calories Burned</th>
             </tr>
+            {% for exercise in workouts %}
+            <tr>
+                <td>{{exercise.e_name}}</td>
+                <td>{{exercise.e_input_date}}</td>
+            </tr>
+            {% endfor %}
         </table>
-        <button onclick="insertExerciseRow()">add</button>
+
+        
+        
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.c_name.label(class="form-control-label")}}
+                {{ form.c_name(class="form-control form-control-md", placeholder=" ")}}
+            </p>
+            <p>
+                {{ form.c_submit(class="form-control form-control-md btn btn-primary") }}
+            </p>
+            <p>
+                {{ form.e_name.label(class="form-control-label")}}
+                {{ form.e_name(class="form-control form-control-md")}}
+            </p>
+            <p>
+                {{ form.e_submit(class="form-control form-control-md btn btn-primary") }}
+            </p>
+        </form>
+
+
 
         <script>
             var n = new Date();

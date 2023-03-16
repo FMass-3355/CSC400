@@ -1,7 +1,7 @@
 #Imports
 from operator import methodcaller
 #from app import app as appl
-from app import app
+from app import API_KEY, app
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ
@@ -9,7 +9,7 @@ from os import environ
 from app import db
 from app.models import *
 #------flask------#
-from flask import render_template, redirect, url_for, flash, send_file
+from flask import render_template, redirect, url_for, flash, send_file, Response, request
 from flask_login import login_user, logout_user, login_required, current_user
 #------WTFForms---------#
 from app.forms import *
@@ -21,6 +21,7 @@ from io import BytesIO
 
 from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
+import json
 
 
 # #API (needed for the USAjobs stuff and other APIs)
@@ -33,6 +34,7 @@ actualDay1 = datetime.now()
 actualDay2 = actualDay1.strftime("%B %d, %Y")
 thisDay = datetime.now()
 today = thisDay.strftime("%B %d, %Y")
+databaseToday = thisDay.strftime("%Y-%m-%d")
 
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
@@ -48,33 +50,103 @@ def chat():
 
 @app.route('/yesterday', methods=['GET', 'POST'])
 def setYesterday():
-    global thisDay
     global actualDay2
+    global thisDay
+
+    user_id = current_user.id
     yesterday = timedelta(days=-1)
     thisDay = thisDay + yesterday
     yesterday2 = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=yesterday2, actualDay=actualDay2)
+    databaseYesterday = thisDay.strftime("%Y-%m-%d")
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseYesterday, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseYesterday, fk_user_id=user_id)
+        workouts = workouts.all()
+        foods = foods.all()
+
+    if yesterday2 == actualDay2:
+        return redirect(url_for('tracker'))
+    else:
+        return render_template('tracker.html', pdate=yesterday2, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/tomorrow', methods=['GET', 'POST'])
 def setTomorrow():
     global actualDay2
     global thisDay
+
+    user_id = current_user.id
     tomorrow = timedelta(days=+1)
     thisDay = thisDay + tomorrow
     tomorrow2 = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=tomorrow2, actualDay=actualDay2)
+    databaseTomorrow = thisDay.strftime("%Y-%m-%d")
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseTomorrow, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseTomorrow, fk_user_id=user_id)
+        foods = foods.all()
+        workouts = workouts.all()
+
+    if tomorrow2 == actualDay2:
+        return redirect(url_for('tracker'))
+    else:
+        return render_template('tracker.html', pdate=tomorrow2, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/tracker', methods=['GET', 'POST'])
 def tracker():
     global actualDay2
     global thisDay
+    global databaseToday
+
+    user_id = current_user.id
     thisDay = datetime.now()
     today = thisDay.strftime("%B %d, %Y")
-    return render_template('tracker.html', pdate=today, actualDay=actualDay2)
+
+    if request.method == "GET":
+        foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+        workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+        foods = foods.all()
+        workouts = workouts.all()
+    return render_template('tracker.html', pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
-    return render_template('edit_tracker.html')
+    global databaseToday
+    global actualDay2
+    global thisDay
+    user_id = current_user.id    
+
+    form=EditTracker()
+    if form.validate_on_submit():
+        c_name = form.c_name.data
+        c_input_date = databaseToday
+        c_submit = form.c_submit.data
+        e_name = form.e_name.data
+        e_input_date = databaseToday
+        e_submit = form.e_submit.data
+        
+        if c_name != '' and c_submit:
+            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+            db.session.add(food)
+            db.session.commit()
+            print(c_name)
+        elif e_name != '' and e_submit:
+            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
+            db.session.add(exercise)
+            db.session.commit()    
+            print(e_name)
+        # print('cal')
+
+    # thisDay = datetime.now()
+    # today = thisDay.strftime("%B %d, %Y")
+    # # if request.method == "GET":
+    # foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+    # workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+    # foods = foods.all()
+    # workouts = workouts.all()
+
+    #return render_template('edit_tracker.html', form=form, pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
+    return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
 @app.route('/')
@@ -159,39 +231,22 @@ def create_user():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        role = form.role.data
         fname = form.fname.data
         lname = form.lname.data
-        mname = form.mname.data
-        company_name = form.company_name.data
         date_of_birth = form.date_of_birth.data
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
         if (email_exists is None) and (user_exists is None):
-            user = User(username=username, email=email, role=role, fname=fname, lname=lname, mname=mname,date_of_birth=date_of_birth)
+            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
             user.set_password(password)
             db.session.add(user)
-            if role == 'recruiter': 
-                Comp_exist = Company.query.filter_by(company_name=company_name).first()
-                if Comp_exist is None:
-                    company = Company(company_name=company_name)
-                    db.session.add(company)
-                else:
-                    company = db.session.query(Company.id).filter_by(company_name=company_name).first()
-                if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
-                    recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
-                    db.session.add(recruiter_Add)
-                    db.session.commit()
-            
-            
             db.session.commit()
             
             return redirect(url_for('login'))
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
-        
         
     all_usernames= db.session.query(User.username).all()
     print(all_usernames, file=sys.stderr)
@@ -214,7 +269,7 @@ def add_user():
             email = form.email.data
             fname = form.fname.data
             lname = form.lname.data
-            mname = form.mname.data
+            #mname = form.mname.data
             role = form.role.data
             company_name = form.company_name.data 
             date_of_birth = form.date_of_birth.data
@@ -301,6 +356,8 @@ def view_users():
 def profile():
     if current_user.is_authenticated:
         username = current_user.username
+        email = current_user.email
+        role = current_user.role
         fname = current_user.fname
         lname = current_user.lname
         email = current_user.email
@@ -376,10 +433,58 @@ def edit_profile():
     return render_template('edit_profile.html', form=form, image_file=image_file)
   
 
+#Workouts
+@app.route('/workouts', methods=['GET', 'POST'])
+@login_required
+def workouts():
+    user_id = current_user.id
+    form = WorkoutNameSearch()
+    if request.method == "GET":
+        workouts = db.session.query(Exercise).filter_by(fk_user_id=user_id)
+        if len(request.args) > 0:
+            date_of_workout = request.args.get('date')
+            if date_of_workout is not None:
+                workouts = workouts.filter_by(e_input_date=date_of_workout)
+            exercise_name = request.args.get('name')
+            if exercise_name is not None:
+                workouts = workouts.filter_by(e_name=exercise_name)
+            
+            workouts = workouts.all()
+        return render_template('workouts.html', workouts=workouts, form=form)
 
+@app.route('/workouts_api', methods=['GET'])
+@login_required
+def ninja_api_search_by_activity():
+    if request.method == "GET":
+        activity = request.args.get('activity')
+        response = requests.get(f"{CALORIES_API_URL}?activity={activity}", headers={'X-Api-Key': API_KEY})
+        response_data = response.json()
+        for ex in response_data:
+            del ex['total_calories']
 
+        if response.status_code != requests.codes.ok:
+            return Response({
+            "status": "error", 
+            "message": "Got an error from API"
+            }, mimetype="application/json")
+    return Response(json.dumps(response_data),  mimetype='application/json')
 
+@app.route('/food_api', methods=['GET'])
+@login_required
+def ninja_api_search_by_food():
+    if request.method == "GET":
+        food_name = request.args.get('name')
+        response = requests.get(f"{NUTRITION_API_URL}?query={food_name}", headers={'X-Api-Key': API_KEY})
+        response_data = response.json()
+
+        if response.status_code != requests.codes.ok:
+            return Response({
+            "status": "error", 
+            "message": "Got an error from API"
+            }, mimetype="application/json")
+    return Response(json.dumps(response_data),  mimetype='application/json')
 #---------------------App Error--------------------------------------------------------------------#
+
 #page not found
 @app.errorhandler(404)
 def error404(error):

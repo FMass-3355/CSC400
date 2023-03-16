@@ -93,21 +93,21 @@ db.create_all()
 #USER#
 user = User.query.filter_by(username='fm').first()
 if user is None:
-    user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='f', lname='m', email='fm@email.com')
+    user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='f', lname='m', email='fm@email.com', gender='m')
     user_admin.set_password('csc400sp23')
     db.session.add(user_admin)
     db.session.commit()
 
 user = User.query.filter_by(username='kb').first()
 if user is None:
-    user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='k', lname='b', email='kb@email.com')
+    user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='k', lname='b', email='kb@email.com', gender='f')
     user_regular_1.set_password('csc400sp23')
     db.session.add(user_regular_1)
     db.session.commit()
 
 user = User.query.filter_by(username='ej').first()
 if user is None:
-    user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='e', lname='j', email='ej@email.com')
+    user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='e', lname='j', email='ej@email.com', gender='f')
     user_regular_2.set_password('csc400sp23')
     db.session.add(user_regular_2)
     db.session.commit()
@@ -153,19 +153,19 @@ if track is None:
 #EXERCISE#
 exercise = Exercise.query.filter_by(e_input_date='2021-02-02', fk_user_id=1).first()
 if exercise is None:
-    exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2021-02-02')
+    exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-03-08', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=110.6)
     db.session.add(exercise_1)
     db.session.commit()
 
 exercise = Exercise.query.filter_by(e_input_date='2022-12-22', fk_user_id=1).first()
 if exercise is None:
-    exercise_2 = Exercise(fk_user_id=1, e_name = 'push ups', e_input_date='2022-12-22')
+    exercise_2 = Exercise(fk_user_id=1, e_name = 'push ups', e_input_date='2023-03-05')
     db.session.add(exercise_2)
     db.session.commit()
 
 exercise = Exercise.query.filter_by(e_input_date='2023-01-12', fk_user_id=1).first()
 if exercise is None:
-    exercise_3 = Exercise(fk_user_id=1, e_name = 'running', e_input_date='2023-01-12')
+    exercise_3 = Exercise(fk_user_id=1, e_name = 'running', e_input_date='2023-03-10')
     db.session.add(exercise_3)
     db.session.commit()
 
@@ -191,19 +191,19 @@ if exercise is None:
 
 calorie = Calorie.query.filter_by(c_input_date='2021-02-02', fk_user_id=1).first()
 if calorie is None:
-    calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2021-02-02')
+    calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-03-08')
     db.session.add(calorie_1)
     db.session.commit()
 
 calorie = Calorie.query.filter_by(c_input_date='2022-12-22', fk_user_id=1).first()
 if calorie is None:
-    calorie_2 = Calorie(fk_user_id=1, c_name = 'lettuce', c_input_date='2022-12-22')
+    calorie_2 = Calorie(fk_user_id=1, c_name = 'lettuce', c_input_date='2023-03-05')
     db.session.add(calorie_2)
     db.session.commit()
 
 calorie = Calorie.query.filter_by(c_input_date='2023-01-12', fk_user_id=1).first()
 if calorie is None:
-    calorie_3 = Calorie(fk_user_id=1, c_name = 'berries', c_input_date='2023-01-12')
+    calorie_3 = Calorie(fk_user_id=1, c_name = 'berries', c_input_date='2023-03-10')
     db.session.add(calorie_3)
     db.session.commit()
 
@@ -250,7 +250,6 @@ if friend is None:
     db.session.add(friendship_3_2)
     db.session.commit()
 
-#status(0) = u  <-  f
-#status(1) = u  ->  f
-#status(2) = u <-> f
-
+#[status = 0] : u  <-  f
+#[status = 1] : u  ->  f
+#[status = 2] : u <-> f

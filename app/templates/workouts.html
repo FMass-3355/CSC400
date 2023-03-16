@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="../static/js/navbar.js"></script>
+
+        <style>
+         
+        body, html {
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: right top;
+            font-family: 'Lato', sans-serif;
+        }
+        </style>
+    </head>
+    
+    <body>
+        <div id="myNav" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+              <a href="/homepage">Home</a>
+              <a href="/workouts">Workouts</a>
+              <a href="/profile">Profile</a>
+              <a href="/logout">Logout</a>
+            </div>
+        </div>
+    
+        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+    
+        <h1 style="text-align: center;">Workouts</h1>
+        <table>
+            <th>Exercise</th>
+            <th>Date</th>
+            {% for exercise in workouts %}
+            <tr>
+                <td>{{exercise.e_name}}</td>
+                <td>{{exercise.e_input_date}}</td>
+            </tr>
+        {% endfor %}
+        
+        </table>
+        <form action="/workouts_api" method="GET" class="workout_search_form">
+            {{ form.hidden_tag() }}
+            <p style="width: fit-content; margin: auto;">
+                {{ form.name.label(class="form-control-label") }}<br>
+                {{ form.name(class="form-control form-control-md workout_name") }}
+            </p>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <p style="display: flex; justify-content: center;"> {{ form.search(class="btn btn-success") }} </p>
+        </form>
+        
+        <!-- food seach bar Name -->
+        <form action="/food_api" method="GET" class="food_search_form">
+            {{ form.hidden_tag() }}
+            <p style="width: fit-content; margin: auto;">
+                {{ form.name.label(class="form-control-label") }}<br>
+                {{ form.name(class="form-control form-control-md food_name") }}
+            </p>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <p style="display: flex; justify-content: center;"> {{ form.search(class="btn btn-success") }} </p>
+        </form>
+
+
+    </body>
+    <script>
+        let activityOptions = [];
+        const fetchActivities = (activity) => {
+            const url = `/workouts_api?activity=${activity}`;
+            fetch(url).then((response) => response.json()).then(res => {
+                activityOptions = [...res]
+                console.log(activityOptions);
+            });
+        }
+        const workout_search_form = document.getElementsByClassName("workout_search_form")[0];
+        const workout_name = document.getElementsByClassName("workout_name")[0];
+        workout_search_form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            fetchActivities(workout_name.value)
+        <!----Food-->
+        });
+        let nameOptions = [];
+        const fetchName = (name) => {
+            const url = `/food_api?activity=${name}`;
+            fetch(url).then((response) => response.json()).then(res => {
+                nameOptions = [...res]
+                console.log(nameOptions);
+            });
+        }
+        const food_search_form = document.getElementsByClassName("food_search_form")[0];
+        const food_name = document.getElementsByClassName("name")[0];
+        food_search_form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            fetchName(food_name.value)
+        });
+    </script>
+</html>
