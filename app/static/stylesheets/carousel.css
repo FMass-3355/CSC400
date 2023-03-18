@@ -1,10 +1,26 @@
-.login_button{
-    padding: 0%; display: flex; justify-content: center; 
-        background-image: linear-gradient(15deg,rgb(99, 99, 242),rgb(25, 215, 25)); 
-        width:fit-content; margin: auto;
+#ptag{
+    width: fit-content;
+    margin: auto;
 }
 
-.carousel { z-index: -99; } /* keeps this behind all content */
+.login_button{
+    padding: 0%;
+    display: flex; margin: auto; width: fit-content; 
+    background-color: dodgerblue; 
+}
+
+.create_user_button{
+    display: flex; margin: auto; width: fit-content; 
+    background-color: aqua; 
+}
+
+.recover_user_button{
+    display: flex; margin: auto; width: fit-content; 
+    background-color:dodgerblue; 
+}
+
+.carousel { z-index: -99; 
+} /* keeps this behind all content */
 
 .carousel .item {
     position: fixed; 
@@ -12,7 +28,7 @@
 }
 
 .carousel .one{
-    background: url(https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77701934912.jpg);
+    background: url(../Images/flippedworkout.jpg);
     background-size: cover;
     -moz-background-size: cover;
 }
@@ -24,13 +40,13 @@
 }
 
 .carousel .three{
-    background: url(https://wallpapercave.com/wp/wp1873140.jpg);
+    background: url(../Images/flippedbeach.jpg);
     background-size: cover;
     -moz-background-size: cover;
 }
 
 .carousel .four{
-    background: url(https://media.khou.com/assets/KHOU/images/39396f9f-d1cc-4309-bef2-9382b9cf9997/39396f9f-d1cc-4309-bef2-9382b9cf9997_1920x1080.jpg);
+    background: url(https://img1.wallspic.com/crops/8/9/5/6/6/166598/166598-fruit-fruits-fruit_salad-salad-strawberry-1920x1080.jpg);
     background-size: cover;
     -moz-background-size: cover;
 }
@@ -44,6 +60,7 @@
 .carousel .six{
     background: url(https://www.pixelstalk.net/wp-content/uploads/2016/08/Food-Pictures.jpg);
     background-size: cover;
+    transform: rotateY(150deg);
     -moz-background-size: cover;
 }
 

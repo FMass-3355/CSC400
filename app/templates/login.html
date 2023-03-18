@@ -16,49 +16,44 @@
 
     </head>
     <body style="height: 100%;">
-                <div id="myCarousel" class="carousel container slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                      <div class="item active one"></div>
-                      <div class="item two"></div>
-                      <div class="item three"></div>
-                      <div class="item four"></div>
-                      <div class="item five"></div>
-                      <div class="item six"></div>
-                      <div class="item seven"></div>
-                    </div>
-                </div>
-           
+            {% include "carousel.html" %}
+            {% block content %}
             <div class="row m-0" style="height: 100%;">
                 <div class="col-md-4 offset-md-8" style="background-color: rgba(0,0,0, 0.6); color: aliceblue;">
                     <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 62pt;">FIT</h1>
                     <form action="" method="POST">
                         {{ form.hidden_tag() }}
-                        <p style="width: fit-content; margin: auto;">
+                        <p id="ptag">
                             {{ form.username.label(class="form-control-label") }}<br>
                             {{ form.username(class="form-control form-control-md") }}
-                        </p>
+                        </p><br>
 
-                        <p style="width: fit-content; margin: auto;">
+                        <p id="ptag">
                             {{ form.password.label(class="form-control-label") }}<br>
                             {{ form.password(class="form-control form-control-md") }}
                         </p><br>
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
                                 {% for message in messages %}
-                                    <div class="alert alert-danger alert-dismissible fade show"
+                                    <div class="alert alert-danger show"
                                     role="alert" style="text-align: center;">
                                         {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
                                 {% endfor %}
                             {% endif %}
                         {% endwith %}
-                        <button class='btn login_button'> {{ form.submit(class="btn") }} </button>
+                        <p class='btn login_button'> {{ form.submit(class="btn") }} </p>
                     </form>
-                    {% if user %}
-                        <p>{{ error }}</p>
-                    {% endif %}
-                    <button><a href="create_user">create user</a></button>
+                    <p style="width: fit-content; margin: auto; padding-top: 2.5%; padding-bottom: 2.5%;">or</p>
+                    <a class="btn recover_user_button" href="/email">Recover Account</a><br>
+                    <hr style="width: 50%; margin: auto;"><br>
+                    <p style="width: fit-content; margin: auto;">New to FIT? No problem, create an account down below!</p><br>
+                    <a class="btn create_user_button" href="/create_user">Create User</a>
                 </div>
             </div>
+            {% endblock %}
     </body>
 </html>
