@@ -170,34 +170,6 @@
                     });
                 }
             
-            function deleteRow() {
-                let config = {
-                    host    : 'localhost',
-                    user    : 'root',
-                    password: 'FVMass3355!',
-                    database: 'fit'
-                    };
-
-                module.exports = config;
-
-                let mysql  = require('mysql');
-                let config = require('./config.js');
-                let connection = mysql.createConnection(config);
-                let sql = `DELETE FROM fit WHERE id = ?`;
-
-                connection.query(sql, 1, (error, results, fields) => {
-                    if (error)
-                        return console.error(error.message);
-
-                    console.log('Deleted Row(s):', results.affectedRows);
-                    });
-                    connection.end();
-            }
-                
-                
-                //DELETE FROM fit WHERE id = 1
-            
-            
         </script>
     </body>
 </html>
