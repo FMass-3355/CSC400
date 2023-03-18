@@ -118,9 +118,29 @@
                 var cell2 = row.insertCell(1);
                 var cell3 = row.insertCell(2);
                 cell1.innerHTML = "<input list='foods' name='foodBrowser' id='food'>" + 
-                    "<datalist id='foods'><option value='STEAK!!!!!!!!'><option value='Apples'</datalist>";
-                cell2.innerHTML = "test2";
-                cell3.innerHTML = "test3";
+                    "<datalist id='foods'>";
+                cell2.innerHTML = "";
+                cell3.innerHTML = "";
+                let nameOptions = [];
+                const fetchName = (name) => {
+                    const url = `/food_api?name=${name}`;
+                    fetch(url).then((response) => response.json()).then(res => {
+                        //foods_list = document.getElementById("foods").removeChild();
+                        nameOptions = [...res]
+                        nameOptions.forEach(function(item){
+                        const option = document.createElement('option');
+                        option.value = item.name;
+                        document.getElementById("foods").appendChild(option);
+                        });
+                    });
+                }
+                const food_name = document.getElementById("food");
+                if (food_name) {
+                    food_name.addEventListener("change", (e) => {
+                        e.preventDefault();
+                        fetchName(food_name.value)
+                    });
+                }
             }
 
             function insertExerciseRow() {
@@ -133,12 +153,28 @@
                     "<datalist id='exercises'><option value='Pushups'><option value='Pullups'></datalist>";
                 cell2.innerHTML = "test2";
                 cell3.innerHTML = "test3";
-
+                let activityOptions = [];
+                const fetchActivities = (activity) => {
+                    const url = `/workouts_api?activity=${activity}`;
+                    fetch(url).then((response) => response.json()).then(res => {
+                        activityOptions = [...res]
+                        console.log(activityOptions);
+                    });
+                }
+                const workout_name = document.getElementById("exercise");
+                if (workout_name) {
+                    workout_name.addEventListener("keyup", (e) => {
+                        e.preventDefault();
+                        fetchActivities(workout_name.value)
+                    <!----Food-->
+                    });
+                }
+            
             function deleteRow() {
                 let config = {
                     host    : 'localhost',
                     user    : 'root',
-                    password: '235rules',
+                    password: 'FVMass3355!',
                     database: 'fit'
                     };
 
@@ -160,7 +196,8 @@
                 
                 
                 //DELETE FROM fit WHERE id = 1
-            }
+            
+            
         </script>
     </body>
 </html>

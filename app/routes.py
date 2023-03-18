@@ -25,10 +25,12 @@ import json
 
 
 # #API (needed for the USAjobs stuff and other APIs)
-# API_KEY = environ.get('API_KEY')
-# API_HOST = environ.get('API_HOST')
-# API_URL = environ.get('API_URL')
-# EMAIL = environ.get('EMAIL')
+API_KEY = environ.get('API_KEY')
+API_HOST = environ.get('API_HOST')
+API_URL = environ.get('API_URL')
+EMAIL = environ.get('EMAIL')
+CALORIES_API_URL = environ.get('CALORIES_API_URL')
+NUTRITION_API_URL = environ.get('NUTRITION_API_URL')
 
 actualDay1 = datetime.now()
 actualDay2 = actualDay1.strftime("%B %d, %Y")
@@ -538,6 +540,84 @@ def ninja_api_search_by_food():
             "message": "Got an error from API"
             }, mimetype="application/json")
     return Response(json.dumps(response_data),  mimetype='application/json')
+
+@app.route('/add_food', methods=['POST'])
+@login_required
+def add_food():
+    if request.method == "POST":
+        c_name = request.args.get('name')
+        c_calories_total = request.args.get('calories')
+        c_serving_size_g = request.args.get('serving')
+        c_fat_saturated_g = request.args.get('fat')
+        c_protein_g = request.args.get('protein')
+        c_sodium_mg = request.args.get('sodium')
+        c_potassium_mg = request.args.get('potassium')
+        c_cholesterol_mg = request.args.get('cholesterol')
+        c_carbohydrates_total_g = request.args.get('carbohydrates')
+        c_fiber_g = request.args.get('fiber')
+        c_sugar_g = request.args.get('sugars')
+
+        calorie = Calorie(fk_user_id=current_user.id,
+                                c_name =c_name,
+                                c_input_date='2023-05-05',
+                                c_calories_total = c_calories_total,
+                                c_serving_size_g = c_serving_size_g,
+                                c_fat_saturated_g = c_fat_saturated_g,
+                                c_protein_g = c_protein_g,
+                                c_sodium_mg = c_sodium_mg,
+                                c_potassium_mg = c_potassium_mg,
+                                c_cholesterol_mg = c_cholesterol_mg,
+                                c_carbohydrates_total_g = c_carbohydrates_total_g,
+                                c_fiber_g = c_fiber_g,
+                                c_sugar_g = c_sugar_g)
+        db.session.add(calorie)
+        db.session.commit()
+        error = False
+        if not error:
+            response_data = {
+                    "status": "success", 
+                    "message": "Added calorie data"
+                    }
+        else:
+            response_data = {
+                "status": "error", 
+                "message": "couldn't add calorie data to db"
+                }
+            
+        return Response(json.dumps(response_data),  mimetype='application/json')
+    
+@app.route('/add_workout', methods=['POST'])
+@login_required
+def add_workout():
+    if request.method == "POST":
+        e_name = request.args.get('name')
+        e_total_calories = request.args.get('totalCalories')
+        e_calories_per_hour = request.args.get('caloriesPerHour')
+        e_duration_minutes = request.args.get('duration')
+
+        exercise = Exercise(fk_user_id=current_user.id,
+                            e_name = e_name,
+                            e_total_calories = e_total_calories,
+                            e_calories_per_hour = e_calories_per_hour,
+                            e_duration_minutes = e_duration_minutes)
+        db.session.add(exercise)
+        db.session.commit()
+        error = False
+        if not error:
+            response_data = {
+                    "status": "success", 
+                    "message": "Added exercise data"
+                    }
+        else:
+            response_data = {
+                "status": "error", 
+                "message": "couldn't add exercise data to db"
+                }
+
+
+
+
+
 #---------------------App Error--------------------------------------------------------------------#
 
 #page not found

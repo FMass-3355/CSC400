@@ -8,8 +8,11 @@ from sqlalchemy.ext.declarative import *
 #------From Flask Login---------#
 from flask_login import UserMixin, current_user
 from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
+from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 #--------Python Library---------#
+import requests
+from io import BytesIO
 import requests
 from io import BytesIO
 
@@ -32,6 +35,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(128), unique=True)
+    gender = db.Column(db.String(32))
     gender = db.Column(db.String(32))
     role = db.Column(db.String(32))
     password_hash = db.Column(db.String(256), unique=True)
