@@ -24,10 +24,8 @@
 
         <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
 
-        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
-            <span style="font-size: 50px; cursor: pointer; float: left;" onclick="setYesterday()">&#x3c;</span>
+        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">            
             <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
-            <span style="font-size: 50px; cursor: pointer; float: right;" onclick="setTomorrow()">&#x3e;</span>
         </div>
         <br>
         <h1 style="text-align: center;"> Day Tracker</h1>
@@ -38,12 +36,14 @@
                 <th>Servings</th>
                 <th>Calories</th>
             </tr>
-            {% for food in foods %}
+            {% for food in query_cal_row %}
             <tr>
                 <td>{{food.c_name}}</td>
                 <td>{{food.c_input_date}}</td>
+                <td></td>
+                <td><a href="/c_delete_row/{{ food.cal_id }}">Delete Food</a></td>
             </tr>
-            {% endfor %}
+            {% endfor %}   
         </table>
 
         <h3>Exercise</h3>
@@ -53,10 +53,12 @@
                 <th>Reps/Time</th>
                 <th>Calories Burned</th>
             </tr>
-            {% for exercise in workouts %}
+            {% for exercise in query_ex_row %}
             <tr>
                 <td>{{exercise.e_name}}</td>
                 <td>{{exercise.e_input_date}}</td>
+                <td></td>
+                <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Food</a></td>
             </tr>
             {% endfor %}
         </table>
@@ -79,6 +81,7 @@
             <p>
                 {{ form.e_submit(class="form-control form-control-md btn btn-primary") }}
             </p>
+            
         </form>
 
 
@@ -88,8 +91,7 @@
             year = n.getFullYear();
             month = n.getMonth() + 1;
             day = n.getDate();
-            if (document.getElementById("date"))
-                document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+            document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
 
             function setYesterday() {
                 var yesterday = n;
@@ -167,9 +169,6 @@
                     <!----Food-->
                     });
                 }
-            }
-
-            
             
         </script>
     </body>

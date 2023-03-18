@@ -115,3 +115,15 @@ User.friends = relationship(User, secondary='friends', primaryjoin=User.id==Frie
 def load_user(id):
     return db.session.query(User).get(int(id))
 #===================================================================================================
+
+class CalInfo:
+    def __CalInfo__(cal_id, c_input_date, c_name):
+        cal_id = cal_id
+        c_input_date = c_input_date
+        c_name = c_name
+
+class ExInfo:
+    def __ExInfo__(ex_id, e_input_date, e_name):
+        ex_id = ex_id
+        e_input_date = e_input_date
+        e_name = e_name

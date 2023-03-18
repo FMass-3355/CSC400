@@ -114,12 +114,54 @@ def tracker():
         workouts = workouts.all()
     return render_template('tracker.html', pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
 
+@app.route('/c_delete_row/<row_id>', methods=['GET', 'POST'])
+@login_required
+def c_deleteRow(row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    print(row_id)
+    delete_form = C_DeleteForm()
+    c_delete = delete_form.delete.data
+    if delete_form.validate_on_submit():
+        print('form works')
+        if c_delete:
+            print("delete")
+            db.session.query(Calorie).filter_by(id=row_id).delete()
+            db.session.commit()
+        return redirect(url_for('edit_tracker'))
+
+
+    return render_template('delete_row.html', delete_form=delete_form)
+
+@app.route('/e_delete_row/<row_id>', methods=['GET', 'POST'])
+@login_required
+def e_deleteRow(row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    print(row_id)
+    delete_form = E_DeleteForm()
+    e_delete = delete_form.delete.data
+    if delete_form.validate_on_submit():
+        print('form works')
+        if e_delete:
+            print("delete")
+            db.session.query(Exercise).filter_by(id=row_id).delete()
+            db.session.commit()
+        return redirect(url_for('edit_tracker'))
+
+
+    return render_template('delete_row.html', delete_form=delete_form)
+
+
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
     global databaseToday
     global actualDay2
     global thisDay
-    user_id = current_user.id    
+    user_id = current_user.id 
+
 
     form=EditTracker()
     if form.validate_on_submit():
@@ -140,18 +182,31 @@ def edit_tracker():
             db.session.add(exercise)
             db.session.commit()    
             print(e_name)
-        # print('cal')
 
-    # thisDay = datetime.now()
-    # today = thisDay.strftime("%B %d, %Y")
-    # # if request.method == "GET":
-    # foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
-    # workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
-    # foods = foods.all()
-    # workouts = workouts.all()
+    foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+    workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+    foods = foods.all()
+    workouts = workouts.all()
 
-    #return render_template('edit_tracker.html', form=form, pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
-    return render_template('edit_tracker.html', form=form)
+    query_cal_row = []
+    for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.c_input_date==databaseToday):
+        row = CalInfo()
+        row.cal_id = item.id
+        row.c_input_date = item.c_input_date
+        row.c_name = item.c_name
+        query_cal_row.append(row)
+    
+    query_ex_row = []
+    for item in db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.e_input_date==databaseToday):
+        row = ExInfo()
+        row.ex_id = item.id
+        row.e_input_date = item.e_input_date
+        row.e_name = item.e_name
+        query_ex_row.append(row)
+
+
+    return render_template('edit_tracker.html', form=form, workouts=workouts, foods=foods, query_cal_row=query_cal_row, query_ex_row=query_ex_row)
+    #return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
 @app.route('/')
@@ -187,9 +242,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
-
-
-
 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
 #Profile Settings
