@@ -43,6 +43,9 @@ databaseToday = thisDay.strftime("%Y-%m-%d")
 def homepage():
     return render_template('homepage.html')
   
+@app.route('/email', methods=['GET', 'POST'])
+def email():
+    return render_template('email.html')
   
 @app.route('/chat')
 @login_required
@@ -168,7 +171,7 @@ def login():
         user = db.session.query(User).filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             print('Login failed', file=sys.stderr)
-            flash("Wrong username and/or password. Please make sure your account details are correct and try again.")
+            flash("Wrong username and/or password.")
             return redirect(url_for('login'))
         # login_user is a flask_login function that starts a session
         else:
