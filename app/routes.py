@@ -327,28 +327,30 @@ def add_user():
             fname = form.fname.data
             lname = form.lname.data
             #mname = form.mname.data
-            role = form.role.data
-            company_name = form.company_name.data 
+            #role = form.role.data
+            #company_name = form.company_name.data 
+            gender = form.gender.data
             date_of_birth = form.date_of_birth.data
+            role = 'regular'
             
 
             email_exists = db.session.query(User).filter_by(email=email).first()
             user_exists = db.session.query(User).filter_by(username=username).first()   
             if (email_exists is None) and (user_exists is None):
-                user = User(username=username, email=email, role=role, fname=fname, lname=lname, mname=mname, date_of_birth=date_of_birth)
+                user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
                 user.set_password(password)
                 db.session.add(user)
-                if role == 'recruiter': 
-                    Comp_exist = Company.query.filter_by(company_name=company_name).first()
-                    if Comp_exist is None:
-                        company = Company(company_name=company_name)
-                        db.session.add(company)
-                    else:
-                        company = db.session.query(Company.id).filter_by(company_name=company_name).first()
-                    if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
-                        recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
-                        db.session.add(recruiter_Add)
-                        db.session.commit()
+                # if role == 'recruiter': 
+                #     Comp_exist = Company.query.filter_by(company_name=company_name).first()
+                #     if Comp_exist is None:
+                #         company = Company(company_name=company_name)
+                #         db.session.add(company)
+                #     else:
+                #         company = db.session.query(Company.id).filter_by(company_name=company_name).first()
+                #     if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
+                #         recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
+                #         db.session.add(recruiter_Add)
+                #         db.session.commit()
                 db.session.commit()
                 flash('User added successfully')
             else:
@@ -364,31 +366,22 @@ def add_user():
 @login_required
 def delete_user(user_id):
     form = RemoveUser()
+    print('in route')
     if form.validate_on_submit():
-        is_recruiter = db.session.query(Recruiter.id).filter_by(fk_user_id=user_id).first()
-        is_student = db.session.query(User.id).filter_by(id=user_id, role='student').first()
-        if is_recruiter:
-            for item in db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id):
-                db.session.query(Associations_Application).filter_by(fk_job_id=item.id).delete()
-            db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id).delete()
-            db.session.query(Recruiter).filter_by(fk_user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
-        elif is_student:
-            db.session.query(Associations_Application).filter_by(fk_user_id=is_student.id).delete()
-            db.session.query(Upload).filter_by(user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()   
-            db.session.commit()
-        else:
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
+        print('USER REMOVED')
+        #is_recruiter = db.session.query(Recruiter.id).filter_by(fk_user_id=user_id).first()
+        #is_student = db.session.query(User.id).filter_by(id=user_id, role='student').first()
+        db.session.query(User).filter_by(id=user_id).delete()
+        db.session.commit()
         # Job.query.filter(id=job_id).delete()
         return redirect(url_for('view_users'))
 
-    return render_template('close_job.html', form=form)
+    return render_template('delete_user.html', form=form)
+    
 
 @app.route('/view_users', methods=['GET', 'POST'])
 def view_users():
+    
     query_users = []
     # Rec_id = db.session.query(Recruiter.id).filter_by(fk_user_id=current_user.id)
     if is_admin():

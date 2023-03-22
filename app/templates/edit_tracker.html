@@ -58,7 +58,7 @@
                 <td>{{exercise.e_name}}</td>
                 <td>{{exercise.e_input_date}}</td>
                 <td></td>
-                <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Food</a></td>
+                <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Exercise</a></td>
             </tr>
             {% endfor %}
         </table>
@@ -125,7 +125,7 @@
                 const fetchName = (name) => {
                     const url = `/food_api?name=${name}`;
                     fetch(url).then((response) => response.json()).then(res => {
-                        //foods_list = document.getElementById("foods").removeChild();
+                        
                         nameOptions = [...res]
                         nameOptions.forEach(function(item){
                         const option = document.createElement('option');
@@ -168,7 +168,7 @@
                         fetchActivities(workout_name.value)
                     <!----Food-->
                     });
-                }
+                }}
             
         </script>
     </body>
