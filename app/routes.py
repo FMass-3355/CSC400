@@ -8,6 +8,7 @@ from os import environ
 #------SQLAlchemy---------#
 from app import db
 from app.models import *
+from sqlalchemy import create_engine
 #------flask------#
 from flask import render_template, redirect, url_for, flash, send_file, Response, request
 from flask_login import login_user, logout_user, login_required, current_user
@@ -23,8 +24,12 @@ from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 import json
 
+import psycopg2
+import matplotlib.pyplot as plt
+import pandas as pd
 
-# #API (needed for the USAjobs stuff and other APIs)
+
+#API 
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
 API_URL = environ.get('API_URL')
@@ -490,21 +495,25 @@ def ninja_api_search_by_food():
 @login_required
 def add_food():
     if request.method == "POST":
-        c_name = request.args.get('name')
-        c_calories_total = request.args.get('calories')
-        c_serving_size_g = request.args.get('serving')
-        c_fat_saturated_g = request.args.get('fat')
-        c_protein_g = request.args.get('protein')
-        c_sodium_mg = request.args.get('sodium')
-        c_potassium_mg = request.args.get('potassium')
-        c_cholesterol_mg = request.args.get('cholesterol')
-        c_carbohydrates_total_g = request.args.get('carbohydrates')
-        c_fiber_g = request.args.get('fiber')
-        c_sugar_g = request.args.get('sugars')
+        form_data = request.json
+        c_name = form_data['name']
+        if not c_name: raise "name missing"
+
+        c_calories_total = form_data['calories']
+        c_serving_size_g = form_data['serving_size_g']
+        c_fat_saturated_g = form_data['fat_saturated_g']
+        c_protein_g = form_data['protein_g']
+        c_sodium_mg = form_data['sodium_mg']
+        c_potassium_mg = form_data['potassium_mg']
+        c_cholesterol_mg = form_data['cholesterol_mg']
+        c_carbohydrates_total_g = form_data['carbohydrates_total_g']
+        c_fiber_g = form_data['fiber_g']
+        c_sugar_g = form_data['sugar_g']
+
 
         calorie = Calorie(fk_user_id=current_user.id,
                                 c_name =c_name,
-                                c_input_date='2023-05-05',
+                                c_input_date=date.today(),
                                 c_calories_total = c_calories_total,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
@@ -515,50 +524,94 @@ def add_food():
                                 c_carbohydrates_total_g = c_carbohydrates_total_g,
                                 c_fiber_g = c_fiber_g,
                                 c_sugar_g = c_sugar_g)
-        db.session.add(calorie)
-        db.session.commit()
-        error = False
-        if not error:
+        
+        try:
+            db.session.add(calorie)
+            db.session.commit()
             response_data = {
                     "status": "success", 
-                    "message": "Added calorie data"
+                    "message": "Added calorie data",
+                    "data": {
+                        "name": calorie.c_name,
+                        "serving_size": calorie.c_serving_size_g,
+                        "calories": calorie.c_calories_total,
+                        "id": calorie.id
                     }
-        else:
+                    }
+            return Response(json.dumps(response_data),  mimetype='application/json')
+            
+        except Exception as error:
+            print(error)
             response_data = {
                 "status": "error", 
-                "message": "couldn't add calorie data to db"
+                "message": str(error)
                 }
-            
-        return Response(json.dumps(response_data),  mimetype='application/json')
+            return Response(json.dumps(response_data), status=500, mimetype='application/json')
     
 @app.route('/add_workout', methods=['POST'])
 @login_required
 def add_workout():
     if request.method == "POST":
-        e_name = request.args.get('name')
-        e_total_calories = request.args.get('totalCalories')
-        e_calories_per_hour = request.args.get('caloriesPerHour')
-        e_duration_minutes = request.args.get('duration')
+        form_data = request.json
+        e_name = form_data['name']
+        if not e_name: raise "name missing"
+
+        e_calories_per_hour = form_data['calories_per_hour']
+        e_duration_minutes = form_data['duration_minutes']
+        e_total_calories = e_calories_per_hour * (e_duration_minutes/60)
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
+                            e_input_date=date.today(),
                             e_total_calories = e_total_calories,
                             e_calories_per_hour = e_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
-        db.session.add(exercise)
-        db.session.commit()
-        error = False
-        if not error:
+        
+        try:
+            db.session.add(exercise)
+            db.session.commit()
             response_data = {
                     "status": "success", 
-                    "message": "Added exercise data"
+                    "message": "Added exercise data",
+                    "data": {
+                        "name": exercise.e_name,
+                        "calories": exercise.e_total_calories,
+                        "perHour": exercise.e_calories_per_hour,
+                        "duration": exercise.e_duration_minutes,
+                        "id": exercise.id
                     }
-        else:
+                    }
+            return Response(json.dumps(response_data),  mimetype='application/json')
+        
+        except Exception as error:
+            print(error)
             response_data = {
                 "status": "error", 
-                "message": "couldn't add exercise data to db"
+                "message": str(error)
                 }
+            return Response(json.dumps(response_data), status=500, mimetype='application/json')
 
+            
+
+#graphs for users progress
+@app.route('/graph', methods=['POST'])
+@login_required
+def graph():
+    df = pd.DataFrame(fit)
+    #connecting to the database 
+    engine = create_engine(
+    #"dialect+driver//username:password@hostname:portnumber/databasename"
+    "dialect+driver//root:@127.0.0.1:3306/fit")
+    
+
+    sql_df = pd.read_sql(
+    "SELECT * FROM fit",
+    con=engine)
+
+    df.plot(x="date", y="min")
+    plt.xlabel("Date",  size = 20)
+    plt.ylabel("c_calories_total", size = 20)
+    plt.show()
 
 
 

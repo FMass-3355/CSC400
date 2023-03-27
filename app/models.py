@@ -4,10 +4,9 @@ from email.policy import default
 from app import db, login
 from sqlalchemy import*
 from sqlalchemy.orm import *
-from sqlalchemy.ext.declarative import *
+#from sqlalchemy.ext.declarative import *
 #------From Flask Login---------#
 from flask_login import UserMixin, current_user
-from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
 from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 #--------Python Library---------#
@@ -85,7 +84,7 @@ class Calorie(db.Model):
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
-    c_total_calories = db.Column(db.Float)
+    c_calories_total = db.Column(db.Float)
     c_serving_size_g = db.Column(db.Float)
     c_fat_saturated_g = db.Column(db.Float)
     c_protein_g = db.Column(db.Float)
