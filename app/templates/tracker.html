@@ -26,7 +26,17 @@
 
         <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
             <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left; color: black;">&#x3c;</span></a>
-            <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
+
+            <div class="dropdown">
+                <span onclick="myFunction()" class="dropbtn" style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
+                <div id="myDropdown" class="dropdown-content">
+                  <a href="#">Day</a>
+                  <a href="#">Month</a>
+                  <a href="#">Year</a>
+                </div>
+              </div>
+
+            
             <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right; color: black;">&#x3e;</span></a>
         </div>
         <br>
@@ -89,6 +99,26 @@
                 var month = tomorrow.getMonth() + 1;
                 var day = tomorrow.getDate();
                 document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+            }
+
+                        /* When the user clicks on the button,
+            toggle between hiding and showing the dropdown content */
+            function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+            }
+
+            // Close the dropdown menu if the user clicks outside of it
+            window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+                }
+            }
             }
 
         </script>

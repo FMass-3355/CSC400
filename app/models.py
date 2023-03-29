@@ -84,7 +84,7 @@ class Calorie(db.Model):
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
-    c_calories_total = db.Column(db.Float)
+    c_total_calories = db.Column(db.Float)
     c_serving_size_g = db.Column(db.Float)
     c_fat_saturated_g = db.Column(db.Float)
     c_protein_g = db.Column(db.Float)

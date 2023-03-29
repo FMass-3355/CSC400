@@ -24,7 +24,7 @@ from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 import json
 
-import psycopg2
+#import psycopg2
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -449,9 +449,18 @@ def recover_account():
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
+        newPassword = form.newPassword.data
+        newPassword_retype = form.newPassword_retype.data
         if (db.session.query(User).filter_by(username=username).first()) and (db.session.query(User).filter_by(email=email).first()):
-            password = db.session.query(User.password_hash).first()
-            print(password)
+            if newPassword == newPassword_retype:
+                user = db.session.query(User).filter_by(username=username).first()
+                password = db.session.query(User.password_hash).first()
+                print("TEST")
+                print(password)
+                user.set_password(newPassword)
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for('login'))
     return render_template('account_recovery.html', form=form)
     
     
@@ -554,7 +563,7 @@ def add_food():
         c_name = form_data['name']
         if not c_name: raise "name missing"
 
-        c_calories_total = form_data['calories']
+        c_total_calories = form_data['calories']
         c_serving_size_g = form_data['serving_size_g']
         c_fat_saturated_g = form_data['fat_saturated_g']
         c_protein_g = form_data['protein_g']
@@ -569,7 +578,7 @@ def add_food():
         calorie = Calorie(fk_user_id=current_user.id,
                                 c_name =c_name,
                                 c_input_date=date.today(),
-                                c_calories_total = c_calories_total,
+                                c_total_calories = c_total_calories,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
                                 c_protein_g = c_protein_g,
@@ -589,7 +598,7 @@ def add_food():
                     "data": {
                         "name": calorie.c_name,
                         "serving_size": calorie.c_serving_size_g,
-                        "calories": calorie.c_calories_total,
+                        "calories": calorie.c_total_calories,
                         "id": calorie.id
                     }
                     }
@@ -652,6 +661,7 @@ def add_workout():
 @app.route('/graph')
 @login_required
 def graph():
+    plt.switch_backend('PDF')
     #connecting to the database 
     IP = environ.get('MYSQL_IP')
     USERNAME = environ.get('MYSQL_USER')
@@ -662,16 +672,16 @@ def graph():
     
 
     calories_df = pd.read_sql(
-    text(f"SELECT c_input_date, c_calories_total FROM calorie WHERE fk_user_id = {current_user.id}"),
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
-    #calories_df.plot(x="c_input_date", y="c_calories_total", label="calories consumed")
+    #calories_df.plot(x="c_input_date", y="c_total_calories", label="calories consumed")
 
     exercises_df = pd.read_sql(
     text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
     #exercises_df.plot(x="e_input_date", y="e_total_calories", label="calories burned")
 
-    plt.plot("c_input_date", "c_calories_total", data=calories_df, label="calories consumed")
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed")
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
 
     plt.xlabel("Date",  size = 20)
