@@ -4,7 +4,7 @@ from email.policy import default
 from app import db, login
 from sqlalchemy import*
 from sqlalchemy.orm import *
-from sqlalchemy.ext.declarative import *
+#from sqlalchemy.ext.declarative import *
 #------From Flask Login---------#
 from flask_login import UserMixin, current_user
 from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file

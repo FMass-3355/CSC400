@@ -232,8 +232,8 @@
                     const cell3 = row.insertCell(2);
                     const cell4 = row.insertCell(3);
                     cell1.innerText = response.data.data.name;
-                    cell2.innerText = response.data.data.calories;
-                    cell3.innerText = response.data.data.duration;
+                    cell2.innerText = response.data.data.duration;
+                    cell3.innerText = response.data.data.calories;
                     cell4.innerText = "DELETE";
                 })
                 .catch(function (error) {
