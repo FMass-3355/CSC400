@@ -4,11 +4,11 @@ from operator import methodcaller
 from app import API_KEY, app
 #-------environment-------#
 from dotenv import load_dotenv
-from os import environ
+from os import environ, path
 #------SQLAlchemy---------#
 from app import db
 from app.models import *
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 #------flask------#
 from flask import render_template, redirect, url_for, flash, send_file, Response, request
 from flask_login import login_user, logout_user, login_required, current_user
@@ -649,24 +649,37 @@ def add_workout():
             
 
 #graphs for users progress
-@app.route('/graph', methods=['POST'])
+@app.route('/graph')
 @login_required
 def graph():
-    df = pd.DataFrame(fit)
     #connecting to the database 
-    engine = create_engine(
-    #"dialect+driver//username:password@hostname:portnumber/databasename"
-    "dialect+driver//root:@127.0.0.1:3306/fit")
+    IP = environ.get('MYSQL_IP')
+    USERNAME = environ.get('MYSQL_USER')
+    PASSWORD = environ.get('MYSQL_PASS')
+    DB_NAME = environ.get('MYSQL_DB')
+    DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
+    engine = create_engine(DB_CONFIG_STR)
     
 
-    sql_df = pd.read_sql(
-    "SELECT * FROM fit",
-    con=engine)
+    calories_df = pd.read_sql(
+    text(f"SELECT c_input_date, c_calories_total FROM calorie WHERE fk_user_id = {current_user.id}"),
+    con=engine.connect())
+    #calories_df.plot(x="c_input_date", y="c_calories_total", label="calories consumed")
 
-    df.plot(x="date", y="min")
+    exercises_df = pd.read_sql(
+    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
+    con=engine.connect())
+    #exercises_df.plot(x="e_input_date", y="e_total_calories", label="calories burned")
+
+    plt.plot("c_input_date", "c_calories_total", data=calories_df, label="calories consumed")
+    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
+
     plt.xlabel("Date",  size = 20)
-    plt.ylabel("c_calories_total", size = 20)
-    plt.show()
+    plt.ylabel("calories", size = 20)
+    plt.legend()
+    plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
+
+    return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
 
 
 
