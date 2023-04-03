@@ -93,6 +93,8 @@ class EditProfileForm(FlaskForm):
 class AccountRecovery(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
+    newPassword = PasswordField('New Password', validators=[DataRequired()])
+    newPassword_retype = PasswordField('Retype New Password', validators=[DataRequired()])
     submit = SubmitField('Recover Account')
 
 class RemoveUser(FlaskForm):

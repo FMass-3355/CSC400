@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="../static/js/navbar.js"></script>
-    </head>
 
-    <body>
-        <div id="myNav" class="overlay">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <div class="overlay-content">
-              <a href="/homepage">Home</a>
-              <a href="/tracker">Tracker</a>
-              <a href="/profile">Profile</a>
-              <a href="/logout">Logout</a>
-            </div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="../static/js/navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="overlay-content">
+            <a href="/homepage">Home</a>
+            <a href="/tracker">Tracker</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
         </div>
+    </div>
 
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+    <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
 
         <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">            
             <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
@@ -63,26 +65,30 @@
             {% endfor %}
         </table>
 
-        
-        
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.c_name.label(class="form-control-label")}}
-                {{ form.c_name(class="form-control form-control-md", placeholder=" ")}}
-            </p>
-            <p>
-                {{ form.c_submit(class="form-control form-control-md btn btn-primary") }}
-            </p>
-            <p>
-                {{ form.e_name.label(class="form-control-label")}}
-                {{ form.e_name(class="form-control form-control-md")}}
-            </p>
-            <p>
-                {{ form.e_submit(class="form-control form-control-md btn btn-primary") }}
-            </p>
-            
-        </form>
+
+
+    <form action="" autocomplete="off" method="post" id="foodForm">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.c_name.label(class="form-control-label")}}
+            {{ form.c_name(class="form-control form-control-md", placeholder="food name", id="food", list="foods")}}
+            <datalist id='foods'></datalist>
+        </p>
+        <p>
+            {{ form.c_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
+        </p>
+    </form>
+    <form action="" autocomplete="off" method="post" id="exerciseForm">
+    <p>
+        {{ form.e_name.label(class="form-control-label")}}
+        {{ form.e_name(class="form-control form-control-md", placeholder="exercise name", id="exercise",
+        list="exercises")}}
+        <datalist id='exercises'></datalist>
+    </p>
+    <p>
+        {{ form.e_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
+    </p>
+    </form>
 
 
 
@@ -91,85 +97,164 @@
             year = n.getFullYear();
             month = n.getMonth() + 1;
             day = n.getDate();
+            // document.getElementById("date").innerText = month + "/" + day + "/" + year;
+
+        function setYesterday() {
+            var yesterday = n;
+            yesterday.setDate(yesterday.getDate() - 1);
+            var year = yesterday.getFullYear();
+            var month = yesterday.getMonth() + 1;
+            var day = yesterday.getDate();
+            // document.getElementById("date").innerText = month + "/" + day + "/" + year;
+        }
+
+        function setTomorrow() {
+            var tomorrow = n;
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            var year = tomorrow.getFullYear();
+            var month = tomorrow.getMonth() + 1;
+            var day = tomorrow.getDate();
             document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+        }
 
-            function setYesterday() {
-                var yesterday = n;
-                yesterday.setDate(yesterday.getDate() - 1);
-                var year = yesterday.getFullYear();
-                var month = yesterday.getMonth() + 1;
-                var day = yesterday.getDate();
-                document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+        function insertFoodRow(foodOption) {
+            if (!foodOption) return;
+            const url = `/add_food`;
+
+            axios.post(url, {
+                ...foodOption
+            })
+                .then(function (response) {
+                    //
+                    //console.log(response.data);
+                    const table = document.getElementById("table1");
+                    const row = table.insertRow(-1);
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3);
+                    cell1.innerText = response.data.data.name;
+                    cell2.innerText = response.data.data.serving_size;
+                    cell3.innerText = response.data.data.calories;
+                    cell4.innerText = "DELETE";
+                })
+                .catch(function (error) {
+                    console.log("Error:")
+                    console.log(error);
+                });
+
+        }
+
+        let nameOptions = [];
+        const food_name = document.getElementById("food");
+
+        const foodForm = document.getElementById("foodForm");
+        foodForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (food_name.value || nameOptions.length == 0) insertFoodRow(nameOptions[0]);
+        })
+
+        function removeAllChildNodes(parent) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
             }
+        }
 
-            function setTomorrow() {
-                var tomorrow = n;
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                var year = tomorrow.getFullYear();
-                var month = tomorrow.getMonth() + 1;
-                var day = tomorrow.getDate();
-                document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
-            }
+        const fetchName = (name) => {
+            const url = `/food_api?name=${name}`;
+            axios.get(url).then(res => {
+                foods_list = document.getElementById("foods");
+                removeAllChildNodes(foods_list);
+                nameOptions = [...res.data]
+                nameOptions.forEach(function (item) {
+                    const option = document.createElement('option');
+                    option.addEventListener("mousedown", () => {
+                        console.log(`Clicked on food option`);
+                    })
+                    option.value = item.name;
+                    option.innerText = item.name;
+                    foods_list.appendChild(option);
+                });
+            });
+        }
+        if (food_name) {
+            food_name.addEventListener("keyup", (e) => {
+                e.preventDefault();
+                if (food_name.value.length >= 3) fetchName(food_name.value)
+            });
+        }
 
-            function insertFoodRow() {
-                var table = document.getElementById("table1");
-                var row = table.insertRow(-1);
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                cell1.innerHTML = "<input list='foods' name='foodBrowser' id='food'>" + 
-                    "<datalist id='foods'>";
-                cell2.innerHTML = "";
-                cell3.innerHTML = "";
-                let nameOptions = [];
-                const fetchName = (name) => {
-                    const url = `/food_api?name=${name}`;
-                    fetch(url).then((response) => response.json()).then(res => {
-                        
-                        nameOptions = [...res]
-                        nameOptions.forEach(function(item){
-                        const option = document.createElement('option');
-                        option.value = item.name;
-                        document.getElementById("foods").appendChild(option);
-                        });
-                    });
-                }
-                const food_name = document.getElementById("food");
-                if (food_name) {
-                    food_name.addEventListener("change", (e) => {
-                        e.preventDefault();
-                        fetchName(food_name.value)
-                    });
-                }
-            }
+        let exerciseOptions = [];
+        const fetchActivities = (activity) => {
+            const url = `/workouts_api?activity=${activity}`;
+            axios.get(url).then(res => {
+                exercises_list = document.getElementById("exercises");
+                removeAllChildNodes(exercises_list);
+                exerciseOptions = [...res.data]
+                console.log(exerciseOptions);
+                exerciseOptions.forEach(function (item) {
+                    const option = document.createElement('option');
+                    option.addEventListener("mousedown", () => {
+                        console.log(`Clicked on exercise option`);
+                        alert("hh")
+                    })
+                    option.value = item.name;
+                    option.innerText = item.name;
+                    exercises_list.appendChild(option);
+                });
+            });
+        }
 
-            function insertExerciseRow() {
-                var table = document.getElementById("table2");
-                var row = table.insertRow(-1);
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                cell1.innerHTML = "<input list='exercises' name='exerciseBrowser' id='exercise'>" +
-                    "<datalist id='exercises'><option value='Pushups'><option value='Pullups'></datalist>";
-                cell2.innerHTML = "test2";
-                cell3.innerHTML = "test3";
-                let activityOptions = [];
-                const fetchActivities = (activity) => {
-                    const url = `/workouts_api?activity=${activity}`;
-                    fetch(url).then((response) => response.json()).then(res => {
-                        activityOptions = [...res]
-                        console.log(activityOptions);
-                    });
-                }
-                const workout_name = document.getElementById("exercise");
-                if (workout_name) {
-                    workout_name.addEventListener("keyup", (e) => {
-                        e.preventDefault();
-                        fetchActivities(workout_name.value)
-                    <!----Food-->
-                    });
-                }}
-            
-        </script>
-    </body>
+        const workout_name = document.getElementById("exercise");
+        if (workout_name) {
+            workout_name.addEventListener("keyup", (e) => {
+                e.preventDefault();
+                if (workout_name.value.length >= 3 && !workout_name.value.includes(",")) fetchActivities(workout_name.value)
+                <!----Food-->
+            });
+        }
+
+
+        function insertExerciseRow(exerciseOption) {
+            if (!exerciseOption) return;
+            const url = `/add_workout`;
+
+            axios.post(url, {
+                ...exerciseOption
+            })
+                .then(function (response) {
+                    //
+                    //console.log(response.data);
+                    const table = document.getElementById("table2");
+                    const row = table.insertRow(-1);
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3);
+                    cell1.innerText = response.data.data.name;
+                    cell2.innerText = response.data.data.duration;
+                    cell3.innerText = response.data.data.calories;
+                    cell4.innerText = "DELETE";
+                })
+                .catch(function (error) {
+                    console.log("Error:")
+                    console.log(error);
+                });
+
+
+        }
+        const exercise_name = document.getElementById("exercise");
+
+        const exerciseForm = document.getElementById("exerciseForm");
+        exerciseForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            console.log(exerciseOptions);
+            if (exercise_name.value || exerciseOptions.length == 0) insertExerciseRow(exerciseOptions[0]);
+        })
+
+
+
+    </script>
+</body>
+
 </html>

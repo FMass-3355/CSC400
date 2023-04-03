@@ -4,10 +4,11 @@ from operator import methodcaller
 from app import API_KEY, app
 #-------environment-------#
 from dotenv import load_dotenv
-from os import environ
+from os import environ, path
 #------SQLAlchemy---------#
 from app import db
 from app.models import *
+from sqlalchemy import create_engine, text
 #------flask------#
 from flask import render_template, redirect, url_for, flash, send_file, Response, request
 from flask_login import login_user, logout_user, login_required, current_user
@@ -23,8 +24,12 @@ from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 import json
 
+#import psycopg2
+import matplotlib.pyplot as plt
+import pandas as pd
 
-# #API (needed for the USAjobs stuff and other APIs)
+
+#API 
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
 API_URL = environ.get('API_URL')
@@ -437,9 +442,18 @@ def recover_account():
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
+        newPassword = form.newPassword.data
+        newPassword_retype = form.newPassword_retype.data
         if (db.session.query(User).filter_by(username=username).first()) and (db.session.query(User).filter_by(email=email).first()):
-            password = db.session.query(User.password_hash).first()
-            print(password)
+            if newPassword == newPassword_retype:
+                user = db.session.query(User).filter_by(username=username).first()
+                password = db.session.query(User.password_hash).first()
+                print("TEST")
+                print(password)
+                user.set_password(newPassword)
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for('login'))
     return render_template('account_recovery.html', form=form)
     
     
@@ -538,22 +552,26 @@ def ninja_api_search_by_food():
 @login_required
 def add_food():
     if request.method == "POST":
-        c_name = request.args.get('name')
-        c_calories_total = request.args.get('calories')
-        c_serving_size_g = request.args.get('serving')
-        c_fat_saturated_g = request.args.get('fat')
-        c_protein_g = request.args.get('protein')
-        c_sodium_mg = request.args.get('sodium')
-        c_potassium_mg = request.args.get('potassium')
-        c_cholesterol_mg = request.args.get('cholesterol')
-        c_carbohydrates_total_g = request.args.get('carbohydrates')
-        c_fiber_g = request.args.get('fiber')
-        c_sugar_g = request.args.get('sugars')
+        form_data = request.json
+        c_name = form_data['name']
+        if not c_name: raise "name missing"
+
+        c_total_calories = form_data['calories']
+        c_serving_size_g = form_data['serving_size_g']
+        c_fat_saturated_g = form_data['fat_saturated_g']
+        c_protein_g = form_data['protein_g']
+        c_sodium_mg = form_data['sodium_mg']
+        c_potassium_mg = form_data['potassium_mg']
+        c_cholesterol_mg = form_data['cholesterol_mg']
+        c_carbohydrates_total_g = form_data['carbohydrates_total_g']
+        c_fiber_g = form_data['fiber_g']
+        c_sugar_g = form_data['sugar_g']
+
 
         calorie = Calorie(fk_user_id=current_user.id,
                                 c_name =c_name,
-                                c_input_date='2023-05-05',
-                                c_calories_total = c_calories_total,
+                                c_input_date=date.today(),
+                                c_total_calories = c_total_calories,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
                                 c_protein_g = c_protein_g,
@@ -563,50 +581,108 @@ def add_food():
                                 c_carbohydrates_total_g = c_carbohydrates_total_g,
                                 c_fiber_g = c_fiber_g,
                                 c_sugar_g = c_sugar_g)
-        db.session.add(calorie)
-        db.session.commit()
-        error = False
-        if not error:
+        
+        try:
+            db.session.add(calorie)
+            db.session.commit()
             response_data = {
                     "status": "success", 
-                    "message": "Added calorie data"
+                    "message": "Added calorie data",
+                    "data": {
+                        "name": calorie.c_name,
+                        "serving_size": calorie.c_serving_size_g,
+                        "calories": calorie.c_total_calories,
+                        "id": calorie.id
                     }
-        else:
+                    }
+            return Response(json.dumps(response_data),  mimetype='application/json')
+            
+        except Exception as error:
+            print(error)
             response_data = {
                 "status": "error", 
-                "message": "couldn't add calorie data to db"
+                "message": str(error)
                 }
-            
-        return Response(json.dumps(response_data),  mimetype='application/json')
+            return Response(json.dumps(response_data), status=500, mimetype='application/json')
     
 @app.route('/add_workout', methods=['POST'])
 @login_required
 def add_workout():
     if request.method == "POST":
-        e_name = request.args.get('name')
-        e_total_calories = request.args.get('totalCalories')
-        e_calories_per_hour = request.args.get('caloriesPerHour')
-        e_duration_minutes = request.args.get('duration')
+        form_data = request.json
+        e_name = form_data['name']
+        if not e_name: raise "name missing"
+
+        e_calories_per_hour = form_data['calories_per_hour']
+        e_duration_minutes = form_data['duration_minutes']
+        e_total_calories = e_calories_per_hour * (e_duration_minutes/60)
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
+                            e_input_date=date.today(),
                             e_total_calories = e_total_calories,
                             e_calories_per_hour = e_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
-        db.session.add(exercise)
-        db.session.commit()
-        error = False
-        if not error:
+        
+        try:
+            db.session.add(exercise)
+            db.session.commit()
             response_data = {
                     "status": "success", 
-                    "message": "Added exercise data"
+                    "message": "Added exercise data",
+                    "data": {
+                        "name": exercise.e_name,
+                        "calories": exercise.e_total_calories,
+                        "perHour": exercise.e_calories_per_hour,
+                        "duration": exercise.e_duration_minutes,
+                        "id": exercise.id
                     }
-        else:
+                    }
+            return Response(json.dumps(response_data),  mimetype='application/json')
+        
+        except Exception as error:
+            print(error)
             response_data = {
                 "status": "error", 
-                "message": "couldn't add exercise data to db"
+                "message": str(error)
                 }
+            return Response(json.dumps(response_data), status=500, mimetype='application/json')
 
+            
+
+#graphs for users progress
+@app.route('/graph')
+@login_required
+def graph():
+    plt.switch_backend('PDF')
+    #connecting to the database 
+    IP = environ.get('MYSQL_IP')
+    USERNAME = environ.get('MYSQL_USER')
+    PASSWORD = environ.get('MYSQL_PASS')
+    DB_NAME = environ.get('MYSQL_DB')
+    DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
+    engine = create_engine(DB_CONFIG_STR)
+    
+
+    calories_df = pd.read_sql(
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
+    con=engine.connect())
+    #calories_df.plot(x="c_input_date", y="c_total_calories", label="calories consumed")
+
+    exercises_df = pd.read_sql(
+    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
+    con=engine.connect())
+    #exercises_df.plot(x="e_input_date", y="e_total_calories", label="calories burned")
+
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed")
+    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
+
+    plt.xlabel("Date",  size = 20)
+    plt.ylabel("calories", size = 20)
+    plt.legend()
+    plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
+
+    return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
 
 
 
