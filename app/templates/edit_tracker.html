@@ -29,6 +29,7 @@
         <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">            
             <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
         </div>
+        <h1 style="text-align: center;">{{actualDay2}}</h1>
         <br>
         <h1 style="text-align: center;"> Day Tracker</h1>
         <h3>Calories</h3>
@@ -41,8 +42,8 @@
             {% for food in query_cal_row %}
             <tr>
                 <td>{{food.c_name}}</td>
-                <td>{{food.c_input_date}}</td>
-                <td></td>
+                <td>{{food.c_serving_size_g}}</td>
+                <td>{{food.c_total_calories}}</td>
                 <td><a href="/c_delete_row/{{ food.cal_id }}">Delete Food</a></td>
             </tr>
             {% endfor %}   
@@ -58,8 +59,8 @@
             {% for exercise in query_ex_row %}
             <tr>
                 <td>{{exercise.e_name}}</td>
-                <td>{{exercise.e_input_date}}</td>
-                <td></td>
+                <td>{{exercise.e_duration_minutes}}</td>
+                <td>{{exercise.e_total_calories}}</td>
                 <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Exercise</a></td>
             </tr>
             {% endfor %}
@@ -120,7 +121,7 @@
         function insertFoodRow(foodOption) {
             if (!foodOption) return;
             const url = `/add_food`;
-
+            // query_cal_row=query_cal_row
             axios.post(url, {
                 ...foodOption
             })
@@ -137,6 +138,8 @@
                     cell2.innerText = response.data.data.serving_size;
                     cell3.innerText = response.data.data.calories;
                     cell4.innerText = "DELETE";
+                    location.reload();
+                    // cell4.innerText = "/c_delete_row/{{ query_cal_row[-1] }}";
                 })
                 .catch(function (error) {
                     console.log("Error:")

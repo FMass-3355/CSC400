@@ -104,9 +104,13 @@ class RemoveUser(FlaskForm):
 
 class EditTracker(FlaskForm):
     c_name = StringField('Food')
+    c_serving_size_g = IntegerField('Serving Size')
+    c_total_calories = IntegerField('Calories')
     #c_serv = IntegerField('Serving Size')
     #c_done = BooleanField('Add Food')
     e_name = StringField('Exercise')
+    e_duration_minutes = IntegerField('Minutes')
+    e_total_calories = IntegerField('Exercise')
     #e_done = BooleanField('Add Exercise')
     c_submit = SubmitField('Add Food')
     e_submit = SubmitField('Add Exercise')
