@@ -14,13 +14,14 @@ class AddUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
-    role = SelectField('Role', choices=[('student', 'student'), ('faculty', 'faculty'), ('recruiter', 'recruiter'), ('regular','regular')])
+    #role = SelectField('Role', choices=[('student', 'student'), ('faculty', 'faculty'), ('recruiter', 'recruiter'), ('regular','regular')])
     fname = StringField('First Name', validators=[DataRequired()])
     lname = StringField('Last Name', validators=[DataRequired()])
-    mname = StringField('MI')
-    company_name = StringField('Company (Not relevant if not recruiter)')
-    profile_pic = FileField('Profile Picture')
+    #mname = StringField('MI')
+    #company_name = StringField('Company (Not relevant if not recruiter)')
+    #profile_pic = FileField('Profile Picture')
     date_of_birth = DateField('Date of Birth (YYYY/MM/DD) (In Progress)')
+    gender = SelectField('Gender', choices=['', 'Male', 'Female'])
     submit = SubmitField('Create Account')
 
     # def validate_username(self, username):
@@ -98,22 +99,18 @@ class AccountRecovery(FlaskForm):
 
 class RemoveUser(FlaskForm):
     # job_id = IntegerField('Enter Job ID number', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    delete = SubmitField('Delete')
 #----------------------Account settings----------------------------------------------------#
 
-# class EditCal(FlaskForm):
-#     c_name = StringField('Food')
-#     #e_name = StringField('Exercise')
-#     submit = SubmitField('Done')
-# class EditEx(FlaskForm):
-#     #c_name = StringField('Food')
-#     e_name = StringField('Exercise')
-#     submit = SubmitField('Done')
 class EditTracker(FlaskForm):
     c_name = StringField('Food')
+    c_serving_size_g = IntegerField('Serving Size')
+    c_total_calories = IntegerField('Calories')
     #c_serv = IntegerField('Serving Size')
     #c_done = BooleanField('Add Food')
     e_name = StringField('Exercise')
+    e_duration_minutes = IntegerField('Minutes')
+    e_total_calories = IntegerField('Exercise')
     #e_done = BooleanField('Add Exercise')
     c_submit = SubmitField('Add Food')
     e_submit = SubmitField('Add Exercise')

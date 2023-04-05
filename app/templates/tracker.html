@@ -55,7 +55,8 @@
             {% for food in foods %}
             <tr>
                 <td>{{food.c_name}}</td>
-                <td>{{food.c_input_date}}</td>
+                <td>{{food.c_serving_size_g}}</td>
+                <td>{{food.c_total_calories}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -70,7 +71,8 @@
             {% for exercise in workouts %}
             <tr>
                 <td>{{exercise.e_name}}</td>
-                <td>{{exercise.e_input_date}}</td>
+                <td>{{exercise.e_duration_minutes}}</td>
+                <td>{{exercise.e_total_calories}}</td>
             </tr>
             {% endfor %}
         </table>

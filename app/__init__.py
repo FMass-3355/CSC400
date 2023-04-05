@@ -60,19 +60,6 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 #===================================================================================================
 
-
-# user=db.session.query(User).filter_by(username='ArtMar23').first()
-# if user is None:
-#     custom_user = User(username='ArtMar23', email='artmar80@gmail.com', role='regular', fname='Arthur', lname='Martinez', date_of_birth='1999-02-02')
-#     custom_user.set_password('123')
-#     db.session.add(custom_user)
-#     db.session.commit()
-
-
-
-
-
-
 #===================================================================================================
 # enables @login_required
 login.login_view = 'login'

@@ -1,0 +1,58 @@
+
+
+{% block content %}
+    <h1><a href="/view_users">VIEW USERS</a></h1>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible show" role="alert">
+        {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <div class="container">
+    <h1 style="padding-bottom: 2.5%;">Create User</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username.label(class="form-control-label")}}<br>
+            {{ form.username(class="form-control form-control-md")}}
+        </p> 
+        
+        <p>
+            {{ form.password.label(class="form-control-label")}}<br>
+            {{ form.password(class="form-control form-control-md")}}
+        </p>
+
+        <p>
+            {{ form.email.label(class="form-control-label") }}<br>
+            {{ form.email(class="form-control form-control-md") }}
+        </p>
+
+        <p>
+            {{ form.fname.label(class="form-control-label")}}<br>
+            {{ form.fname(class="form-control form-control-md")}}
+        </p>
+
+        <p>
+            {{ form.lname.label(class="form-control-label")}}<br>
+            {{ form.lname(class="form-control form-control-md")}}
+        </p>
+
+        <p>
+            {{ form.gender.label(class="form-control-label")}}<br>
+            {{ form.gender(class="form-control form-control-md")}}
+        </p>
+        
+        <p>
+            {{ form.date_of_birth.label(class="form-control-label") }}<br>
+            {{ form.date_of_birth(class="form-control form-control-md") }}
+        
+
+        </p>
+
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+    </div>
+{% endblock %}
+
+<a href="/homepage"><button>Back</button></a>
