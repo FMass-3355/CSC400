@@ -42,11 +42,11 @@
         <br>
         <h1 style="text-align: center;"> Day Tracker</h1>
         {% if pdate == actualDay %}
-        <br><button><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
-        <br><button><a href="/graph" style="text-decoration: none; color: black;">Graph</a></button>
+        <br><button style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
+        <br><button style="width: fit-content;"><a href="/graph" style="text-decoration: none; color: black;">Graph</a></button>
         {% endif %}
         <h3>Calories</h3>
-        <table id="table1">
+        <table id="table1" class="table-striped">
             <tr>
                 <th>Food</th>
                 <th>Servings</th>
@@ -61,7 +61,7 @@
         </table>
 
         <h3>Exercise</h3>
-        <table id="table2">
+        <table id="table2" class="table-striped">
             <tr>
                 <th>Exercise</th>
                 <th>Reps/Time</th>
@@ -122,5 +122,23 @@
             }
 
         </script>
+        <footer style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(0, 88, 88));">
+            <div class="col-md-offset-2 col-sm-offset-2 col-md-8 col-sm-2" style="color:aliceblue">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-sm-2"><h3>About us</h3></div>
+                    <div class="col-md-6 col-sm-2"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-2"><p>We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</p></div>
+                    <div class="col-md-6 col-sm-2">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ej@email.com</p>
+                        <p>Kari Bavis: kb@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

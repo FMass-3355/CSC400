@@ -48,8 +48,10 @@
     }
   }
 
-  table, th, tr, td{
-    border: solid 1px black;
+
+  table{
+    width: 70%;
+    align-self: center;
   }
 
   /* Dropdown Button */
@@ -93,3 +95,13 @@
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
+
+body{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer{
+  margin-top: auto;
+}
