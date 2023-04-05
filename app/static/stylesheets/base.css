@@ -1,0 +1,21 @@
+body, html{
+    background-color: rgba(46, 46, 46);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right top;
+}
+
+h1{
+    font-family:'Courier New', Courier, monospace;
+}
+
+.homepage1{
+    color: rgba(46, 46, 46);
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.whiteback{
+    background-image: url(https://wallpapercave.com/wp/wp6446475.jpg);
+}
