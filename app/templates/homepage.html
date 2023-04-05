@@ -3,27 +3,25 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
-        <link rel="stylesheet" href="../static/stylesheets/homepageSyle.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">   
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
-    <style>
-     
-    body, html {
-        background-color: #E5E5E6;
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: right top;
-        font-family: 'Lato', sans-serif;
-    }
-    </style>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
-    
 
-    <body>
+    <style>
+        h1{
+            font-size: 64px;
+        }
+
+        .content{
+            font-size: 24px;
+        }
+    </style>
+
+    <body class="base">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div class="overlay-content">
@@ -34,12 +32,57 @@
         </div>
     </div>
 
-    <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
-
-    <h1 style="text-align: center;">Home</h1>
-    <h3 style="text-align: center; position:relative; top: 700px;">About us</h3>
-    <br>
-    <p style="text-align: center; position:relative; top: 700px;">The goal of this application is to promote a healthy lifestyle by making the user more aware of the amount of exercise they do.
-    <br>As well ashow much food they consume but what they eat.</p>
+    <span style="font-size:50px;cursor:pointer;width: fit-content; color: aliceblue; padding-left: 9px;" onclick="openNav()">&#9776; </span>
+   <iframe href="/graph">test</iframe>
+   <p style="color:aliceblue;text-align: center;">location of graph</p>
+        <h1 style="text-align: center; color: aliceblue" class="titletext">FIT</h1>
+        <div class="whiteback">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="row" style="padding-top: 1%; padding-bottom: 1%;">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12"><p class="content">Placeholder Text</p></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="https://e1.pxfuel.com/desktop-wallpaper/1008/375/desktop-wallpaper-exercise.jpg" width="400" style="border-radius: 15px;">
+                    </div>
+               </div>
+            </div>   
+        </div>
+        <br><br><br><br><br><br><br>
+        <div class="whiteback">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="row" style="padding-top: 1%; padding-bottom: 1%;">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12"><p class="content">Placeholder Text</p></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="https://images.alphacoders.com/862/thumb-1920-862639.jpg" width="400" style="border-radius: 15px;">
+                    </div>
+               </div>
+            </div>
+        </div>
+   
+    <footer class="titletext" style="margin-top: 10%;text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(0, 88, 88));">
+        <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+            <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+            <div class="row">
+                <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                    project to be used by fitness-oriented individuals.</div>
+                <div class="col-md-6 col-xs-6">
+                    <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                    <p>Emma Jamieson: ej@email.com</p>
+                    <p>Kari Bavis: kb@email.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
     </body>
 </html>
