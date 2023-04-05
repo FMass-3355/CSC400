@@ -403,6 +403,7 @@ def view_users():
 @login_required
 def profile():
     if current_user.is_authenticated:
+        user_id = current_user.id
         username = current_user.username
         email = current_user.email
         role = current_user.role
@@ -410,7 +411,32 @@ def profile():
         lname = current_user.lname
         email = current_user.email
         dob = current_user.date_of_birth
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob)
+        friends = db.session.query(Friend).filter_by(fk_user_id=user_id)
+        friends = friends.all()
+        len_friends = len(friends)
+
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            #user_id = User.id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            # name = row.f_name
+            row.f_name = name.username
+            #db.session.query(User).filter_by(username=username).first()
+            row.status = item.status
+            query_friend_row.append(row)
+            print(f'row id: {row.row_id}')
+            print(f'user id: {row.user_id}')
+            print(f'friend id: {row.f_id}')
+            print(f'friend name: {row.f_name}')
+            #print(f'friend name: {name.username}')
+            print(f'status: {row.status}')
+        
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends)
     #height=height, weight=weight
     #image_file=image_file
 
