@@ -36,10 +36,42 @@
         <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
     
         <h1 style="text-align: center;">Profile</h1>
-     
+        
         <h1>user: {{username}}<br>first: {{fname}}<br>last: {{lname}}<br>email: {{email}}<br>
             dob: {{date_of_birth}}<!--<br>height: {{height}}<br>weight: {{weight}}</h1>--></h1>
 
+        
+  
+        
+
+
+        <h3>FRIEND STUFF</h3>
+        
+        <p>How Many Friends with any status: {{len_friends}}</p>
+
+        <table id="friend_table">
+            
+            <tr>
+                <th>Row ID</th>
+                <th>Current User ID</th>
+                <th>Friends ID</th>
+                <th>Friends Username</th>
+                <th>Status of Friendship</th>
+            </tr>
+            {% for friend in query_friend_row %}
+            <tr>
+                <!-- <td>WORD</td> -->
+                <td>{{friend.row_id}}</td>
+                <td>{{friend.user_id}}</td>
+                <td>{{friend.f_id}}</td>
+                <td>{{friend.f_name}}</td>
+                <td>{{friend.status}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+
         <button style="width: fit-content;"><a href="/edit_profile">edit</a></button>
+
     </body>
 </html>
