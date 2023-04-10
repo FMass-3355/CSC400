@@ -46,7 +46,8 @@ databaseToday = thisDay.strftime("%Y-%m-%d")
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')
+    user = current_user.fname
+    return render_template('homepage.html', user=user)
   
 @app.route('/email', methods=['GET', 'POST'])
 def email():
@@ -669,7 +670,6 @@ def graph():
     DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
     engine = create_engine(DB_CONFIG_STR)
     
-
     calories_df = pd.read_sql(
     text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
@@ -687,10 +687,9 @@ def graph():
     plt.ylabel("calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
-
-    return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
-
-
+    user = current_user.id
+    #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
+    return render_template('graph.html', user=user)
 
 
 #---------------------App Error--------------------------------------------------------------------#

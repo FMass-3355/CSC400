@@ -4,10 +4,24 @@ body, html{
     background-repeat: no-repeat;
     background-size: cover;
     background-position: right top;
+    max-width: 100%;
+    overflow-x:hidden
 }
 
 h1{
     font-family:'Courier New', Courier, monospace;
+}
+
+.dateSwitch{
+    font-size: 50px;
+    cursor: pointer;
+    color: aliceblue;
+    transition: .3s;
+}
+
+.dateSwitch:hover, .dateSwitch:focus{
+    color: aqua;
+    transition: .3s;
 }
 
 .homepage1{
