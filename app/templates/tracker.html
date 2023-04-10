@@ -4,14 +4,15 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
 
-    <body>
+    <body class="base" style="color:aliceblue">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -22,28 +23,35 @@
             </div>
         </div>
 
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+        <span class="openNav" onclick="openNav()">&#9776;</span>
 
-        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
-            <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left; color: black;">&#x3c;</span></a>
-
-            <div class="dropdown">
-                <span onclick="myFunction()" class="dropbtn" style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
-                <div id="myDropdown" class="dropdown-content">
-                  <a href="#">Day</a>
-                  <a href="#">Month</a>
-                  <a href="#">Year</a>
+        <div class="col-md-offset-2 col-md-8 col-xs-12" style="text-align: center;">
+            <div class="row">
+                <div class="col-md-2 col-xs-1">
+                    <a href="/yesterday" class="dateSwitch"><span style="float: left;">&#x3c;</span></a>
                 </div>
-              </div>
-
-            
-            <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right; color: black;">&#x3e;</span></a>
+    
+                <div class="col-md-8 col-xs-10 dropdown">
+                    <span onclick="myFunction()" class="dropbtn" style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
+                    <div id="myDropdown" class="dropdown-content">
+                      <a href="#">Day</a>
+                      <a href="#">Month</a>
+                      <a href="#">Year</a>
+                    </div>
+                </div>
+    
+                <div class="col-md-2 col-xs-1">
+                    <a href="/tomorrow" class="dateSwitch"><span style=" float: right;">&#x3e;</span></a>
+                </div>
+            </div>
         </div>
+
         <br>
         <h1 style="text-align: center;"> Day Tracker</h1>
         {% if pdate == actualDay %}
         <br><button style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
-        <br><button style="width: fit-content;"><a href="/graph" style="text-decoration: none; color: black;">Graph</a></button>
+        <br><iframe src="/graph" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
+        style="width:40%;border:none;margin:auto;"></iframe>
         {% endif %}
         <h3>Calories</h3>
         <table id="table1" class="table-striped">
@@ -124,17 +132,17 @@
             }
 
         </script>
-        <footer style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(0, 88, 88));">
-            <div class="col-md-offset-2 col-sm-offset-2 col-md-8 col-sm-2" style="color:aliceblue">
+        <footer class="titletext" style="margin-top: 10%; text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100));">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
                 <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
                 <div class="row">
-                    <div class="col-md-6 col-sm-2"><h3>About us</h3></div>
-                    <div class="col-md-6 col-sm-2"><h3>Contact us</h3>
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 col-sm-2"><p>We are Southern Connecticut State University students creating a capstone 
-                        project to be used by fitness-oriented individuals.</p></div>
-                    <div class="col-md-6 col-sm-2">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
                         <p>Franklin Massimi: FMass3355@hotmail.com</p>
                         <p>Emma Jamieson: ej@email.com</p>
                         <p>Kari Bavis: kb@email.com</p>
