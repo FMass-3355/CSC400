@@ -88,7 +88,12 @@ class EditProfileForm(FlaskForm):
     # profile_pic = FileField('Profile Picture')
     submit = SubmitField('Update Profile')
 
-   
+class SearchUsers(FlaskForm):
+    username = StringField('Username')
+    submit = SubmitField('Search')
+
+class FriendRequest(FlaskForm):
+    friend_request = SubmitField('Send Friend Request')
 
 class AccountRecovery(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

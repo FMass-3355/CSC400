@@ -412,11 +412,22 @@ def profile():
         lname = current_user.lname
         email = current_user.email
         dob = current_user.date_of_birth
-        friends = db.session.query(Friend).filter_by(fk_user_id=user_id)
+        friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
         friends = friends.all()
+        requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
+        requests = requests.all()
+        sent = db.session.query(Friend).filter_by(fk_user_id=user_id, status=1)
+        sent = sent.all()
         len_friends = len(friends)
+        len_requests = len(requests)
+        len_sent = len(sent)
 
+        #s2 = mutual friends
+        #s1 = user sent request
+        #s0 = friend sent request
         query_friend_row = []
+        query_requests_row = []
+        query_sent_row = []
         for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
             row = FriendInfo()
             row.row_id = item.id
@@ -429,17 +440,101 @@ def profile():
             row.f_name = name.username
             #db.session.query(User).filter_by(username=username).first()
             row.status = item.status
-            query_friend_row.append(row)
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+            elif row.status == 1:
+                query_sent_row.append(row)
+            elif row.status == 0:
+                query_requests_row.append
             print(f'row id: {row.row_id}')
             print(f'user id: {row.user_id}')
             print(f'friend id: {row.f_id}')
             print(f'friend name: {row.f_name}')
             #print(f'friend name: {name.username}')
             print(f'status: {row.status}')
-        
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends)
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
+
+@app.route('/search_users', methods=['GET', 'POST'])
+@login_required
+def search_users():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        form = SearchUsers()
+        request_form=FriendRequest()
+        if form.validate_on_submit:
+            search_username = form.username.data
+
+            users = db.session.query(User).filter_by()
+            users = users.all()
+            len_users = len(users)
+            #not getting all users in query below
+            #for loop keeps going until it finds the user its looking for
+            query_user_row = [] 
+            count = 1
+            for item in db.session.query(User):
+                row = UserInfo()
+                row.user_id = item.id
+                row.username = item.username
+                row.email = item.email
+                row.role = item.role
+                
+                print(f"user ids: {row.user_id}")
+                result = "User Not Found"
+                if row.user_id != current_user_id:
+                    query_user_row.append(row)
+                    count+=1
+                    if row.username == search_username:
+                        print("yay QUERY")
+                        print(search_username)
+                        result = "User Found"
+                        #flash(result)
+                        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=row.user_id).first()
+                        if friend is None:
+                            friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=row.user_id, status=1)
+                            friendship_for_friend = Friend(fk_user_id=row.user_id, fk_friend_id=current_user_id, status=0)
+                            db.session.add(friendship_for_user)
+                            db.session.add(friendship_for_friend)
+                            db.session.commit()
+
+                        break
+                    elif (row.username != search_username) and ((len_users-1) == count) and (search_username != None):
+                        flash(result)
+                        # flash(len_users)
+                        # flash(count)
+                
+
+
+            # if search_username in users:
+            #     print("yay USERS")
+            #     print(search_username)
+            # else:
+            #     print("fuck USERS") 
+            #     print(search_username)
+
+
+        all_user_row = [] 
+        for item in db.session.query(User):
+            row = UserInfo()
+            row.user_id = item.id
+            row.username = item.username
+            row.email = item.email
+            row.role = item.role
+            # f_id = row.f_id
+            print(f"user ids: {row.user_id}")
+            if row.user_id != current_user_id:
+                all_user_row.append(row)
+        
+        
+    return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form)
+
+
+@app.route('/friend_profile', methods=['GET', 'POST'])
+@login_required
+def friend_profile():
+    pass
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
@@ -611,7 +706,7 @@ def add_food():
                 "message": str(error)
                 }
             return Response(json.dumps(response_data), status=500, mimetype='application/json')
-    
+        
 @app.route('/add_workout', methods=['POST'])
 @login_required
 def add_workout():
