@@ -52,12 +52,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)      
 
-class UserInfo:
-    def __UserInfo__(user_id,username,email,role):
-        user_id = user_id
-        username = username
-        email = email
-        role = role
+
 
 class Track(db.Model):
     __tablename__ = 'track'
@@ -134,3 +129,10 @@ class FriendInfo:
         f_id = f_id
         f_name = f_name
         status = status
+
+class UserInfo:
+    def __UserInfo__(user_id,username,email,role):
+        user_id = user_id
+        username = username
+        email = email
+        role = role
