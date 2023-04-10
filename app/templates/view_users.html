@@ -1,0 +1,23 @@
+
+{% block content %}
+    <h1><a href="/add_user">ADD USER</a></h1>
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+        </thead>
+        <tbody>
+            {% for info in query_users %}
+            <tr>
+                <td>{{ info.user_id }}</td>
+                <td>{{ info.username }}</td>
+                <td>{{ info.email }}</td>
+                <td>{{ info.role }}</td>
+                <td><a href="/delete_user/{{ info.user_id }}">Delete User</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

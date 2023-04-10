@@ -126,3 +126,11 @@ class ExInfo:
         ex_id = ex_id
         e_input_date = e_input_date
         e_name = e_name
+
+class FriendInfo:
+    def __FriendInfo__(row_id, user_id, f_id, f_name, status):
+        row_id = row_id
+        user_id = user_id
+        f_id = f_id
+        f_name = f_name
+        status = status

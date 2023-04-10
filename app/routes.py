@@ -172,18 +172,22 @@ def edit_tracker():
     if form.validate_on_submit():
         c_name = form.c_name.data
         c_input_date = databaseToday
+        c_serving_size_g = form.c_serving_size_g.data
+        c_total_calories = c_total_calories
         c_submit = form.c_submit.data
         e_name = form.e_name.data
         e_input_date = databaseToday
+        e_duration_minutes = form.e_duration_minutes.data
+        e_total_calories = e_total_calories
         e_submit = form.e_submit.data
         
         if c_name != '' and c_submit:
-            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date, c_serving_size_g=c_serving_size_g, c_total_calories = c_total_calories)
             db.session.add(food)
             db.session.commit()
             print(c_name)
         elif e_name != '' and e_submit:
-            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
+            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date, e_duration_minutes=e_duration_minutes, e_total_calories = e_total_calories)
             db.session.add(exercise)
             db.session.commit()    
             print(e_name)
@@ -198,6 +202,8 @@ def edit_tracker():
         row = CalInfo()
         row.cal_id = item.id
         row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
         row.c_name = item.c_name
         query_cal_row.append(row)
     
@@ -206,11 +212,13 @@ def edit_tracker():
         row = ExInfo()
         row.ex_id = item.id
         row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
         row.e_name = item.e_name
         query_ex_row.append(row)
 
 
-    return render_template('edit_tracker.html', form=form, workouts=workouts, foods=foods, query_cal_row=query_cal_row, query_ex_row=query_ex_row)
+    return render_template('edit_tracker.html', form=form, workouts=workouts, foods=foods, query_cal_row=query_cal_row, query_ex_row=query_ex_row, actualDay2=actualDay2)
     #return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
@@ -331,29 +339,18 @@ def add_user():
             email = form.email.data
             fname = form.fname.data
             lname = form.lname.data
-            #mname = form.mname.data
-            role = form.role.data
-            company_name = form.company_name.data 
+            gender = form.gender.data
             date_of_birth = form.date_of_birth.data
+            role = 'regular'
             
 
             email_exists = db.session.query(User).filter_by(email=email).first()
             user_exists = db.session.query(User).filter_by(username=username).first()   
             if (email_exists is None) and (user_exists is None):
-                user = User(username=username, email=email, role=role, fname=fname, lname=lname, mname=mname, date_of_birth=date_of_birth)
+                user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
                 user.set_password(password)
                 db.session.add(user)
-                if role == 'recruiter': 
-                    Comp_exist = Company.query.filter_by(company_name=company_name).first()
-                    if Comp_exist is None:
-                        company = Company(company_name=company_name)
-                        db.session.add(company)
-                    else:
-                        company = db.session.query(Company.id).filter_by(company_name=company_name).first()
-                    if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
-                        recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
-                        db.session.add(recruiter_Add)
-                        db.session.commit()
+                
                 db.session.commit()
                 flash('User added successfully')
             else:
@@ -369,33 +366,22 @@ def add_user():
 @login_required
 def delete_user(user_id):
     form = RemoveUser()
+    print('in route')
     if form.validate_on_submit():
-        is_recruiter = db.session.query(Recruiter.id).filter_by(fk_user_id=user_id).first()
-        is_student = db.session.query(User.id).filter_by(id=user_id, role='student').first()
-        if is_recruiter:
-            for item in db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id):
-                db.session.query(Associations_Application).filter_by(fk_job_id=item.id).delete()
-            db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id).delete()
-            db.session.query(Recruiter).filter_by(fk_user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
-        elif is_student:
-            db.session.query(Associations_Application).filter_by(fk_user_id=is_student.id).delete()
-            db.session.query(Upload).filter_by(user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()   
-            db.session.commit()
-        else:
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
-        # Job.query.filter(id=job_id).delete()
+        print('USER REMOVED')
+
+        db.session.query(User).filter_by(id=user_id).delete()
+        db.session.commit()
         return redirect(url_for('view_users'))
 
-    return render_template('close_job.html', form=form)
+    return render_template('delete_user.html', form=form)
+    
 
 @app.route('/view_users', methods=['GET', 'POST'])
 def view_users():
+    
     query_users = []
-    # Rec_id = db.session.query(Recruiter.id).filter_by(fk_user_id=current_user.id)
+
     if is_admin():
         admin_id = current_user.id
         for item in db.session.query(User).filter(User.id!=admin_id).all():
@@ -417,29 +403,40 @@ def view_users():
 @login_required
 def profile():
     if current_user.is_authenticated:
+        user_id = current_user.id
         username = current_user.username
         email = current_user.email
         role = current_user.role
         fname = current_user.fname
         lname = current_user.lname
         email = current_user.email
-        # mname = current_user.mname
         dob = current_user.date_of_birth
-        # height = current_user.height
-        # weight = current_user.weight
-        # address = current_user.address
-        # city = current_user.city
-        # state = current_user.state
-        # zip_code = current_user.zip_code
-        # phone_number = current_user.phone_number
-        # user_bio = current_user.user_bio
-        # image_file = url_for('static', filename='images/' + current_user.image_file)
-        # exists = db.session.query(Upload.id).filter_by(user_id=current_user.id, doc_type="profile_pic").first()
-        # if exists:
-        #    image_file = db.session.query(Upload).filter_by(user_id=current_user.id, doc_type="profile_pic").with_entities(Upload.data).first()
-        # else:
-        #     image_file = url_for('static', filename='images/' + current_user.image_file)
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob)
+        friends = db.session.query(Friend).filter_by(fk_user_id=user_id)
+        friends = friends.all()
+        len_friends = len(friends)
+
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            #user_id = User.id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            # name = row.f_name
+            row.f_name = name.username
+            #db.session.query(User).filter_by(username=username).first()
+            row.status = item.status
+            query_friend_row.append(row)
+            print(f'row id: {row.row_id}')
+            print(f'user id: {row.user_id}')
+            print(f'friend id: {row.f_id}')
+            print(f'friend name: {row.f_name}')
+            #print(f'friend name: {name.username}')
+            print(f'status: {row.status}')
+        
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends)
     #height=height, weight=weight
     #image_file=image_file
 
@@ -544,6 +541,7 @@ def ninja_api_search_by_activity():
 @login_required
 def ninja_api_search_by_food():
     if request.method == "GET":
+        user_id = current_user.id 
         food_name = request.args.get('name')
         response = requests.get(f"{NUTRITION_API_URL}?query={food_name}", headers={'X-Api-Key': API_KEY})
         response_data = response.json()
@@ -553,6 +551,7 @@ def ninja_api_search_by_food():
             "status": "error", 
             "message": "Got an error from API"
             }, mimetype="application/json")
+                
     return Response(json.dumps(response_data),  mimetype='application/json')
 
 @app.route('/add_food', methods=['POST'])
@@ -620,15 +619,15 @@ def add_workout():
         e_name = form_data['name']
         if not e_name: raise "name missing"
 
-        e_calories_per_hour = form_data['calories_per_hour']
+        e_total_calories_per_hour = form_data['calories_per_hour']
         e_duration_minutes = form_data['duration_minutes']
-        e_total_calories = e_calories_per_hour * (e_duration_minutes/60)
+        e_total_calories = e_total_calories_per_hour * (e_duration_minutes/60)
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
-                            e_calories_per_hour = e_calories_per_hour,
+                            e_total_calories_per_hour = e_total_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
         
         try:
@@ -640,7 +639,7 @@ def add_workout():
                     "data": {
                         "name": exercise.e_name,
                         "calories": exercise.e_total_calories,
-                        "perHour": exercise.e_calories_per_hour,
+                        "perHour": exercise.e_total_calories_per_hour,
                         "duration": exercise.e_duration_minutes,
                         "id": exercise.id
                     }
