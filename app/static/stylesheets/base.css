@@ -16,6 +16,11 @@ h1{
     margin-bottom: 2%;
 }
 
-.whiteback{
-    background-image: url(https://wallpapercave.com/wp/wp6446475.jpg);
+.whiteback1{
+    background-image: url(../Images/flippedblue.jpg);
+    background-size: cover;
+}
+
+.whiteback2{
+    background-image: url(https://wallpaperaccess.com/full/1109099.jpg);
 }
