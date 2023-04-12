@@ -95,6 +95,14 @@ class SearchUsers(FlaskForm):
 class FriendRequest(FlaskForm):
     friend_request = SubmitField('Send Friend Request')
 
+class A_Friend_Request(FlaskForm):
+    Accept = SubmitField('Accept')
+
+class D_Friend_Request(FlaskForm):
+    Decline = SubmitField('Decline')
+
+
+
 class AccountRecovery(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
