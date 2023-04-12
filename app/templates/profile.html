@@ -4,25 +4,15 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
-
-        <style>
-         
-        body, html {
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: right top;
-            font-family: 'Lato', sans-serif;
-        }
-        </style>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
     
-    <body>
+    <body class="base" style="color:aliceblue">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -33,17 +23,12 @@
             </div>
         </div>
     
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
     
         <h1 style="text-align: center;">Profile</h1>
         
         <h1>user: {{username}}<br>first: {{fname}}<br>last: {{lname}}<br>email: {{email}}<br>
             dob: {{date_of_birth}}<!--<br>height: {{height}}<br>weight: {{weight}}</h1>--></h1>
-
-        
-  
-        
-
 
         <h3>FRIEND STUFF</h3>
         
@@ -76,6 +61,23 @@
         <button style="width: fit-content;"><a href="/edit_profile">edit</a></button>
 
         <button style="width: fit-content;"><a href="/search_users">Search Users</a></button>
-
+        <footer class="titletext" style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100));">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: rgb(9, 64, 100); height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ej@email.com</p>
+                        <p>Kari Bavis: kb@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

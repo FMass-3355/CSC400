@@ -10,13 +10,57 @@ body, html{
 
 h1{
     font-family:'Courier New', Courier, monospace;
+    font-size: 64px;
+    color: aqua;
 }
 
-.dateSwitch{
+.moveLeft span{
     font-size: 50px;
     cursor: pointer;
+    position: relative;
+    text-decoration: none;
     color: aliceblue;
     transition: .3s;
+}
+
+.moveLeft:hover span{
+    animation: animateLeft 5s infinite;
+    cursor: pointer;
+}
+@keyframes animateLeft{
+    0%{
+        transform: translateX(0px);
+    }
+    50%{
+        transform: translateX(-30px);
+    }
+    100%{
+        transform: translateX(0px);
+    }
+}
+
+.moveRight span{
+    font-size: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    color: aliceblue;
+    transition: .3s;
+}
+
+.moveRight:hover span{
+    animation: animateRight 5s infinite;
+    cursor: pointer;
+}
+@keyframes animateRight{
+    0%{
+        transform: translateX(0px);
+    }
+    50%{
+        transform: translateX(30px);
+    }
+    100%{
+        transform: translateX(0px);
+    }
 }
 
 .dateSwitch:hover, .dateSwitch:focus{
@@ -36,5 +80,36 @@ h1{
 }
 
 .whiteback2{
-    background-image: url(https://wallpaperaccess.com/full/1109099.jpg);
+    background-image: url(../Images/flippedblue.jpg);
+    background-position: left;
 }
+
+.rotate{
+    transition: all 2s linear;
+}
+
+.rotate.down {
+    transform:rotate(180deg);
+    transition: .5s;
+}
+
+.rotate2{
+    transition: all 2s linear;
+}
+
+.rotate2.down2 {
+    transform:rotate(180deg);
+    transition: .5s;
+}
+
+.collapseBar {
+    float: right;
+    font-size: 20px;
+    height: 20px;
+    vertical-align: middle;
+    transform: rotate(0deg);
+    transition: .3s;
+}
+
+
+

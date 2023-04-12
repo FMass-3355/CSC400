@@ -11,82 +11,154 @@
         <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
+    <style>
+        .table-striped>tbody>tr:nth-child(odd)>td,
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: rgb(9, 64, 100);
+        }
 
+        table {
+            font-size:medium;
+            width: 35%;
+            color: aliceblue;
+        }
+    </style>
     <body class="base" style="color:aliceblue">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
-              <a href="/homepage">Home</a>
+              <a href="/homepage" class="content">Home</a>
               <a href="/tracker">Tracker</a>
               <a href="/profile">Profile</a>
               <a href="/logout">Logout</a>
             </div>
         </div>
 
-        <span class="openNav" onclick="openNav()">&#9776;</span>
-
+        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
+        <h1 style="text-align: center; color: aqua">Calorie Tracker</h1><br>
         <div class="col-md-offset-2 col-md-8 col-xs-12" style="text-align: center;">
             <div class="row">
-                <div class="col-md-2 col-xs-1">
-                    <a href="/yesterday" class="dateSwitch"><span style="float: left;">&#x3c;</span></a>
+                <div class="col-md-2 col-xs-1 moveLeft">
+                    <a href="/yesterday"><span style="padding-left: 10px; padding-right: 10px; float: left;">&#x2039;</span></a>
                 </div>
     
                 <div class="col-md-8 col-xs-10 dropdown">
-                    <span onclick="myFunction()" class="dropbtn" style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
+                    <span onclick="myFunction()" class="dropbtn" style="cursor: pointer;">{{ pdate }}</span>
                     <div id="myDropdown" class="dropdown-content">
-                      <a href="#">Day</a>
-                      <a href="#">Month</a>
-                      <a href="#">Year</a>
+                      <a href="#">Day View</a>
+                      <a href="#">Month View</a>
+                      <a href="#">Year View</a>
                     </div>
                 </div>
     
-                <div class="col-md-2 col-xs-1">
-                    <a href="/tomorrow" class="dateSwitch"><span style=" float: right;">&#x3e;</span></a>
+                <div class="col-md-2 col-xs-1 moveRight">
+                    <a href="/tomorrow"><span style="padding-left: 10px; padding-right: 10px; float: right;">&#x203A;</span></a>
                 </div>
             </div>
         </div>
 
         <br>
-        <h1 style="text-align: center;"> Day Tracker</h1>
-        {% if pdate == actualDay %}
-        <br><button style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
-        <br><iframe src="/graph" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
-        style="width:40%;border:none;margin:auto;"></iframe>
-        {% endif %}
-        <h3>Calories</h3>
-        <table id="table1" class="table-striped">
-            <tr>
-                <th>Food</th>
-                <th>Servings</th>
-                <th>Calories</th>
-            </tr>
-            {% for food in foods %}
-            <tr>
-                <td>{{food.c_name}}</td>
-                <td>{{food.c_serving_size_g}}</td>
-                <td>{{food.c_total_calories}}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <br><iframe src="/graph" on onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
+        style="width:40%;border:none;margin:auto;"></iframe><br><br>
 
-        <h3>Exercise</h3>
-        <table id="table2" class="table-striped">
-            <tr>
-                <th>Exercise</th>
-                <th>Reps/Time</th>
-                <th>Calories Burned</th>
-            </tr>
-            {% for exercise in workouts %}
-            <tr>
-                <td>{{exercise.e_name}}</td>
-                <td>{{exercise.e_duration_minutes}}</td>
-                <td>{{exercise.e_total_calories}}</td>
-            </tr>
-            {% endfor %}
-        </table>
- 
+        <div class="col-md-4 col-md-offset-4">
+            <div class="row">
+                <button 
+                class="btn btn-primary rotate" 
+                type="button" 
+                data-toggle="collapse"
+                data-target="#collapseExample1" 
+                aria-expanded="false" 
+                aria-controls="collapseExample"
+                style="width:100%; margin:auto;">
+                    Calories<span id="chevron" class="collapseBar rotate">&#8963;</span>
+                </button>
+                <div class="collapse" id="collapseExample1" style="margin-bottom: 2%;">
+                    <table id="table1" class="table-striped" style="margin: auto; width: 100%;">
+                        <tr>
+                            <th>Food</th>
+                            <th>Servings (in grams)</th>
+                            <th>Calories</th>
+                        </tr>
+                        {% for food in foods %}
+                        <tr>
+                            <td>{{food.c_name}}</td>
+                            <td>{{food.c_serving_size_g}}</td>
+                            <td>{{food.c_total_calories}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div><br>
+            
+            <div class="row">
+                <button 
+                class="btn btn-primary rotate2"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseExample2"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+                style="width:100%; margin:auto;">
+                    Exercise<span id="chevron2" class="collapseBar rotate2">&#8963;</span>
+                </button>
+                <div class="collapse" id="collapseExample2">
+                    <table id="table2" class="table-striped" style="margin: auto; width: 100%;">
+                        <tr>
+                            <th>Exercise</th>
+                            <th>Reps/Time</th>
+                            <th>Calories Burned</th>
+                        </tr>
+                        {% for exercise in workouts %}
+                        <tr>
+                            <td>{{exercise.e_name}}</td>
+                            <td>{{exercise.e_duration_minutes}}</td>
+                            <td>{{exercise.e_total_calories}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div><br>
+    
+            <div class="row">
+                {% if pdate == actualDay %}
+                <button style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit Calories</a></button>
+                {% else %}
+                <button style="width: fit-content;"><a href="/tracker" style="text-decoration: none; color: black;">Back to Current Day</a></button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <footer class="titletext" style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100)); margin-top: 10%;">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: rgb(9, 64, 100); height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ej@email.com</p>
+                        <p>Kari Bavis: kb@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         <script>
+            var chevron = document.getElementById("chevron");
+                $(".rotate").click(function(){
+                    $(chevron).toggleClass("down");
+                });
+
+                var chevron2 = document.getElementById("chevron2");
+                $(".rotate2").click(function(){
+                    $(chevron2).toggleClass("down2");
+                });
+            
             var n = new Date();
             year = n.getFullYear();
             month = n.getMonth() + 1;
@@ -132,23 +204,5 @@
             }
 
         </script>
-        <footer class="titletext" style="margin-top: 10%; text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100));">
-            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
-                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
-                <div class="row">
-                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
-                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
-                        project to be used by fitness-oriented individuals.</div>
-                    <div class="col-md-6 col-xs-6">
-                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
-                        <p>Emma Jamieson: ej@email.com</p>
-                        <p>Kari Bavis: kb@email.com</p>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </body>
 </html>
