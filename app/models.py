@@ -123,12 +123,14 @@ class ExInfo:
         e_name = e_name
 
 class FriendInfo:
-    def __FriendInfo__(row_id, user_id, f_id, f_name, status):
+    def __FriendInfo__(row_id, user_id, f_id, f_name, status, first_name, last_name):
         row_id = row_id
         user_id = user_id
         f_id = f_id
         f_name = f_name
         status = status
+        first_name = first_name
+        last_name = last_name
 
 class UserInfo:
     def __UserInfo__(user_id,username,email,role):

@@ -36,53 +36,29 @@
         <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
     
         <h1 style="text-align: center;">Profile</h1>
-        
-        <h1>user: {{username}}<br>first: {{fname}}<br>last: {{lname}}<br>email: {{email}}<br>
-            dob: {{date_of_birth}}<!--<br>height: {{height}}<br>weight: {{weight}}</h1>--></h1>
+        <h3>FRIENDS</h3>
 
-        
-  
-        
-
-
-        <h3>FRIEND STUFF</h3>
-        
-        <p>Friends: {{len_friends}}</p>
-        {% if len_friends != 0 %}
-            <button style="width: fit-content;"><a href="/view_friends">View Friends</a></button>
-        {% endif %}
-        <p>Friend Requests: {{len_requests}}</p>
-        {% if len_requests != 0 %}
-            <button style="width: fit-content;"><a href="/view_requests">View Friend Requests</a></button>
-        {% endif %}
-        
-        <br>
-        <!-- <p>How Many Requests Sent (1): {{len_sent}}</p> -->
-
-        <!-- <table id="friend_table">
+        <table id="friend_table">
             
             <tr>
-                <th>Row ID</th>
-                <th>Current User ID</th>
-                <th>Friends ID</th>
                 <th>Friends Username</th>
-                <th>Status of Friendship</th>
+                <th></th>
+                <th></th>
             </tr>
-            {% for friend in query_friend_row %}
-            <tr>
-                <td>{{friend.row_id}}</td>
-                <td>{{friend.user_id}}</td>
-                <td>{{friend.f_id}}</td>
-                <td>{{friend.f_name}}</td>
-                <td>{{friend.status}}</td>
-            </tr>
-            {% endfor %}
+            {% if query_requests_row%}
+                {% for friend in query_requests_row %}
+                <tr>
+                    <td>{{friend.f_name}}</td>
+                    <td><a href="/accept_friend/{{ friend.f_id }}">Accept</a></td>
+                    <td><a href="/decline_friend/{{ friend.f_id }}">Decline</a></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                 <td>No More Friend Requests</td>
+            {% endif %}
             
-        </table> -->
-
-        <button style="width: fit-content;"><a href="/edit_profile">edit</a></button>
-
-        <button style="width: fit-content;"><a href="/search_users">Search Users</a></button>
+            
+        </table>
 
     </body>
 </html>
