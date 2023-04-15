@@ -48,6 +48,7 @@
             <tr>
                 <td>{{friend.f_name}}</td>
                 <td><button style="width: fit-content;"><a href="/friend_profile/{{friend.f_id}}">View Profile</a></button></td>
+                <td><a href="/remove_friend/{{ friend.f_id }}">Remove Friend</a></td>
             </tr>
             {% endfor %}
             
