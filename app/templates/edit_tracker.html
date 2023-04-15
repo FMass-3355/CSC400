@@ -91,7 +91,7 @@
     </p>
     </form>
 
-
+    <button style="width: fit-content;"><a href="/tracker">Back</a></button>
 
         <script>
             var n = new Date();
@@ -238,6 +238,7 @@
                     cell2.innerText = response.data.data.duration;
                     cell3.innerText = response.data.data.calories;
                     cell4.innerText = "DELETE";
+                    location.reload();
                 })
                 .catch(function (error) {
                     console.log("Error:")

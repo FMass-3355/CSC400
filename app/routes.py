@@ -823,7 +823,7 @@ def add_workout():
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
-                            e_total_calories_per_hour = e_total_calories_per_hour,
+                            e_calories_per_hour = e_total_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
         
         try:
@@ -835,7 +835,7 @@ def add_workout():
                     "data": {
                         "name": exercise.e_name,
                         "calories": exercise.e_total_calories,
-                        "perHour": exercise.e_total_calories_per_hour,
+                        "perHour": exercise.e_calories_per_hour,
                         "duration": exercise.e_duration_minutes,
                         "id": exercise.id
                     }
@@ -879,7 +879,7 @@ def graph():
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
 
     plt.xlabel("Date",  size = 20)
-    plt.ylabel("calories", size = 20)
+    plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
     user = current_user.id
