@@ -120,14 +120,6 @@ class EditTracker(FlaskForm):
     c_submit = SubmitField('Add Food')
     e_submit = SubmitField('Add Exercise')
 
-class C_DeleteForm(FlaskForm):
-    #delete_id = HiddenField("Hidden table row ID")
-    delete = SubmitField("Delete")
-
-class E_DeleteForm(FlaskForm):
-    #delete_id = HiddenField("Hidden table row ID")
-    delete = SubmitField("Delete")
-
 # --------------- Search Form -------------------------#
 class WorkoutNameSearch(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])

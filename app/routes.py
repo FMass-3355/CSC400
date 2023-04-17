@@ -126,19 +126,9 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = C_DeleteForm()
-    c_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if c_delete:
-            print("delete")
-            db.session.query(Calorie).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
+    db.session.query(Calorie).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/e_delete_row/<row_id>', methods=['GET', 'POST'])
 @login_required
@@ -146,20 +136,9 @@ def e_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = E_DeleteForm()
-    e_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if e_delete:
-            print("delete")
-            db.session.query(Exercise).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
-
+    db.session.query(Exercise).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
@@ -167,7 +146,6 @@ def edit_tracker():
     global actualDay2
     global thisDay
     user_id = current_user.id 
-
 
     form=EditTracker()
     if form.validate_on_submit():
@@ -723,7 +701,7 @@ def add_workout():
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
-                            e_total_calories_per_hour = e_total_calories_per_hour,
+                            e_calories_per_hour = e_total_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
         
         try:
@@ -735,7 +713,7 @@ def add_workout():
                     "data": {
                         "name": exercise.e_name,
                         "calories": exercise.e_total_calories,
-                        "perHour": exercise.e_total_calories_per_hour,
+                        "perHour": exercise.e_calories_per_hour,
                         "duration": exercise.e_duration_minutes,
                         "id": exercise.id
                     }
