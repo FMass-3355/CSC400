@@ -44,7 +44,16 @@
                 <td>{{food.c_name}}</td>
                 <td>{{food.c_serving_size_g}}</td>
                 <td>{{food.c_total_calories}}</td>
-                <td><a href="/c_delete_row/{{ food.cal_id }}">Delete Food</a></td>
+                <td><button onclick="deleteFood()">Delete Food</button></td>
+                <script>
+                    function deleteFood() {
+                        if (confirm("Delete Food?")) {
+                            window.location.href = "/c_delete_row/{{ food.cal_id }}";
+                        }
+                        else {
+                            window.location.href = "/edit_tracker";
+                        }}
+                </script>
             </tr>
             {% endfor %}   
         </table>
@@ -61,12 +70,19 @@
                 <td>{{exercise.e_name}}</td>
                 <td>{{exercise.e_duration_minutes}}</td>
                 <td>{{exercise.e_total_calories}}</td>
-                <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Exercise</a></td>
+                <td><button onclick="deleteExercise()">Delete Exercise</button></td>
+                <script>
+                    function deleteExercise() {
+                        if (confirm("Delete Exercise?")) {
+                            window.location.href = "/e_delete_row/{{ exercise.ex_id }}";
+                        }
+                        else {
+                            window.location.href = "/edit_tracker";
+                        }}
+                </script>
             </tr>
             {% endfor %}
         </table>
-
-
 
     <form action="" autocomplete="off" method="post" id="foodForm">
         {{ form.hidden_tag() }}
@@ -99,7 +115,7 @@
             month = n.getMonth() + 1;
             day = n.getDate();
             // document.getElementById("date").innerText = month + "/" + day + "/" + year;
-
+        
         function setYesterday() {
             var yesterday = n;
             yesterday.setDate(yesterday.getDate() - 1);
