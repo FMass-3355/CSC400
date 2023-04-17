@@ -37,7 +37,7 @@
     
         <h1 style="text-align: center;">Search Users</h1>
 
-        <p>How Many users: {{len_users}}</p>
+        <!-- <p>How Many users: {{len_users}}</p>
 
         <table id="user_table">
             
@@ -49,13 +49,12 @@
           </tr>
           {% for user in all_user_row %}
           <tr>
-              <!-- <td>WORD</td> -->
               <td>{{user.user_id}}</td>
               <td>{{user.username}}</td>
               <td>{{user.email}}</td>
               <td>{{user.role}}</td>
           </tr>
-          {% endfor %}
+          {% endfor %} -->
           
       </table>
       <form action="" autocomplete="off" method="post" id="userForm">
@@ -67,21 +66,21 @@
         <p>
             {{ form.submit(class="form-control form-control-md btn btn-primary") }}
         </p>
-    </form>
+        </form>
 
 
     
-    {% if result == "User Found" %}
-    <p>{{result}}</p>
-    <p>{{search_username}}</p>
-    <!-- <button style="width: fit-content;">Send Friend Request To -> {{search_username}}</button> -->
-    <form action="" autocomplete="off" method="post" id="requestForm">
-      {{ request_form.hidden_tag() }}
-      <p>
-          {{ request_form.friend_request(class="form-control form-control-md btn btn-primary") }}
-      </p>
-    </form>
-    {% endif %}
+        {% if result == "User Found" %}
+        <p>{{result}}</p>
+        <p>{{search_username}}</p>
+        <!-- <button style="width: fit-content;">Send Friend Request To -> {{search_username}}</button> -->
+        <form action="" autocomplete="off" method="post" id="requestForm">
+        {{ request_form.hidden_tag() }}
+        <p>
+            {{ request_form.friend_request(class="form-control form-control-md btn btn-primary") }}
+        </p>
+        </form>
+        {% endif %}
 
 
 
@@ -89,22 +88,22 @@
 
 
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-danger show"
-    role="alert" style="text-align: center;">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger show"
+        role="alert" style="text-align: center;">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
 
 
-    <button style="width: fit-content;"><a href="/profile">Back</a></button>
+        <button style="width: fit-content;"><a href="/profile">Back</a></button>
 
     </body>
 </html>

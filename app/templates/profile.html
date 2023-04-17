@@ -32,11 +32,19 @@
 
         <h3>FRIEND STUFF</h3>
         
-        <p>How Many Friends with mutual status (2): {{len_friends}}</p>
-        <p>How Many Friend Requests (0): {{len_requests}}</p>
-        <p>How Many Requests Sent (1): {{len_sent}}</p>
+        <p>Friends: {{len_friends}}</p>
+        {% if len_friends != 0 %}
+            <button style="width: fit-content;"><a href="/view_friends">View Friends</a></button>
+        {% endif %}
+        <p>Friend Requests: {{len_requests}}</p>
+        {% if len_requests != 0 %}
+            <button style="width: fit-content;"><a href="/view_requests">View Friend Requests</a></button>
+        {% endif %}
+        
+        <br>
+        <!-- <p>How Many Requests Sent (1): {{len_sent}}</p> -->
 
-        <table id="friend_table">
+        <!-- <table id="friend_table">
             
             <tr>
                 <th>Row ID</th>
@@ -47,7 +55,6 @@
             </tr>
             {% for friend in query_friend_row %}
             <tr>
-                <!-- <td>WORD</td> -->
                 <td>{{friend.row_id}}</td>
                 <td>{{friend.user_id}}</td>
                 <td>{{friend.f_id}}</td>
@@ -56,7 +63,7 @@
             </tr>
             {% endfor %}
             
-        </table>
+        </table> -->
 
         <button style="width: fit-content;"><a href="/edit_profile">edit</a></button>
 

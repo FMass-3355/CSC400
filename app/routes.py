@@ -425,12 +425,12 @@ def profile():
                 query_sent_row.append(row)
             elif row.status == 0:
                 query_requests_row.append
-            print(f'row id: {row.row_id}')
-            print(f'user id: {row.user_id}')
-            print(f'friend id: {row.f_id}')
-            print(f'friend name: {row.f_name}')
-            #print(f'friend name: {name.username}')
-            print(f'status: {row.status}')
+            # print(f'row id: {row.row_id}')
+            # print(f'user id: {row.user_id}')
+            # print(f'friend id: {row.f_id}')
+            # print(f'friend name: {row.f_name}')
+            # #print(f'friend name: {name.username}')
+            # print(f'status: {row.status}')
     return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
@@ -465,8 +465,8 @@ def search_users():
                     query_user_row.append(row)
                     count+=1
                     if row.username == search_username:
-                        print("yay QUERY")
-                        print(search_username)
+                        # print("yay QUERY")
+                        # print(search_username)
                         result = "User Found"
                         #flash(result)
                         friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=row.user_id).first()
@@ -509,10 +509,110 @@ def search_users():
     return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form)
 
 
-@app.route('/friend_profile', methods=['GET', 'POST'])
+@app.route('/view_friends', methods=['GET', 'POST'])
 @login_required
-def friend_profile():
-    pass
+def view_friends():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+        
+        return render_template('friends.html', query_friend_row=query_friend_row)
+
+@app.route('/view_requests', methods=['GET', 'POST'])
+@login_required
+def view_requests():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_requests_row = []
+
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 0:
+                query_requests_row.append(row)
+                                 
+        return render_template('requests.html', query_requests_row=query_requests_row)
+
+@app.route('/accept_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def accept_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            # friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2)
+            # friendship_for_friend = Friend(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2)
+            # db.session.update(friendship_for_user)
+            # db.session.update(friendship_for_friend)
+            # 
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id).update({'status':2})
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/decline_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def decline_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=1).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def friend_profile(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        #f_id = friend_id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            row.first_name = name.fname
+            row.last_name = name.lname
+
+
+            friend_id = int(friend_id)
+
+            
+            if (row.status == 2) and (row.f_id == friend_id):
+                print("IN IF")
+                query_friend_row.append(row)
+                break
+        print(len(query_friend_row))
+        query_friend_row = query_friend_row[0]
+        return render_template('view_friend_profile.html', query_friend_row=query_friend_row)
+        
+        
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
