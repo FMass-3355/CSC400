@@ -22,8 +22,14 @@
             width: 35%;
             color: aliceblue;
         }
+
+        .background {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_854725372_391824.jpg);
+        }
     </style>
-    <body class="base" style="color:aliceblue">
+    <body class="base background" style="color:aliceblue;">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -38,12 +44,13 @@
         <h1 style="text-align: center; color: aqua">Calorie Tracker</h1><br>
         <div class="col-md-offset-2 col-md-8 col-xs-12" style="text-align: center;">
             <div class="row">
-                <div class="col-md-2 col-xs-1 moveLeft">
-                    <a href="/yesterday"><span style="padding-left: 10px; padding-right: 10px; float: left;">&#x2039;</span></a>
+                <div class="col-md-1 col-xs-1 moveLeft col-md-offset-2">
+                    <a href="/yesterday" style="vertical-align: middle;"><span style="padding-left: 10px; padding-right: 10px; float: left; position: up 50%;">&#x2039;</span></a>
                 </div>
     
-                <div class="col-md-8 col-xs-10 dropdown">
-                    <span onclick="myFunction()" class="dropbtn" style="cursor: pointer;">{{ pdate }}</span>
+                <div class="col-md-6 col-xs-10 dropdown" style="display: table; overflow: hidden;transform: translateY(20px)">
+                    <div style="display: table-cell; vertical-align: middle;">
+                    <span onclick="myFunction()" class="dropbtn" style="cursor: pointer;">{{ pdate }}</span></div>
                     <div id="myDropdown" class="dropdown-content">
                       <a href="#">Day View</a>
                       <a href="#">Month View</a>
@@ -51,7 +58,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-2 col-xs-1 moveRight">
+                <div class="col-md-1 col-xs-1 moveRight">
                     <a href="/tomorrow"><span style="padding-left: 10px; padding-right: 10px; float: right;">&#x203A;</span></a>
                 </div>
             </div>
@@ -129,9 +136,9 @@
             </div>
         </div>
         
-        <footer class="titletext" style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100)); margin-top: 10%;">
+        <footer class="titletext" style="text-align: center; margin-top: 10%;">
             <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
-                <hr style="background-color: rgb(9, 64, 100); height: 1px; border: none; margin: 0%;">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
                 <div class="row">
                     <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
                     <div class="col-md-6 col-xs-6"><h3>Contact us</h3>

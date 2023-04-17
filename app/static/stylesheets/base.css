@@ -15,7 +15,7 @@ h1{
 }
 
 .moveLeft span{
-    font-size: 50px;
+    font-size: 70px;
     cursor: pointer;
     position: relative;
     text-decoration: none;
@@ -24,7 +24,7 @@ h1{
 }
 
 .moveLeft:hover span{
-    animation: animateLeft 5s infinite;
+    animation: animateLeft 3s infinite;
     cursor: pointer;
 }
 @keyframes animateLeft{
@@ -40,7 +40,7 @@ h1{
 }
 
 .moveRight span{
-    font-size: 50px;
+    font-size: 70px;
     cursor: pointer;
     text-decoration: none;
     color: aliceblue;
@@ -48,7 +48,7 @@ h1{
 }
 
 .moveRight:hover span{
-    animation: animateRight 5s infinite;
+    animation: animateRight 3s infinite;
     cursor: pointer;
 }
 @keyframes animateRight{
