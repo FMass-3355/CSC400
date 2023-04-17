@@ -71,15 +71,27 @@
 
     
         {% if result == "User Found" %}
-        <p>{{result}}</p>
-        <p>{{search_username}}</p>
-        <!-- <button style="width: fit-content;">Send Friend Request To -> {{search_username}}</button> -->
-        <form action="" autocomplete="off" method="post" id="requestForm">
-        {{ request_form.hidden_tag() }}
-        <p>
-            {{ request_form.friend_request(class="form-control form-control-md btn btn-primary") }}
-        </p>
-        </form>
+            <p>{{result}}</p>
+            <p>{{search_username}}</p>
+            <!-- <button style="width: fit-content;">Send Friend Request To -> {{search_username}}</button> -->
+            <!-- if not anything -->
+            {% if friendship == 3 %}
+                <form action="" autocomplete="off" method="post" id="requestForm">
+                {{ request_form.hidden_tag() }}
+                <p>
+                    {{ request_form.friend_request(class="form-control form-control-md btn btn-primary") }}
+                </p>
+                </form>
+                <!-- if already friends -->
+            {% elif friendship == 2 %}
+                <button style="width: fit-content;"><a href="/friend_profile/{{f_id}}">View Profile</a></button>
+            {% else %}
+            <script>
+                 console.log("Either sent request already, or request was sent from user (both ways you cannot do the above two options)");
+                
+            </script>
+               
+            {% endif %}
         {% endif %}
 
 

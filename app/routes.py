@@ -451,38 +451,62 @@ def search_users():
             #not getting all users in query below
             #for loop keeps going until it finds the user its looking for
             query_user_row = [] 
-            count = 1
+            count = 0
             for item in db.session.query(User):
                 row = UserInfo()
                 row.user_id = item.id
                 row.username = item.username
                 row.email = item.email
                 row.role = item.role
-                
-                print(f"user ids: {row.user_id}")
+                friendship = 0
+                f_id = None
+                # print(f"user ids: {row.user_id}")
                 result = "User Not Found"
                 if row.user_id != current_user_id:
                     query_user_row.append(row)
                     count+=1
+                    print('++++')
+                    print(row.username)
+                    print(type(row.username))
+                    print(search_username)
+                    print(type(search_username))
                     if row.username == search_username:
                         # print("yay QUERY")
                         # print(search_username)
                         result = "User Found"
-                        #flash(result)
-                        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=row.user_id).first()
-                        if friend is None:
+                        f_id = row.user_id
+                        print(f'IN LOOP {search_username} {row.user_id}')
+                        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=2).first()
+                        request = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=0).first()
+                        sent = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=1).first()
+
+                        print(f' {search_username} None? {friend}')
+                        
+                        if (friend is None) and (request is None) and (sent is None) :
                             friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=row.user_id, status=1)
                             friendship_for_friend = Friend(fk_user_id=row.user_id, fk_friend_id=current_user_id, status=0)
                             db.session.add(friendship_for_user)
                             db.session.add(friendship_for_friend)
                             db.session.commit()
-
-                        break
+                            friendship = 3
+                            break
+                        elif (friend is not None) and (request is None) and (sent is None) :
+                            friendship = 2
+                            break
+                        elif (friend is None) and (request is not None) and (sent is None) :
+                            friendship = 0
+                            break
+                        elif (friend is None) and (request is None) and (sent is not None) :
+                            friendship = 1
+                            break                       
+                        
                     elif (row.username != search_username) and ((len_users-1) == count) and (search_username != None):
+                        print(f'RESULT {result} {search_username}')
+                        print(f'EQUALS? {row.username == search_username}')
                         flash(result)
                         # flash(len_users)
                         # flash(count)
-                
+              
 
 
             # if search_username in users:
@@ -491,7 +515,7 @@ def search_users():
             # else:
             #     print("fuck USERS") 
             #     print(search_username)
-
+        
 
         all_user_row = [] 
         for item in db.session.query(User):
@@ -505,8 +529,8 @@ def search_users():
             if row.user_id != current_user_id:
                 all_user_row.append(row)
         
-        
-    return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form)
+    print(f'END OF CODE\n\tresult = {result}\n\tfriendship = {friendship}\n\tf_id = {f_id}')    
+    return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form, friendship=friendship, f_id=f_id)
 
 
 @app.route('/view_friends', methods=['GET', 'POST'])
@@ -580,6 +604,18 @@ def decline_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
             db.session.commit()
     return render_template('requests.html')
+
+@app.route('/remove_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def remove_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2).delete()
+            db.session.commit()
+    return render_template('friends.html')
 
 @app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -857,7 +893,7 @@ def graph():
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
 
     plt.xlabel("Date",  size = 20)
-    plt.ylabel("calories", size = 20)
+    plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
     user = current_user.id

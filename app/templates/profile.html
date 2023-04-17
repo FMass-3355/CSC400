@@ -29,9 +29,8 @@
         
         <h1>user: {{username}}<br>first: {{fname}}<br>last: {{lname}}<br>email: {{email}}<br>
             dob: {{date_of_birth}}<!--<br>height: {{height}}<br>weight: {{weight}}</h1>--></h1>
-
-        <h3>FRIEND STUFF</h3>
-        
+            <button style="width: fit-content;"><a href="/edit_profile">Edit Profile</a></button>
+            <br>
         <p>Friends: {{len_friends}}</p>
         {% if len_friends != 0 %}
             <button style="width: fit-content;"><a href="/view_friends">View Friends</a></button>
@@ -65,7 +64,7 @@
             
         </table> -->
 
-        <button style="width: fit-content;"><a href="/edit_profile">edit</a></button>
+        
 
         <button style="width: fit-content;"><a href="/search_users">Search Users</a></button>
         <footer class="titletext" style="text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100));">
