@@ -1,7 +1,7 @@
 #Imports
 from operator import methodcaller
 #from app import app as appl
-from app import API_KEY, app
+from app import API_KEY, app, otp, mail, s
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ, path
@@ -28,7 +28,25 @@ import json
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from email_validator import validate_email,EmailNotValidError
 
+# testEmail = "fitemail420@gmail.com"
+# emailObject = validate_email(testEmail)
+# print(emailObject.email)
+# try:
+#     # Validating the `testEmail`
+#     emailObject = validate_email(testEmail)
+
+#     # If the `testEmail` is valid
+#     # it is updated with its normalized form
+#     testEmail = emailObject.email
+#     print(testEmail)
+# except EmailNotValidError as errorMsg:
+#     # If `testEmail` is not valid
+#     # we print a human readable error message
+#     print(str(errorMsg))
 #API 
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
@@ -42,6 +60,7 @@ actualDay2 = actualDay1.strftime("%B %d, %Y")
 thisDay = datetime.now()
 today = thisDay.strftime("%B %d, %Y")
 databaseToday = thisDay.strftime("%Y-%m-%d")
+
 
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
@@ -203,6 +222,9 @@ def edit_tracker():
 #Start with here
 @app.route('/')
 def index():
+    # msg = Message("Hello", sender="fitemail420@gmail.com", recipients=["deattlecowhawk@gmail.com"])
+    # msg.body = "testing"
+    # mail.send(msg)
     return redirect(url_for('login'))
     
 #Login Method
@@ -233,6 +255,73 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+# @app.route('/email_ver', methods=['GET', 'POST'])
+# def email_ver():
+#     if request.method == 'GET':
+#         return '<form action="/" method="POST"><input name="email"><input type="submit"></form>'
+
+#     email = request.form['email']
+#     token = s.dumps(email, salt='email-confirm')
+
+#     msg = Message('Confirm Email', sender='fitemail420@gmail.com', recipients=[email])
+
+#     link = url_for('confirm_email', token=token, _external=True)
+
+#     msg.body = 'Your link is {}'.format(link)
+
+#     mail.send(msg)
+
+#     return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+
+
+# @app.route('/confirm_email/<token>')
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+@app.route('/test',methods=['GET'])
+def test():
+    return render_template("test.html") 
+
+@app.route('/verify', methods=['POST'])
+def verify():
+
+    email = request.form["email"]
+    message = str(otp)   
+    subject = 'OTP'
+    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # msg.body = str(otp)  
+    mail.send(msg)  
+
+    # with mail.connect() as conn:
+    #     email = request.form["email"]   
+    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
+    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
+    #     conn.send(msg)
+
+    return render_template('verify.html')  
+
+@app.route('/validate',methods=["POST"])   
+def validate():  
+    user_otp = request.form['otp']  
+    if otp == int(user_otp):  
+        return "<h3> Email  verification is  successful </h3>"  
+    return "<h3>failure, OTP does not match</h3>" 
+
+# @app.route('/confirm_email/<token>', methods=['GET', 'POST'])
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+
+
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
@@ -286,6 +375,8 @@ def create_user():
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
+
+
         if (email_exists is None) and (user_exists is None):
             user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
             user.set_password(password)
