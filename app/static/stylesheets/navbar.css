@@ -43,10 +43,10 @@
     font-size: 60px;
   }
 
-
-
   .openNav {
+    position: fixed;
     font-size:50px;
+    z-index: .99;
     cursor:pointer;
     width: fit-content;
     color: aliceblue;
@@ -54,7 +54,7 @@
     transition: .3s;
   }
 
-  .openNav:hover, openNav:focus {
+  .openNav:hover{
     color: aqua;
     transition: .3s;
   }

@@ -14,6 +14,10 @@ h1{
     color: aqua;
 }
 
+.content{
+    font-size: 34px;
+}
+
 .moveLeft span{
     font-size: 70px;
     cursor: pointer;
@@ -77,11 +81,14 @@ h1{
 .whiteback1{
     background-image: url(../Images/flippedblue.jpg);
     background-size: cover;
+    color: black;
 }
 
 .whiteback2{
     background-image: url(../Images/flippedblue.jpg);
-    background-position: left;
+    background-size: cover;
+    background-position-y: 400px;
+    color: black;
 }
 
 .rotate{
@@ -110,6 +117,23 @@ h1{
     transform: rotate(0deg);
     transition: .3s;
 }
+
+.background {
+    background-image: 
+    linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+    url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_854725372_391824.jpg);
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: rgb(9, 64, 100);
+        }
+
+        table {
+            font-size:medium;
+            width: 35%;
+            color: aliceblue;
+        }
 
 
 
