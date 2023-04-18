@@ -435,53 +435,49 @@ def add_user():
 @app.route('/delete_user/<user_id>', methods=['GET', 'POST'])
 @login_required
 def delete_user(user_id):
-    form = RemoveUser()
-    print('in route')
-    if form.validate_on_submit():
-        friends1 = db.session.query(Friend).filter_by(fk_user_id=user_id)
-        friends1 = friends1.all()
-        len_friends1 = len(friends1)
-        friends2 = db.session.query(Friend).filter_by(fk_friend_id=user_id)
-        friends2 = friends2.all()
-        len_friends2 = len(friends2)
-        calorie = db.session.query(Calorie).filter_by(fk_user_id=user_id)
-        calorie = calorie.all()
-        len_calorie = len(calorie)
-        exercise = db.session.query(Exercise).filter_by(fk_user_id=user_id)
-        exercise = exercise.all()
-        len_exercise = len(exercise)
-        track = db.session.query(Track).filter_by(fk_user_id=user_id)
-        track = track.all()
-        len_track = len(track)
+
+    friends1 = db.session.query(Friend).filter_by(fk_user_id=user_id)
+    friends1 = friends1.all()
+    len_friends1 = len(friends1)
+    friends2 = db.session.query(Friend).filter_by(fk_friend_id=user_id)
+    friends2 = friends2.all()
+    len_friends2 = len(friends2)
+    calorie = db.session.query(Calorie).filter_by(fk_user_id=user_id)
+    calorie = calorie.all()
+    len_calorie = len(calorie)
+    exercise = db.session.query(Exercise).filter_by(fk_user_id=user_id)
+    exercise = exercise.all()
+    len_exercise = len(exercise)
+    track = db.session.query(Track).filter_by(fk_user_id=user_id)
+    track = track.all()
+    len_track = len(track)
         
         # print(f'friends: {len_friends1}')
         # print(f'friends: {len_friends2}')
-        for f in range(len_friends1):
-            f = db.session.query(Friend).filter_by(fk_user_id=user_id).first()
-            db.session.delete(f)
-            db.session.commit()
-        for f in range(len_friends2):
-            f = db.session.query(Friend).filter_by(fk_friend_id=user_id).first()
-            db.session.delete(f)
-            db.session.commit()
-        for c in range(len_calorie):
-            c = db.session.query(Calorie).filter_by(fk_user_id=user_id).first()
-            db.session.delete(c)
-            db.session.commit()
-        for e in range(len_exercise):
-            e = db.session.query(Exercise).filter_by(fk_user_id=user_id).first()
-            db.session.delete(e)
-            db.session.commit()
-        for t in range(len_track):
-            t = db.session.query(Track).filter_by(fk_user_id=user_id).first()
-            db.session.delete(t)
-            db.session.commit()
-
-        db.session.query(User).filter_by(id=user_id).delete()
+    for f in range(len_friends1):
+        f = db.session.query(Friend).filter_by(fk_user_id=user_id).first()
+        db.session.delete(f)
         db.session.commit()
-        return redirect(url_for('view_users'))
+    for f in range(len_friends2):
+        f = db.session.query(Friend).filter_by(fk_friend_id=user_id).first()
+        db.session.delete(f)
+        db.session.commit()
+    for c in range(len_calorie):
+        c = db.session.query(Calorie).filter_by(fk_user_id=user_id).first()
+        db.session.delete(c)
+        db.session.commit()
+    for e in range(len_exercise):
+        e = db.session.query(Exercise).filter_by(fk_user_id=user_id).first()
+        db.session.delete(e)
+        db.session.commit()
+    for t in range(len_track):
+        t = db.session.query(Track).filter_by(fk_user_id=user_id).first()
+        db.session.delete(t)
+        db.session.commit()
 
-    return render_template('delete_user.html', form=form)
+    db.session.query(User).filter_by(id=user_id).delete()
+    db.session.commit()
+    return redirect(url_for('view_users'))
     
 
 @app.route('/view_users', methods=['GET', 'POST'])

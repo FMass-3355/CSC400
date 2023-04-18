@@ -41,8 +41,8 @@ class User(UserMixin, db.Model):
     fname = db.Column(db.String(64))
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
-    is_confirmed = db.Column(Boolean, unique=True)
-    confirmed_on = db.Column(db.Date)
+    #is_confirmed = db.Column(Boolean, unique=True)
+    #confirmed_on = db.Column(db.Date)
     #tracks = db.relationship('Track', backref='fk_user_id')
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
     # primaryjoin='User.id==Friendship.user_id',
