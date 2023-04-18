@@ -11,25 +11,7 @@
         <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
-    <style>
-        .table-striped>tbody>tr:nth-child(odd)>td,
-        .table-striped>tbody>tr:nth-child(odd)>th {
-            background-color: rgb(9, 64, 100);
-        }
-
-        table {
-            font-size:medium;
-            width: 35%;
-            color: aliceblue;
-        }
-
-        .background {
-            background-image: 
-            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
-            url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_854725372_391824.jpg);
-        }
-    </style>
-    <body class="base background" style="color:aliceblue;">
+    <body class="background" style="color:aliceblue;">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -40,12 +22,12 @@
             </div>
         </div>
 
-        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
-        <h1 style="text-align: center; color: aqua">Calorie Tracker</h1><br>
+        <span class="openNav" onclick="openNav()">&#9776;</span>
+        <br><br><h1 style="text-align: center; color: aqua;">Calorie Tracker</h1><br>
         <div class="col-md-offset-2 col-md-8 col-xs-12" style="text-align: center;">
             <div class="row">
                 <div class="col-md-1 col-xs-1 moveLeft col-md-offset-2">
-                    <a href="/yesterday" style="vertical-align: middle;"><span style="padding-left: 10px; padding-right: 10px; float: left; position: up 50%;">&#x2039;</span></a>
+                    <a href="/yesterday" style="vertical-align: middle;"><span style="padding-left: 25px; padding-right: 25px; float: left;">&#x2039;</span></a>
                 </div>
     
                 <div class="col-md-6 col-xs-10 dropdown" style="display: table; overflow: hidden;transform: translateY(20px)">
@@ -59,7 +41,7 @@
                 </div>
     
                 <div class="col-md-1 col-xs-1 moveRight">
-                    <a href="/tomorrow"><span style="padding-left: 10px; padding-right: 10px; float: right;">&#x203A;</span></a>
+                    <a href="/tomorrow"><span style="padding-left: 25px; padding-right: 25px; float: right;">&#x203A;</span></a>
                 </div>
             </div>
         </div>
@@ -129,9 +111,9 @@
     
             <div class="row">
                 {% if pdate == actualDay %}
-                <button style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit Calories</a></button>
+                <button class="btn" style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit Calories</a></button>
                 {% else %}
-                <button style="width: fit-content;"><a href="/tracker" style="text-decoration: none; color: black;">Back to Current Day</a></button>
+                <button class="btn" style="width: fit-content;"><a href="/tracker" style="text-decoration: none; color: black;">Back to Current Day</a></button>
                 {% endif %}
             </div>
         </div>
