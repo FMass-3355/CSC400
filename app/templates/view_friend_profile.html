@@ -21,21 +21,25 @@
         }
         </style>
     </head>
-
+    
     <body>
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.fname.label(class="form-control-label") }}
-                {{ form.fname(class="form-control form-control-md", value=current_user.fname)}}
-            </p>
-            <p>
-                {{ form.lname.label(class="form-control-label") }}
-                {{ form.lname(class="form-control form-control-md", value=current_user.lname)}}
-            </p>
-            <p href="/profile" style="width: fit-content; margin: auto; float: right;">
-                {{ form.submit(class="form-control form-control-md btn btn-primary") }}</p>
-        </form>
+        <div id="myNav" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+              <a href="/homepage">Home</a>
+              <a href="/tracker">Tracker</a>
+              <a href="/profile">Profile</a>
+              <a href="/logout">Logout</a>
+            </div>
+        </div>
+    
+        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+    
+        <h1 style="text-align: center;">Profile</h1>
+        
+        <h1>user: {{query_friend_row.f_name}}<br>first: {{query_friend_row.first_name}}<br>last: {{query_friend_row.last_name}}<br></h1>
+
         <button style="width: fit-content;"><a href="/profile">Back</a></button>
+
     </body>
 </html>

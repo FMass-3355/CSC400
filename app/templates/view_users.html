@@ -15,9 +15,19 @@
                 <td>{{ info.username }}</td>
                 <td>{{ info.email }}</td>
                 <td>{{ info.role }}</td>
-                <td><a href="/delete_user/{{ info.user_id }}">Delete User</a></td>
+                <td><button onclick="deleteUser()">Delete User</button></td>
+                <script>
+                    function deleteUser() {
+                        if (confirm("Delete User?")) {
+                            window.location.href = "/delete_user/{{ info.user_id }}";
+                        }
+                        else {
+                            window.location.href = "/view_users";
+                        }}
+                </script>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="/homepage"><button>Back</button></a>
 {% endblock %}

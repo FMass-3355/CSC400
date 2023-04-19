@@ -5,15 +5,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../static/stylesheets/navbar.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="../static/js/navbar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+    <link rel="stylesheet" href="../static/stylesheets/base.css">
 </head>
 
-<body>
+<body class="background" style="color: aliceblue;">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div class="overlay-content">
@@ -24,74 +26,96 @@
         </div>
     </div>
 
-    <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+    <span class="openNav" onclick="openNav()">&#9776; </span>
 
-        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">            
-            <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
-        </div>
-        <h1 style="text-align: center;">{{actualDay2}}</h1>
+     
+        <br><br><h1 id="title" style="text-align: center;">{{actualDay2}}</h1>
         <br>
-        <h1 style="text-align: center;"> Day Tracker</h1>
-        <h3>Calories</h3>
-        <table id="table1" class="table-striped">
-            <tr>
-                <th>Food</th>
-                <th>Servings</th>
-                <th>Calories</th>
-            </tr>
-            {% for food in query_cal_row %}
-            <tr>
-                <td>{{food.c_name}}</td>
-                <td>{{food.c_input_date}}</td>
-                <td>{{food.c_calories_total}}</td>
-                <td><a href="/c_delete_row/{{ food.cal_id }}">Delete Food</a></td>
-            </tr>
-            {% endfor %}   
-        </table>
 
-        <h3>Exercise</h3>
-        <table id="table2" class="table-striped">
-            <tr>
-                <th>Exercise</th>
-                <th>Reps/Time</th>
-                <th>Calories Burned</th>
-            </tr>
-            {% for exercise in query_ex_row %}
-            <tr>
-                <td>{{exercise.e_name}}</td>
-                <td>{{exercise.e_duration_minutes}}</td>
-                <td>{{exercise.e_total_calories}}</td>
-                <td><a href="/e_delete_row/{{ exercise.ex_id }}">Delete Exercise</a></td>
-            </tr>
-            {% endfor %}
-        </table>
+        <div class="col-md-4 col-md-offset-4">
+            <div class="row">
+                <h3>Calories</h3>
+                <table id="table1" class="table-striped" style="width: 100%; margin: auto;">
+                    <tr>
+                        <th>Food</th>
+                        <th>Servings</th>
+                        <th>Calories</th>
+                        <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
+                    </tr>
+                    {% for food in query_cal_row %}
+                    <tr>
+                        <td>{{food.c_name}}</td>
+                        <td>{{food.c_input_date}}</td>
+                        <td>{{food.c_calories_total}}</td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <script>
+                            function deleteFood() {
+                                if (confirm("Delete Food?")) {
+                                    window.location.href = "/c_delete_row/{{ food.cal_id }}";
+                                }
+                                else {
+                                    window.location.href = "/edit_tracker";
+                                }}
+                        </script>
+                    </tr>
+                    {% endfor %}   
+                </table><br>
 
+                <form action="" autocomplete="off" method="post" id="foodForm">
+                    {{ form.hidden_tag() }}
+                    <p>
+                        {{ form.c_name(class="form-control form-control-md", placeholder="food name", id="food", list="foods")}}
+                        <datalist id='foods'></datalist>
+                    </p>
+                    <p>
+                        {{ form.c_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
+                    </p>
+                </form>
+            </div>
+        </div><br>
 
+        <div class="col-md-4 col-md-offset-4">
+            <div class="row">
+                <h3>Exercise</h3>
+                <table id="table2" class="table-striped" style="width: 100%; margin: auto;">
+                    <tr>
+                        <th>Exercise</th>
+                        <th>Reps/Time</th>
+                        <th>Calories Burned</th>
+                        <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
+                    </tr>
+                    {% for exercise in query_ex_row %}
+                    <tr>
+                        <td>{{exercise.e_name}}</td>
+                        <td>{{exercise.e_duration_minutes}}</td>
+                        <td>{{exercise.e_total_calories}}</td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <script>
+                            function deleteExercise() {
+                                if (confirm("Delete Exercise?")) {
+                                    window.location.href = "/e_delete_row/{{ exercise.ex_id }}";
+                                }
+                                else {
+                                    window.location.href = "/edit_tracker";
+                                }}
+                        </script>
+                    </tr>
+                    {% endfor %}
+                </table><br>
 
-    <form action="" autocomplete="off" method="post" id="foodForm">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.c_name.label(class="form-control-label")}}
-            {{ form.c_name(class="form-control form-control-md", placeholder="food name", id="food", list="foods")}}
-            <datalist id='foods'></datalist>
-        </p>
-        <p>
-            {{ form.c_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
-        </p>
-    </form>
-    <form action="" autocomplete="off" method="post" id="exerciseForm">
-    <p>
-        {{ form.e_name.label(class="form-control-label")}}
-        {{ form.e_name(class="form-control form-control-md", placeholder="exercise name", id="exercise",
-        list="exercises")}}
-        <datalist id='exercises'></datalist>
-    </p>
-    <p>
-        {{ form.e_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
-    </p>
-    </form>
-
-
+                <form action="" autocomplete="off" method="post" id="exerciseForm">
+                <p>
+                    {{ form.e_name(class="form-control form-control-md", placeholder="exercise name", id="exercise",
+                    list="exercises")}}
+                    <datalist id='exercises'></datalist>
+                </p>
+                <p>
+                    {{ form.e_submit(class="form-control form-control-md btn btn-primary", onSubmit=submitFood) }}
+                </p>
+                </form><br>
+                <button class="btn"><a href="/tracker" style="text-decoration: none; color: black;">Done</a></button></button>
+            </div>
+        </div>
 
         <script>
             var n = new Date();
@@ -99,7 +123,12 @@
             month = n.getMonth() + 1;
             day = n.getDate();
             // document.getElementById("date").innerText = month + "/" + day + "/" + year;
+        
+            if (screen && screen.width < 800) {
+                document.getElementById("title").style.fontSize = "40px";
+            }
 
+        
         function setYesterday() {
             var yesterday = n;
             yesterday.setDate(yesterday.getDate() - 1);
@@ -137,7 +166,6 @@
                     cell1.innerText = response.data.data.name;
                     cell2.innerText = response.data.data.serving_size;
                     cell3.innerText = response.data.data.calories;
-                    cell4.innerText = "DELETE";
                     location.reload();
                     // cell4.innerText = "/c_delete_row/{{ query_cal_row[-1] }}";
                 })
@@ -238,6 +266,7 @@
                     cell2.innerText = response.data.data.duration;
                     cell3.innerText = response.data.data.calories;
                     cell4.innerText = "DELETE";
+                    location.reload();
                 })
                 .catch(function (error) {
                     console.log("Error:")
@@ -254,10 +283,26 @@
             console.log(exerciseOptions);
             if (exercise_name.value || exerciseOptions.length == 0) insertExerciseRow(exerciseOptions[0]);
         })
-
-
-
     </script>
+
+    <footer class="titletext" style="text-align: center;">
+        <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+            <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+            <div class="row">
+                <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                    project to be used by fitness-oriented individuals.</div>
+                <div class="col-md-6 col-xs-6">
+                    <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                    <p>Emma Jamieson: ej@email.com</p>
+                    <p>Kari Bavis: kb@email.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

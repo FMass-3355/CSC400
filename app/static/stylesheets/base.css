@@ -10,13 +10,61 @@ body, html{
 
 h1{
     font-family:'Courier New', Courier, monospace;
+    font-size: 64px;
+    color: aqua;
 }
 
-.dateSwitch{
-    font-size: 50px;
+.content{
+    font-size: 34px;
+}
+
+.moveLeft span{
+    font-size: 70px;
     cursor: pointer;
+    position: relative;
+    text-decoration: none;
     color: aliceblue;
     transition: .3s;
+}
+
+.moveLeft:hover span{
+    animation: animateLeft 3s infinite;
+    cursor: pointer;
+}
+@keyframes animateLeft{
+    0%{
+        transform: translateX(0px);
+    }
+    50%{
+        transform: translateX(-30px);
+    }
+    100%{
+        transform: translateX(0px);
+    }
+}
+
+.moveRight span{
+    font-size: 70px;
+    cursor: pointer;
+    text-decoration: none;
+    color: aliceblue;
+    transition: .3s;
+}
+
+.moveRight:hover span{
+    animation: animateRight 3s infinite;
+    cursor: pointer;
+}
+@keyframes animateRight{
+    0%{
+        transform: translateX(0px);
+    }
+    50%{
+        transform: translateX(30px);
+    }
+    100%{
+        transform: translateX(0px);
+    }
 }
 
 .dateSwitch:hover, .dateSwitch:focus{
@@ -33,8 +81,59 @@ h1{
 .whiteback1{
     background-image: url(../Images/flippedblue.jpg);
     background-size: cover;
+    color: black;
 }
 
 .whiteback2{
-    background-image: url(https://wallpaperaccess.com/full/1109099.jpg);
+    background-image: url(../Images/flippedblue.jpg);
+    background-size: cover;
+    background-position-y: 400px;
+    color: black;
 }
+
+.rotate{
+    transition: all 2s linear;
+}
+
+.rotate.down {
+    transform:rotate(180deg);
+    transition: .5s;
+}
+
+.rotate2{
+    transition: all 2s linear;
+}
+
+.rotate2.down2 {
+    transform:rotate(180deg);
+    transition: .5s;
+}
+
+.collapseBar {
+    float: right;
+    font-size: 20px;
+    height: 20px;
+    vertical-align: middle;
+    transform: rotate(0deg);
+    transition: .3s;
+}
+
+.background {
+    background-image: 
+    linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+    url(https://www.incimages.com/uploaded_files/image/1920x1080/getty_854725372_391824.jpg);
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: rgb(9, 64, 100);
+        }
+
+        table {
+            font-size:medium;
+            width: 35%;
+            color: aliceblue;
+        }
+
+
+

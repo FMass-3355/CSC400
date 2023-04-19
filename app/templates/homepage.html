@@ -12,16 +12,18 @@
     </head>
 
     <style>
-        h1{
-            font-size: 64px;
+        h3{
+            color: aliceblue;
         }
 
-        .content{
-            font-size: 24px;
+        .homeBack {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://assets.gqindia.com/photos/610124ee5828449e02306209/16:9/pass/rainy%20day%20workout.jpg);
         }
     </style>
 
-    <body class="base">
+    <body class="base homeBack">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div class="overlay-content">
@@ -29,12 +31,17 @@
           <a href="/tracker">Tracker</a>
           <a href="/profile">Profile</a>
           <a href="/logout">Logout</a>
+          {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
         </div>
     </div>
 
-    <span class="openNav" onclick="openNav()">&#9776; </span>
+    <span class="openNav" onclick="openNav()">&#9776;</span>
    
-        <h1 style="text-align: center; color: aqua" class="titletext"> Welcome to FIT!</h1>
+        <br><br><h1 style="text-align: center; color: aqua;"> Welcome to FIT!</h1>
         <iframe src="/graph" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
         style="width:40%;border:none;margin:auto;"></iframe>
         <p class="content" style="color:aliceblue; text-align: center;">Take a look at your current calorie progress, {{user}}.</p><br><br><br><br>
@@ -43,7 +50,10 @@
                 <div class="row" style="padding-top: 1%; padding-bottom: 1%;">
                     <div class="col-md-8 col-xs-12">
                         <div class="row">
-                            <div class="col-md-12"><p class="content">Placeholder Text</p></div>
+                            <div class="col-md-12"><p class="content">Fitness and eating well are both major aspects to maintaing one's health.
+                                Even taking a walk can help you significantly in the long run. A major issue some people have however is keeping track of their calories; this is where FIT comes in.
+
+                            </p></div>
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
@@ -58,7 +68,9 @@
                 <div class="row" style="padding-top: 1%; padding-bottom: 1%;">
                     <div class="col-md-8">
                         <div class="row">
-                            <div class="col-md-12"><p class="content">Placeholder Text</p></div>
+                            <div class="col-md-12"><p class="content">We're here to help count your calories so you can focus on more important things, like your health. 
+                                All you have to do is enter the exercises you've done and food you've eaten that day and we'll do the rest.
+                                To get started, just head to your tracker and try telling us what you've eaten today!</p></div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -68,7 +80,7 @@
             </div>
         </div>
    
-    <footer class="titletext" style="margin-top: 10%;text-align: center; background-image: linear-gradient(rgba(46, 46, 46) 20%, rgb(9, 64, 100));">
+    <footer class="titletext" style="margin-top: 10%;text-align: center;">
         <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
             <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
             <div class="row">
