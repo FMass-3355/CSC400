@@ -15,6 +15,19 @@
     <link rel="stylesheet" href="../static/stylesheets/base.css">
 </head>
 
+<style>
+    button {
+        transition: .5s;
+    }
+
+    button:hover {
+        text-decoration: none;
+        color: black;
+        background-color: aqua;
+        transition: .5s;
+    }
+</style>
+
 <body class="background" style="color: aliceblue;">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -23,13 +36,18 @@
             <a href="/tracker">Tracker</a>
             <a href="/profile">Profile</a>
             <a href="/logout">Logout</a>
+            {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
         </div>
     </div>
 
     <span class="openNav" onclick="openNav()">&#9776; </span>
 
      
-        <br><br><h1 id="title" style="text-align: center;">{{actualDay2}}</h1>
+        <br><br><span class="dropbtn" style="text-align: center;">{{actualDay2}}</span>
         <br>
 
         <div class="col-md-4 col-md-offset-4">
