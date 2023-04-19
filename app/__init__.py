@@ -13,6 +13,10 @@ import requests
 import sys
 from wtforms.validators import DataRequired
 import json
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+import random
+
 #===================================================================================================
 
 
@@ -45,7 +49,9 @@ EMAIL = environ.get('EMAIL')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'csc33O'
 bootstrap = Bootstrap(app)
-app.static_folder = "static"
+#-----
+# app.static_folder = "static"
+# app.config.from_pyfile('config.cfg')
 #===================================================================================================
 #===================================================================================================
 # Specify the connection parameters/credentials for the database
@@ -59,20 +65,21 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= True
 db = SQLAlchemy(app)
 login = LoginManager(app)
 #===================================================================================================
-
-
-# user=db.session.query(User).filter_by(username='ArtMar23').first()
-# if user is None:
-#     custom_user = User(username='ArtMar23', email='artmar80@gmail.com', role='regular', fname='Arthur', lname='Martinez', date_of_birth='1999-02-02')
-#     custom_user.set_password('123')
-#     db.session.add(custom_user)
-#     db.session.commit()
-
-
-
-
-
-
+#===================================================================================================
+app.config["MAIL_SERVER"]='smtp.gmail.com'
+app.config["MAIL_USERNAME"]='fitemail420@gmail.com'
+app.config["MAIL_PASSWORD"]='dcaqhvkurlllfpfn'
+#csc400!!
+app.config["MAIL_PORT"]=465
+app.config["MAIL_USE_TLS"]=False
+app.config["MAIL_USE_SSL"]=True
+#app.config["SECURITY_CONFIRMABLE"] = True
+mail = Mail()
+mail.init_app(app)
+s = URLSafeTimedSerializer('Thisisasecret!')
+otp = random.randint(000000,999999)
+#s = Serializer('sercret', 30)
+#token = s.dumps({'user_id': 1}).decode('utf-8')
 #===================================================================================================
 # enables @login_required
 login.login_view = 'login'

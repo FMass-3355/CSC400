@@ -2,7 +2,7 @@
 
 from operator import methodcaller
 #from app import app as appl
-from app import API_KEY, app
+from app import API_KEY, app, otp, mail, s
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ, path
@@ -25,11 +25,29 @@ from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 import json
 
-import psycopg2
+#import psycopg2
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from email_validator import validate_email,EmailNotValidError
 
+# testEmail = "fitemail420@gmail.com"
+# emailObject = validate_email(testEmail)
+# print(emailObject.email)
+# try:
+#     # Validating the `testEmail`
+#     emailObject = validate_email(testEmail)
+
+#     # If the `testEmail` is valid
+#     # it is updated with its normalized form
+#     testEmail = emailObject.email
+#     print(testEmail)
+# except EmailNotValidError as errorMsg:
+#     # If `testEmail` is not valid
+#     # we print a human readable error message
+#     print(str(errorMsg))
 #API 
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
@@ -44,10 +62,12 @@ thisDay = datetime.now()
 today = thisDay.strftime("%B %d, %Y")
 databaseToday = thisDay.strftime("%Y-%m-%d")
 
+
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')
+    user = current_user.fname
+    return render_template('homepage.html', user=user)
   
 @app.route('/email', methods=['GET', 'POST'])
 def email():
@@ -126,19 +146,9 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = C_DeleteForm()
-    c_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if c_delete:
-            print("delete")
-            db.session.query(Calorie).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
+    db.session.query(Calorie).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/e_delete_row/<row_id>', methods=['GET', 'POST'])
 @login_required
@@ -146,20 +156,9 @@ def e_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = E_DeleteForm()
-    e_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if e_delete:
-            print("delete")
-            db.session.query(Exercise).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
-
+    db.session.query(Exercise).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
@@ -168,23 +167,26 @@ def edit_tracker():
     global thisDay
     user_id = current_user.id 
 
-
     form=EditTracker()
     if form.validate_on_submit():
         c_name = form.c_name.data
         c_input_date = databaseToday
+        c_serving_size_g = form.c_serving_size_g.data
+        c_total_calories = c_total_calories
         c_submit = form.c_submit.data
         e_name = form.e_name.data
         e_input_date = databaseToday
+        e_duration_minutes = form.e_duration_minutes.data
+        e_total_calories = e_total_calories
         e_submit = form.e_submit.data
         
         if c_name != '' and c_submit:
-            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date)
+            food = Calorie(fk_user_id=user_id, c_name=c_name, c_input_date=c_input_date, c_serving_size_g=c_serving_size_g, c_total_calories = c_total_calories)
             db.session.add(food)
             db.session.commit()
             print(c_name)
         elif e_name != '' and e_submit:
-            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date)
+            exercise = Exercise(fk_user_id=user_id, e_name=e_name, e_input_date=e_input_date, e_duration_minutes=e_duration_minutes, e_total_calories = e_total_calories)
             db.session.add(exercise)
             db.session.commit()    
             print(e_name)
@@ -199,6 +201,8 @@ def edit_tracker():
         row = CalInfo()
         row.cal_id = item.id
         row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
         row.c_name = item.c_name
         query_cal_row.append(row)
     
@@ -207,16 +211,21 @@ def edit_tracker():
         row = ExInfo()
         row.ex_id = item.id
         row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
         row.e_name = item.e_name
         query_ex_row.append(row)
 
 
-    return render_template('edit_tracker.html', form=form, workouts=workouts, foods=foods, query_cal_row=query_cal_row, query_ex_row=query_ex_row)
+    return render_template('edit_tracker.html', form=form, workouts=workouts, foods=foods, query_cal_row=query_cal_row, query_ex_row=query_ex_row, actualDay2=actualDay2)
     #return render_template('edit_tracker.html', form=form)
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 #Start with here
 @app.route('/')
 def index():
+    # msg = Message("Hello", sender="fitemail420@gmail.com", recipients=["deattlecowhawk@gmail.com"])
+    # msg.body = "testing"
+    # mail.send(msg)
     return redirect(url_for('login'))
     
 #Login Method
@@ -247,6 +256,73 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+# @app.route('/email_ver', methods=['GET', 'POST'])
+# def email_ver():
+#     if request.method == 'GET':
+#         return '<form action="/" method="POST"><input name="email"><input type="submit"></form>'
+
+#     email = request.form['email']
+#     token = s.dumps(email, salt='email-confirm')
+
+#     msg = Message('Confirm Email', sender='fitemail420@gmail.com', recipients=[email])
+
+#     link = url_for('confirm_email', token=token, _external=True)
+
+#     msg.body = 'Your link is {}'.format(link)
+
+#     mail.send(msg)
+
+#     return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+
+
+# @app.route('/confirm_email/<token>')
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+@app.route('/test',methods=['GET'])
+def test():
+    return render_template("test.html") 
+
+@app.route('/verify', methods=['POST'])
+def verify():
+
+    email = request.form["email"]
+    message = str(otp)   
+    subject = 'OTP'
+    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # msg.body = str(otp)  
+    mail.send(msg)  
+
+    # with mail.connect() as conn:
+    #     email = request.form["email"]   
+    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
+    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
+    #     conn.send(msg)
+
+    return render_template('verify.html')  
+
+@app.route('/validate',methods=["POST"])   
+def validate():  
+    user_otp = request.form['otp']  
+    if otp == int(user_otp):  
+        return "<h3> Email  verification is  successful </h3>"  
+    return "<h3>failure, OTP does not match</h3>" 
+
+# @app.route('/confirm_email/<token>', methods=['GET', 'POST'])
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+
+
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
@@ -300,6 +376,8 @@ def create_user():
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
+
+
         if (email_exists is None) and (user_exists is None):
             user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
             user.set_password(password)
@@ -332,29 +410,18 @@ def add_user():
             email = form.email.data
             fname = form.fname.data
             lname = form.lname.data
-            #mname = form.mname.data
-            role = form.role.data
-            company_name = form.company_name.data 
+            gender = form.gender.data
             date_of_birth = form.date_of_birth.data
+            role = 'regular'
             
 
             email_exists = db.session.query(User).filter_by(email=email).first()
             user_exists = db.session.query(User).filter_by(username=username).first()   
             if (email_exists is None) and (user_exists is None):
-                user = User(username=username, email=email, role=role, fname=fname, lname=lname, mname=mname, date_of_birth=date_of_birth)
+                user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
                 user.set_password(password)
                 db.session.add(user)
-                if role == 'recruiter': 
-                    Comp_exist = Company.query.filter_by(company_name=company_name).first()
-                    if Comp_exist is None:
-                        company = Company(company_name=company_name)
-                        db.session.add(company)
-                    else:
-                        company = db.session.query(Company.id).filter_by(company_name=company_name).first()
-                    if (user is not None and company is not None) and Recruiter.query.filter_by(fk_user_id=user.id, fk_company_id=company.id).first() is None:
-                        recruiter_Add=Recruiter(fk_user_id=user.id, fk_company_id=company.id)
-                        db.session.add(recruiter_Add)
-                        db.session.commit()
+                
                 db.session.commit()
                 flash('User added successfully')
             else:
@@ -369,34 +436,56 @@ def add_user():
 @app.route('/delete_user/<user_id>', methods=['GET', 'POST'])
 @login_required
 def delete_user(user_id):
-    form = RemoveUser()
-    if form.validate_on_submit():
-        is_recruiter = db.session.query(Recruiter.id).filter_by(fk_user_id=user_id).first()
-        is_student = db.session.query(User.id).filter_by(id=user_id, role='student').first()
-        if is_recruiter:
-            for item in db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id):
-                db.session.query(Associations_Application).filter_by(fk_job_id=item.id).delete()
-            db.session.query(Job).filter_by(fk_recruiter_id=is_recruiter.id).delete()
-            db.session.query(Recruiter).filter_by(fk_user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
-        elif is_student:
-            db.session.query(Associations_Application).filter_by(fk_user_id=is_student.id).delete()
-            db.session.query(Upload).filter_by(user_id=user_id).delete()
-            db.session.query(User).filter_by(id=user_id).delete()   
-            db.session.commit()
-        else:
-            db.session.query(User).filter_by(id=user_id).delete()
-            db.session.commit()
-        # Job.query.filter(id=job_id).delete()
-        return redirect(url_for('view_users'))
 
-    return render_template('close_job.html', form=form)
+    friends1 = db.session.query(Friend).filter_by(fk_user_id=user_id)
+    friends1 = friends1.all()
+    len_friends1 = len(friends1)
+    friends2 = db.session.query(Friend).filter_by(fk_friend_id=user_id)
+    friends2 = friends2.all()
+    len_friends2 = len(friends2)
+    calorie = db.session.query(Calorie).filter_by(fk_user_id=user_id)
+    calorie = calorie.all()
+    len_calorie = len(calorie)
+    exercise = db.session.query(Exercise).filter_by(fk_user_id=user_id)
+    exercise = exercise.all()
+    len_exercise = len(exercise)
+    track = db.session.query(Track).filter_by(fk_user_id=user_id)
+    track = track.all()
+    len_track = len(track)
+        
+        # print(f'friends: {len_friends1}')
+        # print(f'friends: {len_friends2}')
+    for f in range(len_friends1):
+        f = db.session.query(Friend).filter_by(fk_user_id=user_id).first()
+        db.session.delete(f)
+        db.session.commit()
+    for f in range(len_friends2):
+        f = db.session.query(Friend).filter_by(fk_friend_id=user_id).first()
+        db.session.delete(f)
+        db.session.commit()
+    for c in range(len_calorie):
+        c = db.session.query(Calorie).filter_by(fk_user_id=user_id).first()
+        db.session.delete(c)
+        db.session.commit()
+    for e in range(len_exercise):
+        e = db.session.query(Exercise).filter_by(fk_user_id=user_id).first()
+        db.session.delete(e)
+        db.session.commit()
+    for t in range(len_track):
+        t = db.session.query(Track).filter_by(fk_user_id=user_id).first()
+        db.session.delete(t)
+        db.session.commit()
+
+    db.session.query(User).filter_by(id=user_id).delete()
+    db.session.commit()
+    return redirect(url_for('view_users'))
+    
 
 @app.route('/view_users', methods=['GET', 'POST'])
 def view_users():
+    
     query_users = []
-    # Rec_id = db.session.query(Recruiter.id).filter_by(fk_user_id=current_user.id)
+
     if is_admin():
         admin_id = current_user.id
         for item in db.session.query(User).filter(User.id!=admin_id).all():
@@ -418,31 +507,273 @@ def view_users():
 @login_required
 def profile():
     if current_user.is_authenticated:
+        user_id = current_user.id
         username = current_user.username
         email = current_user.email
         role = current_user.role
         fname = current_user.fname
         lname = current_user.lname
         email = current_user.email
-        # mname = current_user.mname
         dob = current_user.date_of_birth
-        # height = current_user.height
-        # weight = current_user.weight
-        # address = current_user.address
-        # city = current_user.city
-        # state = current_user.state
-        # zip_code = current_user.zip_code
-        # phone_number = current_user.phone_number
-        # user_bio = current_user.user_bio
-        # image_file = url_for('static', filename='images/' + current_user.image_file)
-        # exists = db.session.query(Upload.id).filter_by(user_id=current_user.id, doc_type="profile_pic").first()
-        # if exists:
-        #    image_file = db.session.query(Upload).filter_by(user_id=current_user.id, doc_type="profile_pic").with_entities(Upload.data).first()
-        # else:
-        #     image_file = url_for('static', filename='images/' + current_user.image_file)
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob)
+        friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
+        friends = friends.all()
+        requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
+        requests = requests.all()
+        sent = db.session.query(Friend).filter_by(fk_user_id=user_id, status=1)
+        sent = sent.all()
+        len_friends = len(friends)
+        len_requests = len(requests)
+        len_sent = len(sent)
+
+        #s2 = mutual friends
+        #s1 = user sent request
+        #s0 = friend sent request
+        query_friend_row = []
+        query_requests_row = []
+        query_sent_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            #user_id = User.id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            # name = row.f_name
+            row.f_name = name.username
+            #db.session.query(User).filter_by(username=username).first()
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+            elif row.status == 1:
+                query_sent_row.append(row)
+            elif row.status == 0:
+                query_requests_row.append
+            # print(f'row id: {row.row_id}')
+            # print(f'user id: {row.user_id}')
+            # print(f'friend id: {row.f_id}')
+            # print(f'friend name: {row.f_name}')
+            # #print(f'friend name: {name.username}')
+            # print(f'status: {row.status}')
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
+
+@app.route('/search_users', methods=['GET', 'POST'])
+@login_required
+def search_users():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        form = SearchUsers()
+        request_form=FriendRequest()
+        if form.validate_on_submit:
+            search_username = form.username.data
+
+            users = db.session.query(User).filter_by()
+            users = users.all()
+            len_users = len(users)
+            #not getting all users in query below
+            #for loop keeps going until it finds the user its looking for
+            query_user_row = [] 
+            count = 0
+            for item in db.session.query(User):
+                row = UserInfo()
+                row.user_id = item.id
+                row.username = item.username
+                row.email = item.email
+                row.role = item.role
+                friendship = 0
+                f_id = None
+                # print(f"user ids: {row.user_id}")
+                result = "User Not Found"
+                if row.user_id != current_user_id:
+                    query_user_row.append(row)
+                    count+=1
+                    print('++++')
+                    print(row.username)
+                    print(type(row.username))
+                    print(search_username)
+                    print(type(search_username))
+                    if row.username == search_username:
+                        # print("yay QUERY")
+                        # print(search_username)
+                        result = "User Found"
+                        f_id = row.user_id
+                        print(f'IN LOOP {search_username} {row.user_id}')
+                        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=2).first()
+                        request = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=0).first()
+                        sent = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=1).first()
+
+                        print(f' {search_username} None? {friend}')
+                        
+                        if (friend is None) and (request is None) and (sent is None) :
+                            friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=row.user_id, status=1)
+                            friendship_for_friend = Friend(fk_user_id=row.user_id, fk_friend_id=current_user_id, status=0)
+                            db.session.add(friendship_for_user)
+                            db.session.add(friendship_for_friend)
+                            db.session.commit()
+                            friendship = 3
+                            break
+                        elif (friend is not None) and (request is None) and (sent is None) :
+                            friendship = 2
+                            break
+                        elif (friend is None) and (request is not None) and (sent is None) :
+                            friendship = 0
+                            break
+                        elif (friend is None) and (request is None) and (sent is not None) :
+                            friendship = 1
+                            break                       
+                        
+                    elif (row.username != search_username) and ((len_users-1) == count) and (search_username != None):
+                        print(f'RESULT {result} {search_username}')
+                        print(f'EQUALS? {row.username == search_username}')
+                        flash(result)
+                        # flash(len_users)
+                        # flash(count)
+              
+
+
+            # if search_username in users:
+            #     print("yay USERS")
+            #     print(search_username)
+            # else:
+            #     print("fuck USERS") 
+            #     print(search_username)
+        
+
+        all_user_row = [] 
+        for item in db.session.query(User):
+            row = UserInfo()
+            row.user_id = item.id
+            row.username = item.username
+            row.email = item.email
+            row.role = item.role
+            # f_id = row.f_id
+            print(f"user ids: {row.user_id}")
+            if row.user_id != current_user_id:
+                all_user_row.append(row)
+        
+    print(f'END OF CODE\n\tresult = {result}\n\tfriendship = {friendship}\n\tf_id = {f_id}')    
+    return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form, friendship=friendship, f_id=f_id)
+
+
+@app.route('/view_friends', methods=['GET', 'POST'])
+@login_required
+def view_friends():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+        
+        return render_template('friends.html', query_friend_row=query_friend_row)
+
+@app.route('/view_requests', methods=['GET', 'POST'])
+@login_required
+def view_requests():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_requests_row = []
+
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 0:
+                query_requests_row.append(row)
+                                 
+        return render_template('requests.html', query_requests_row=query_requests_row)
+
+@app.route('/accept_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def accept_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            # friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2)
+            # friendship_for_friend = Friend(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2)
+            # db.session.update(friendship_for_user)
+            # db.session.update(friendship_for_friend)
+            # 
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id).update({'status':2})
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/decline_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def decline_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=1).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/remove_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def remove_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2).delete()
+            db.session.commit()
+    return render_template('friends.html')
+
+@app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def friend_profile(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        #f_id = friend_id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            row.first_name = name.fname
+            row.last_name = name.lname
+
+
+            friend_id = int(friend_id)
+
+            
+            if (row.status == 2) and (row.f_id == friend_id):
+                print("IN IF")
+                query_friend_row.append(row)
+                break
+        print(len(query_friend_row))
+        query_friend_row = query_friend_row[0]
+        return render_template('view_friend_profile.html', query_friend_row=query_friend_row)
+        
+        
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
@@ -450,9 +781,18 @@ def recover_account():
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
+        newPassword = form.newPassword.data
+        newPassword_retype = form.newPassword_retype.data
         if (db.session.query(User).filter_by(username=username).first()) and (db.session.query(User).filter_by(email=email).first()):
-            password = db.session.query(User.password_hash).first()
-            print(password)
+            if newPassword == newPassword_retype:
+                user = db.session.query(User).filter_by(username=username).first()
+                password = db.session.query(User.password_hash).first()
+                print("TEST")
+                print(password)
+                user.set_password(newPassword)
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for('login'))
     return render_template('account_recovery.html', form=form)
     
     
@@ -536,6 +876,7 @@ def ninja_api_search_by_activity():
 @login_required
 def ninja_api_search_by_food():
     if request.method == "GET":
+        user_id = current_user.id 
         food_name = request.args.get('name')
         response = requests.get(f"{NUTRITION_API_URL}?query={food_name}", headers={'X-Api-Key': API_KEY})
         response_data = response.json()
@@ -545,6 +886,7 @@ def ninja_api_search_by_food():
             "status": "error", 
             "message": "Got an error from API"
             }, mimetype="application/json")
+                
     return Response(json.dumps(response_data),  mimetype='application/json')
 
 @app.route('/add_food', methods=['POST'])
@@ -555,7 +897,7 @@ def add_food():
         c_name = form_data['name']
         if not c_name: raise "name missing"
 
-        c_calories_total = form_data['calories']
+        c_total_calories = form_data['calories']
         c_serving_size_g = form_data['serving_size_g']
         c_fat_saturated_g = form_data['fat_saturated_g']
         c_protein_g = form_data['protein_g']
@@ -570,7 +912,7 @@ def add_food():
         calorie = Calorie(fk_user_id=current_user.id,
                                 c_name =c_name,
                                 c_input_date=date.today(),
-                                c_calories_total = c_calories_total,
+                                c_total_calories = c_total_calories,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
                                 c_protein_g = c_protein_g,
@@ -590,7 +932,7 @@ def add_food():
                     "data": {
                         "name": calorie.c_name,
                         "serving_size": calorie.c_serving_size_g,
-                        "calories": calorie.c_calories_total,
+                        "calories": calorie.c_total_calories,
                         "id": calorie.id
                     }
                     }
@@ -603,7 +945,7 @@ def add_food():
                 "message": str(error)
                 }
             return Response(json.dumps(response_data), status=500, mimetype='application/json')
-    
+        
 @app.route('/add_workout', methods=['POST'])
 @login_required
 def add_workout():
@@ -612,15 +954,15 @@ def add_workout():
         e_name = form_data['name']
         if not e_name: raise "name missing"
 
-        e_calories_per_hour = form_data['calories_per_hour']
+        e_total_calories_per_hour = form_data['calories_per_hour']
         e_duration_minutes = form_data['duration_minutes']
-        e_total_calories = e_calories_per_hour * (e_duration_minutes/60)
+        e_total_calories = e_total_calories_per_hour * (e_duration_minutes/60)
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
-                            e_calories_per_hour = e_calories_per_hour,
+                            e_calories_per_hour = e_total_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
         
         try:
@@ -654,6 +996,7 @@ def add_workout():
 @login_required
 def graph():
     plt.switch_backend('PDF')
+    plt.switch_backend('PDF')
     #connecting to the database 
     IP = environ.get('MYSQL_IP')
     USERNAME = environ.get('MYSQL_USER')
@@ -662,8 +1005,8 @@ def graph():
     DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
     engine = create_engine(DB_CONFIG_STR)
     
-
     calories_df = pd.read_sql(
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
@@ -675,13 +1018,12 @@ def graph():
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
-    plt.ylabel("calories", size = 20)
+    plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
-
-    return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
-
-
+    user = current_user.id
+    #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
+    return render_template('graph.html', user=user)
 
 
 #---------------------App Error--------------------------------------------------------------------#

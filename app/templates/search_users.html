@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="../static/js/navbar.js"></script>
+
+        <style>
+         
+        body, html {
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: right top;
+            font-family: 'Lato', sans-serif;
+        }
+        </style>
+    </head>
+    
+    <body>
+        <div id="myNav" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+              <a href="/homepage">Home</a>
+              <a href="/tracker">Tracker</a>
+              <a href="/profile">Profile</a>
+              <a href="/logout">Logout</a>
+            </div>
+        </div>
+    
+        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+    
+        <h1 style="text-align: center;">Search Users</h1>
+
+        <!-- <p>How Many users: {{len_users}}</p>
+
+        <table id="user_table">
+            
+          <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+          </tr>
+          {% for user in all_user_row %}
+          <tr>
+              <td>{{user.user_id}}</td>
+              <td>{{user.username}}</td>
+              <td>{{user.email}}</td>
+              <td>{{user.role}}</td>
+          </tr>
+          {% endfor %} -->
+          
+      </table>
+      <form action="" autocomplete="off" method="post" id="userForm">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username.label(class="form-control-label")}}
+            {{ form.username(class="form-control form-control-md", placeholder="user search", id="user search")}}
+        </p>
+        <p>
+            {{ form.submit(class="form-control form-control-md btn btn-primary") }}
+        </p>
+        </form>
+
+
+    
+        {% if result == "User Found" %}
+            <p>{{result}}</p>
+            <p>{{search_username}}</p>
+            <!-- <button style="width: fit-content;">Send Friend Request To -> {{search_username}}</button> -->
+            <!-- if not anything -->
+            {% if friendship == 3 %}
+                <form action="" autocomplete="off" method="post" id="requestForm">
+                {{ request_form.hidden_tag() }}
+                <p>
+                    {{ request_form.friend_request(class="form-control form-control-md btn btn-primary") }}
+                </p>
+                </form>
+                <!-- if already friends -->
+            {% elif friendship == 2 %}
+                <button style="width: fit-content;"><a href="/friend_profile/{{f_id}}">View Profile</a></button>
+            {% else %}
+            <script>
+                 console.log("Either sent request already, or request was sent from user (both ways you cannot do the above two options)");
+            </script>
+               
+            {% endif %}
+        {% endif %}
+
+
+
+
+
+
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger show"
+        role="alert" style="text-align: center;">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+
+        <button style="width: fit-content;"><a href="/profile">Back</a></button>
+
+    </body>
+</html>

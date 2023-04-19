@@ -1,0 +1,33 @@
+
+{% block content %}
+    <h1><a href="/add_user">ADD USER</a></h1>
+    <table>
+        <thead>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+        </thead>
+        <tbody>
+            {% for info in query_users %}
+            <tr>
+                <td>{{ info.user_id }}</td>
+                <td>{{ info.username }}</td>
+                <td>{{ info.email }}</td>
+                <td>{{ info.role }}</td>
+                <td><button onclick="deleteUser()">Delete User</button></td>
+                <script>
+                    function deleteUser() {
+                        if (confirm("Delete User?")) {
+                            window.location.href = "/delete_user/{{ info.user_id }}";
+                        }
+                        else {
+                            window.location.href = "/view_users";
+                        }}
+                </script>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/homepage"><button>Back</button></a>
+{% endblock %}

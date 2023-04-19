@@ -4,69 +4,150 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
-
-    <body>
+    <body class="background" style="color:aliceblue;">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
-              <a href="/homepage">Home</a>
+              <a href="/homepage" class="content">Home</a>
               <a href="/tracker">Tracker</a>
               <a href="/profile">Profile</a>
               <a href="/logout">Logout</a>
             </div>
         </div>
 
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
-
-        <div style="width:100%; text-align: center; background-color: beige; padding-left: 2.5%; padding-right: 2.5%;">
-            <a href="/yesterday"><span style="font-size: 50px; cursor: pointer; float: left; color: black;">&#x3c;</span></a>
-            <span style="font-size: 50px; cursor: pointer;">{{ pdate }}</span>
-            <a href="/tomorrow"><span style="font-size: 50px; cursor: pointer; float: right; color: black;">&#x3e;</span></a>
+        <span class="openNav" onclick="openNav()">&#9776;</span>
+        <br><br><h1 style="text-align: center; color: aqua;">Calorie Tracker</h1><br>
+        <div class="col-md-offset-2 col-md-8 col-xs-12" style="text-align: center;">
+            <div class="row">
+                <div class="col-md-1 col-xs-1 moveLeft col-md-offset-2">
+                    <a href="/yesterday" style="vertical-align: middle;"><span style="padding-left: 25px; padding-right: 25px; float: left;">&#x2039;</span></a>
+                </div>
+    
+                <div class="col-md-6 col-xs-10 dropdown" style="display: table; overflow: hidden;transform: translateY(20px)">
+                    <div style="display: table-cell; vertical-align: middle;">
+                    <span onclick="myFunction()" class="dropbtn" style="cursor: pointer;">{{ pdate }}</span></div>
+                    <div id="myDropdown" class="dropdown-content">
+                      <a href="#">Day View</a>
+                      <a href="#">Month View</a>
+                      <a href="#">Year View</a>
+                    </div>
+                </div>
+    
+                <div class="col-md-1 col-xs-1 moveRight">
+                    <a href="/tomorrow"><span style="padding-left: 25px; padding-right: 25px; float: right;">&#x203A;</span></a>
+                </div>
+            </div>
         </div>
-        <br>
-        <h1 style="text-align: center;"> Day Tracker</h1>
-        {% if pdate == actualDay %}
-        <br><button><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit</a></button>
-        <br><button><a href="/graph" style="text-decoration: none; color: black;">Graph</a></button>
-        {% endif %}
-        <h3>Calories</h3>
-        <table id="table1">
-            <tr>
-                <th>Food</th>
-                <th>Servings</th>
-                <th>Calories</th>
-            </tr>
-            {% for food in foods %}
-            <tr>
-                <td>{{food.c_name}}</td>
-                <td>{{food.c_input_date}}</td>
-            </tr>
-            {% endfor %}
-        </table>
 
-        <h3>Exercise</h3>
-        <table id="table2">
-            <tr>
-                <th>Exercise</th>
-                <th>Reps/Time</th>
-                <th>Calories Burned</th>
-            </tr>
-            {% for exercise in workouts %}
-            <tr>
-                <td>{{exercise.e_name}}</td>
-                <td>{{exercise.e_input_date}}</td>
-            </tr>
-            {% endfor %}
-        </table>
- 
+        <br>
+        <br><iframe src="/graph" on onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
+        style="width:40%;border:none;margin:auto;"></iframe><br><br>
+
+        <div class="col-md-4 col-md-offset-4">
+            <div class="row">
+                <button 
+                class="btn btn-primary rotate" 
+                type="button" 
+                data-toggle="collapse"
+                data-target="#collapseExample1" 
+                aria-expanded="false" 
+                aria-controls="collapseExample"
+                style="width:100%; margin:auto;">
+                    Calories<span id="chevron" class="collapseBar rotate">&#8963;</span>
+                </button>
+                <div class="collapse" id="collapseExample1" style="margin-bottom: 2%;">
+                    <table id="table1" class="table-striped" style="margin: auto; width: 100%;">
+                        <tr>
+                            <th>Food</th>
+                            <th>Servings (in grams)</th>
+                            <th>Calories</th>
+                        </tr>
+                        {% for food in foods %}
+                        <tr>
+                            <td>{{food.c_name}}</td>
+                            <td>{{food.c_serving_size_g}}</td>
+                            <td>{{food.c_total_calories}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div><br>
+            
+            <div class="row">
+                <button 
+                class="btn btn-primary rotate2"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseExample2"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+                style="width:100%; margin:auto;">
+                    Exercise<span id="chevron2" class="collapseBar rotate2">&#8963;</span>
+                </button>
+                <div class="collapse" id="collapseExample2">
+                    <table id="table2" class="table-striped" style="margin: auto; width: 100%;">
+                        <tr>
+                            <th>Exercise</th>
+                            <th>Reps/Time</th>
+                            <th>Calories Burned</th>
+                        </tr>
+                        {% for exercise in workouts %}
+                        <tr>
+                            <td>{{exercise.e_name}}</td>
+                            <td>{{exercise.e_duration_minutes}}</td>
+                            <td>{{exercise.e_total_calories}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div><br>
+    
+            <div class="row">
+                {% if pdate == actualDay %}
+                <button class="btn" style="width: fit-content;"><a href="/edit_tracker" style="text-decoration: none; color: black;">Edit Calories</a></button>
+                {% else %}
+                <button class="btn" style="width: fit-content;"><a href="/tracker" style="text-decoration: none; color: black;">Back to Current Day</a></button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <footer class="titletext" style="text-align: center; margin-top: 10%;">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ej@email.com</p>
+                        <p>Kari Bavis: kb@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         <script>
+            var chevron = document.getElementById("chevron");
+                $(".rotate").click(function(){
+                    $(chevron).toggleClass("down");
+                });
+
+                var chevron2 = document.getElementById("chevron2");
+                $(".rotate2").click(function(){
+                    $(chevron2).toggleClass("down2");
+                });
+            
             var n = new Date();
             year = n.getFullYear();
             month = n.getMonth() + 1;
@@ -89,6 +170,26 @@
                 var month = tomorrow.getMonth() + 1;
                 var day = tomorrow.getDate();
                 document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+            }
+
+                        /* When the user clicks on the button,
+            toggle between hiding and showing the dropdown content */
+            function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+            }
+
+            // Close the dropdown menu if the user clicks outside of it
+            window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+                }
+            }
             }
 
         </script>
