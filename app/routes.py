@@ -306,12 +306,7 @@ def verify():
 
     return render_template('verify.html')  
 
-@app.route('/validate',methods=["POST"])   
-def validate():  
-    user_otp = request.form['otp']  
-    if otp == int(user_otp):  
-        return "<h3> Email  verification is  successful </h3>"  
-    return "<h3>failure, OTP does not match</h3>" 
+
 
 # @app.route('/confirm_email/<token>', methods=['GET', 'POST'])
 # def confirm_email(token):
@@ -348,7 +343,7 @@ def change_password():
             print('old password correct', file=sys.stderr)
             if new_pass == new_pass_retype:
                 print('password & retype match', file=sys.stderr)
-                user.set_password(new_pass)
+                user.set_password(new_pass, False)
                 db.session.add(user)
                 db.session.commit()
             else:
@@ -379,12 +374,21 @@ def create_user():
 
 
         if (email_exists is None) and (user_exists is None):
-            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
-            user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
             
-            return redirect(url_for('login'))
+            message = str(otp)   
+            subject = 'OTP'
+            msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+            # msg.body = str(otp)  
+            mail.send(msg) 
+            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
+            password = user.set_password(password, True)
+            # user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
+            # user.set_password(password)
+            # db.session.add(user)
+            # db.session.commit()       
+            
+            # return redirect(url_for('validate'))
+            return render_template('verify.html', username=username, password=password, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
@@ -393,6 +397,35 @@ def create_user():
     print(all_usernames, file=sys.stderr)
     return render_template('create_user.html', form=form)
 
+
+@app.route('/validate/<username>/<password>/<email>/<fname>/<lname>/<date_of_birth>',methods=["POST"])   
+def validate(username,password,email,fname,lname,date_of_birth):  
+    if request.method == "POST":
+        # first_name = request.form.get("fname")
+        username = username
+        print(f"username = {username}")
+        password = password
+        print(f"password = {password}")
+        email = email
+        print(f"email = {email}")
+        fname = fname
+        print(f"fname = {fname}")
+        lname = lname
+        print(f"lname = {lname}")
+        date_of_birth = date_of_birth
+        print(f"date_of_birth = {date_of_birth}")
+        # fname=fname
+        # print(f"fname = {fname}")
+        #fname = v_form.fname.data
+        #print(f"FIRST NAME: {fname}")
+        user_otp = request.form['otp']  
+        if otp == int(user_otp):  
+            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
+            user.set_password(password, False)
+            db.session.add(user)
+            db.session.commit()
+            return "<h3> Email  verification is  successful </h3>"  
+    return "<h3>failure, OTP does not match</h3>" 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
 
 
@@ -419,7 +452,7 @@ def add_user():
             user_exists = db.session.query(User).filter_by(username=username).first()   
             if (email_exists is None) and (user_exists is None):
                 user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
-                user.set_password(password)
+                user.set_password(password, False)
                 db.session.add(user)
                 
                 db.session.commit()
@@ -789,7 +822,7 @@ def recover_account():
                 password = db.session.query(User.password_hash).first()
                 print("TEST")
                 print(password)
-                user.set_password(newPassword)
+                user.set_password(newPassword, False)
                 db.session.add(user)
                 db.session.commit()
                 return redirect(url_for('login'))
