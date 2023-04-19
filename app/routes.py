@@ -664,14 +664,14 @@ def graph():
     
 
     calories_df = pd.read_sql(
-    text(f"SELECT c_input_date, c_calories_total FROM calorie WHERE fk_user_id = {current_user.id}"),
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
     exercises_df = pd.read_sql(
     text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
-    plt.plot("c_input_date", "c_calories_total", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
