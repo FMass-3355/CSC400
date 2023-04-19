@@ -11,6 +11,20 @@
         <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
+
+    <style>
+        button {
+            transition: .5s;
+        }
+
+        button:hover {
+            text-decoration: none;
+            color: black;
+            background-color: aqua;
+            transition: .5s;
+        }
+    </style>
+
     <body class="background" style="color:aliceblue;">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -19,6 +33,11 @@
               <a href="/tracker">Tracker</a>
               <a href="/profile">Profile</a>
               <a href="/logout">Logout</a>
+              {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
             </div>
         </div>
 
@@ -30,11 +49,11 @@
                     <a href="/yesterday" style="vertical-align: middle;"><span style="padding-left: 25px; padding-right: 25px; float: left;">&#x2039;</span></a>
                 </div>
     
-                <div class="col-md-6 col-xs-10 dropdown" style="display: table; overflow: hidden;transform: translateY(20px)">
+                <div class="col-md-6 col-xs-10 dropdown" style="display: table;">
                     <div style="display: table-cell; vertical-align: middle;">
                     <span onclick="myFunction()" class="dropbtn" style="cursor: pointer;">{{ pdate }}</span></div>
                     <div id="myDropdown" class="dropdown-content">
-                      <a href="#">Day View</a>
+                      <a href="/tracker">Day View</a>
                       <a href="#">Month View</a>
                       <a href="#">Year View</a>
                     </div>

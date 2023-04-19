@@ -556,7 +556,24 @@ def profile():
             # print(f'friend name: {row.f_name}')
             # #print(f'friend name: {name.username}')
             # print(f'status: {row.status}')
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
+        if current_user.is_authenticated:
+            current_user_id = current_user.id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob,
+                           query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
 
@@ -740,7 +757,7 @@ def remove_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2).delete()
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2).delete()
             db.session.commit()
-    return render_template('friends.html')
+    return redirect(url_for('profile'))
 
 @app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -761,20 +778,14 @@ def friend_profile(friend_id):
             row.first_name = name.fname
             row.last_name = name.lname
 
-
             friend_id = int(friend_id)
 
-            
             if (row.status == 2) and (row.f_id == friend_id):
-                print("IN IF")
                 query_friend_row.append(row)
                 break
-        print(len(query_friend_row))
         query_friend_row = query_friend_row[0]
-        return render_template('view_friend_profile.html', query_friend_row=query_friend_row)
+        return render_template('view_friend_profile.html', query_friend_row=query_friend_row, f_id=f_id)
         
-        
-
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
     form = AccountRecovery()
@@ -800,7 +811,64 @@ def recover_account():
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    user_id = current_user.id
     form = EditProfileForm()
+    friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
+    friends = friends.all()
+    requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
+    requests = requests.all()
+    sent = db.session.query(Friend).filter_by(fk_user_id=user_id, status=1)
+    sent = sent.all()
+    len_friends = len(friends)
+    len_requests = len(requests)
+    len_sent = len(sent)
+
+    #s2 = mutual friends
+    #s1 = user sent request
+    #s0 = friend sent request
+    query_friend_row = []
+    query_requests_row = []
+    query_sent_row = []
+    for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
+        row = FriendInfo()
+        row.row_id = item.id
+        row.user_id = current_user.id
+        row.f_id = item.fk_friend_id
+        f_id = row.f_id
+        #user_id = User.id
+        name = db.session.query(User).filter_by(id=f_id).first()
+        # name = row.f_name
+        row.f_name = name.username
+        #db.session.query(User).filter_by(username=username).first()
+        row.status = item.status
+        
+        if row.status == 2:
+            query_friend_row.append(row)
+        elif row.status == 1:
+            query_sent_row.append(row)
+        elif row.status == 0:
+            query_requests_row.append
+        # print(f'row id: {row.row_id}')
+        # print(f'user id: {row.user_id}')
+        # print(f'friend id: {row.f_id}')
+        # print(f'friend name: {row.f_name}')
+        # #print(f'friend name: {name.username}')
+        # print(f'status: {row.status}')
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+    query_friend_row = []
+    for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+        row = FriendInfo()
+        row.row_id = item.id
+        row.user_id = current_user.id
+        row.f_id = item.fk_friend_id
+        f_id = row.f_id
+        name = db.session.query(User).filter_by(id=f_id).first()
+        row.f_name = name.username
+        row.status = item.status
+        
+        if row.status == 2:
+            query_friend_row.append(row)
     if form.validate_on_submit():
         #---------------------------# 
         fname = form.fname.data
@@ -833,7 +901,8 @@ def edit_profile():
 
         return redirect(url_for('profile'))
     image_file = url_for('static', filename='images/' + 'profile.png')
-    return render_template('edit_profile.html', form=form, image_file=image_file)
+    return render_template('edit_profile.html', form=form, image_file=image_file, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
   
 
 #Workouts
@@ -1024,7 +1093,36 @@ def graph():
     #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
     return render_template('graph.html', user=user)
 
+@app.route('/friendGraph/<friend_id>')
+@login_required
+def friendGraph(friend_id):
+    plt.switch_backend('PDF')
+    plt.switch_backend('PDF')
+    #connecting to the database 
+    IP = environ.get('MYSQL_IP')
+    USERNAME = environ.get('MYSQL_USER')
+    PASSWORD = environ.get('MYSQL_PASS')
+    DB_NAME = environ.get('MYSQL_DB')
+    DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
+    engine = create_engine(DB_CONFIG_STR)
+    
+    calories_df = pd.read_sql(
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {friend_id}"),
+    con=engine.connect())
 
+    exercises_df = pd.read_sql(
+    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {friend_id}"),
+    con=engine.connect())
+
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
+
+    plt.xlabel("Date",  size = 20)
+    plt.ylabel("Calories", size = 20)
+    plt.legend()
+    plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{friend_id}-graph.png"))
+    #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
+    return render_template('friendGraph.html', friend_id=friend_id)
 #---------------------App Error--------------------------------------------------------------------#
 
 #page not found
