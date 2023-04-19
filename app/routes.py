@@ -1007,7 +1007,6 @@ def graph():
     
     calories_df = pd.read_sql(
     text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
-    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
     exercises_df = pd.read_sql(
