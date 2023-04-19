@@ -88,7 +88,20 @@ class EditProfileForm(FlaskForm):
     # profile_pic = FileField('Profile Picture')
     submit = SubmitField('Update Profile')
 
-   
+class SearchUsers(FlaskForm):
+    username = StringField('Username')
+    submit = SubmitField('Search')
+
+class FriendRequest(FlaskForm):
+    friend_request = SubmitField('Send Friend Request')
+
+class A_Friend_Request(FlaskForm):
+    Accept = SubmitField('Accept')
+
+class D_Friend_Request(FlaskForm):
+    Decline = SubmitField('Decline')
+
+
 
 class AccountRecovery(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -114,14 +127,6 @@ class EditTracker(FlaskForm):
     #e_done = BooleanField('Add Exercise')
     c_submit = SubmitField('Add Food')
     e_submit = SubmitField('Add Exercise')
-
-class C_DeleteForm(FlaskForm):
-    #delete_id = HiddenField("Hidden table row ID")
-    delete = SubmitField("Delete")
-
-class E_DeleteForm(FlaskForm):
-    #delete_id = HiddenField("Hidden table row ID")
-    delete = SubmitField("Delete")
 
 # --------------- Search Form -------------------------#
 class WorkoutNameSearch(FlaskForm):

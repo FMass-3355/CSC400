@@ -1,7 +1,7 @@
 #Imports
 from operator import methodcaller
 #from app import app as appl
-from app import API_KEY, app
+from app import API_KEY, app, otp, mail, s
 #-------environment-------#
 from dotenv import load_dotenv
 from os import environ, path
@@ -28,7 +28,25 @@ import json
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from email_validator import validate_email,EmailNotValidError
 
+# testEmail = "fitemail420@gmail.com"
+# emailObject = validate_email(testEmail)
+# print(emailObject.email)
+# try:
+#     # Validating the `testEmail`
+#     emailObject = validate_email(testEmail)
+
+#     # If the `testEmail` is valid
+#     # it is updated with its normalized form
+#     testEmail = emailObject.email
+#     print(testEmail)
+# except EmailNotValidError as errorMsg:
+#     # If `testEmail` is not valid
+#     # we print a human readable error message
+#     print(str(errorMsg))
 #API 
 API_KEY = environ.get('API_KEY')
 API_HOST = environ.get('API_HOST')
@@ -42,6 +60,7 @@ actualDay2 = actualDay1.strftime("%B %d, %Y")
 thisDay = datetime.now()
 today = thisDay.strftime("%B %d, %Y")
 databaseToday = thisDay.strftime("%Y-%m-%d")
+
 
 #------------------------------------------------------------ Static Webpages ----------------------------------------------------------------#
 @app.route('/homepage')
@@ -126,19 +145,9 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = C_DeleteForm()
-    c_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if c_delete:
-            print("delete")
-            db.session.query(Calorie).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
+    db.session.query(Calorie).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/e_delete_row/<row_id>', methods=['GET', 'POST'])
 @login_required
@@ -146,20 +155,9 @@ def e_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
-    print(row_id)
-    delete_form = E_DeleteForm()
-    e_delete = delete_form.delete.data
-    if delete_form.validate_on_submit():
-        print('form works')
-        if e_delete:
-            print("delete")
-            db.session.query(Exercise).filter_by(id=row_id).delete()
-            db.session.commit()
-        return redirect(url_for('edit_tracker'))
-
-
-    return render_template('delete_row.html', delete_form=delete_form)
-
+    db.session.query(Exercise).filter_by(id=row_id).delete()
+    db.session.commit()
+    return redirect(url_for('edit_tracker'))
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
@@ -167,7 +165,6 @@ def edit_tracker():
     global actualDay2
     global thisDay
     user_id = current_user.id 
-
 
     form=EditTracker()
     if form.validate_on_submit():
@@ -225,6 +222,9 @@ def edit_tracker():
 #Start with here
 @app.route('/')
 def index():
+    # msg = Message("Hello", sender="fitemail420@gmail.com", recipients=["deattlecowhawk@gmail.com"])
+    # msg.body = "testing"
+    # mail.send(msg)
     return redirect(url_for('login'))
     
 #Login Method
@@ -255,6 +255,73 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+# @app.route('/email_ver', methods=['GET', 'POST'])
+# def email_ver():
+#     if request.method == 'GET':
+#         return '<form action="/" method="POST"><input name="email"><input type="submit"></form>'
+
+#     email = request.form['email']
+#     token = s.dumps(email, salt='email-confirm')
+
+#     msg = Message('Confirm Email', sender='fitemail420@gmail.com', recipients=[email])
+
+#     link = url_for('confirm_email', token=token, _external=True)
+
+#     msg.body = 'Your link is {}'.format(link)
+
+#     mail.send(msg)
+
+#     return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+
+
+# @app.route('/confirm_email/<token>')
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+@app.route('/test',methods=['GET'])
+def test():
+    return render_template("test.html") 
+
+@app.route('/verify', methods=['POST'])
+def verify():
+
+    email = request.form["email"]
+    message = str(otp)   
+    subject = 'OTP'
+    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # msg.body = str(otp)  
+    mail.send(msg)  
+
+    # with mail.connect() as conn:
+    #     email = request.form["email"]   
+    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
+    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
+    #     conn.send(msg)
+
+    return render_template('verify.html')  
+
+@app.route('/validate',methods=["POST"])   
+def validate():  
+    user_otp = request.form['otp']  
+    if otp == int(user_otp):  
+        return "<h3> Email  verification is  successful </h3>"  
+    return "<h3>failure, OTP does not match</h3>" 
+
+# @app.route('/confirm_email/<token>', methods=['GET', 'POST'])
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt='email-confirm', max_age=3600)
+#     except SignatureExpired:
+#         return '<h1>The token is expired!</h1>'
+#     return '<h1>The token works!</h1>'
+
+
+
 #------------------------------------------------------------- Logging in and Out-----------------------------------------------#
 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
@@ -308,6 +375,8 @@ def create_user():
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
+
+
         if (email_exists is None) and (user_exists is None):
             user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
             user.set_password(password)
@@ -366,16 +435,49 @@ def add_user():
 @app.route('/delete_user/<user_id>', methods=['GET', 'POST'])
 @login_required
 def delete_user(user_id):
-    form = RemoveUser()
-    print('in route')
-    if form.validate_on_submit():
-        print('USER REMOVED')
 
-        db.session.query(User).filter_by(id=user_id).delete()
+    friends1 = db.session.query(Friend).filter_by(fk_user_id=user_id)
+    friends1 = friends1.all()
+    len_friends1 = len(friends1)
+    friends2 = db.session.query(Friend).filter_by(fk_friend_id=user_id)
+    friends2 = friends2.all()
+    len_friends2 = len(friends2)
+    calorie = db.session.query(Calorie).filter_by(fk_user_id=user_id)
+    calorie = calorie.all()
+    len_calorie = len(calorie)
+    exercise = db.session.query(Exercise).filter_by(fk_user_id=user_id)
+    exercise = exercise.all()
+    len_exercise = len(exercise)
+    track = db.session.query(Track).filter_by(fk_user_id=user_id)
+    track = track.all()
+    len_track = len(track)
+        
+        # print(f'friends: {len_friends1}')
+        # print(f'friends: {len_friends2}')
+    for f in range(len_friends1):
+        f = db.session.query(Friend).filter_by(fk_user_id=user_id).first()
+        db.session.delete(f)
         db.session.commit()
-        return redirect(url_for('view_users'))
+    for f in range(len_friends2):
+        f = db.session.query(Friend).filter_by(fk_friend_id=user_id).first()
+        db.session.delete(f)
+        db.session.commit()
+    for c in range(len_calorie):
+        c = db.session.query(Calorie).filter_by(fk_user_id=user_id).first()
+        db.session.delete(c)
+        db.session.commit()
+    for e in range(len_exercise):
+        e = db.session.query(Exercise).filter_by(fk_user_id=user_id).first()
+        db.session.delete(e)
+        db.session.commit()
+    for t in range(len_track):
+        t = db.session.query(Track).filter_by(fk_user_id=user_id).first()
+        db.session.delete(t)
+        db.session.commit()
 
-    return render_template('delete_user.html', form=form)
+    db.session.query(User).filter_by(id=user_id).delete()
+    db.session.commit()
+    return redirect(url_for('view_users'))
     
 
 @app.route('/view_users', methods=['GET', 'POST'])
@@ -412,11 +514,22 @@ def profile():
         lname = current_user.lname
         email = current_user.email
         dob = current_user.date_of_birth
-        friends = db.session.query(Friend).filter_by(fk_user_id=user_id)
+        friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
         friends = friends.all()
+        requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
+        requests = requests.all()
+        sent = db.session.query(Friend).filter_by(fk_user_id=user_id, status=1)
+        sent = sent.all()
         len_friends = len(friends)
+        len_requests = len(requests)
+        len_sent = len(sent)
 
+        #s2 = mutual friends
+        #s1 = user sent request
+        #s0 = friend sent request
         query_friend_row = []
+        query_requests_row = []
+        query_sent_row = []
         for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
             row = FriendInfo()
             row.row_id = item.id
@@ -429,17 +542,237 @@ def profile():
             row.f_name = name.username
             #db.session.query(User).filter_by(username=username).first()
             row.status = item.status
-            query_friend_row.append(row)
-            print(f'row id: {row.row_id}')
-            print(f'user id: {row.user_id}')
-            print(f'friend id: {row.f_id}')
-            print(f'friend name: {row.f_name}')
-            #print(f'friend name: {name.username}')
-            print(f'status: {row.status}')
-        
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends)
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+            elif row.status == 1:
+                query_sent_row.append(row)
+            elif row.status == 0:
+                query_requests_row.append
+            # print(f'row id: {row.row_id}')
+            # print(f'user id: {row.user_id}')
+            # print(f'friend id: {row.f_id}')
+            # print(f'friend name: {row.f_name}')
+            # #print(f'friend name: {name.username}')
+            # print(f'status: {row.status}')
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
+
+@app.route('/search_users', methods=['GET', 'POST'])
+@login_required
+def search_users():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        form = SearchUsers()
+        request_form=FriendRequest()
+        if form.validate_on_submit:
+            search_username = form.username.data
+
+            users = db.session.query(User).filter_by()
+            users = users.all()
+            len_users = len(users)
+            #not getting all users in query below
+            #for loop keeps going until it finds the user its looking for
+            query_user_row = [] 
+            count = 0
+            for item in db.session.query(User):
+                row = UserInfo()
+                row.user_id = item.id
+                row.username = item.username
+                row.email = item.email
+                row.role = item.role
+                friendship = 0
+                f_id = None
+                # print(f"user ids: {row.user_id}")
+                result = "User Not Found"
+                if row.user_id != current_user_id:
+                    query_user_row.append(row)
+                    count+=1
+                    print('++++')
+                    print(row.username)
+                    print(type(row.username))
+                    print(search_username)
+                    print(type(search_username))
+                    if row.username == search_username:
+                        # print("yay QUERY")
+                        # print(search_username)
+                        result = "User Found"
+                        f_id = row.user_id
+                        print(f'IN LOOP {search_username} {row.user_id}')
+                        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=2).first()
+                        request = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=0).first()
+                        sent = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=f_id, status=1).first()
+
+                        print(f' {search_username} None? {friend}')
+                        
+                        if (friend is None) and (request is None) and (sent is None) :
+                            friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=row.user_id, status=1)
+                            friendship_for_friend = Friend(fk_user_id=row.user_id, fk_friend_id=current_user_id, status=0)
+                            db.session.add(friendship_for_user)
+                            db.session.add(friendship_for_friend)
+                            db.session.commit()
+                            friendship = 3
+                            break
+                        elif (friend is not None) and (request is None) and (sent is None) :
+                            friendship = 2
+                            break
+                        elif (friend is None) and (request is not None) and (sent is None) :
+                            friendship = 0
+                            break
+                        elif (friend is None) and (request is None) and (sent is not None) :
+                            friendship = 1
+                            break                       
+                        
+                    elif (row.username != search_username) and ((len_users-1) == count) and (search_username != None):
+                        print(f'RESULT {result} {search_username}')
+                        print(f'EQUALS? {row.username == search_username}')
+                        flash(result)
+                        # flash(len_users)
+                        # flash(count)
+              
+
+
+            # if search_username in users:
+            #     print("yay USERS")
+            #     print(search_username)
+            # else:
+            #     print("fuck USERS") 
+            #     print(search_username)
+        
+
+        all_user_row = [] 
+        for item in db.session.query(User):
+            row = UserInfo()
+            row.user_id = item.id
+            row.username = item.username
+            row.email = item.email
+            row.role = item.role
+            # f_id = row.f_id
+            print(f"user ids: {row.user_id}")
+            if row.user_id != current_user_id:
+                all_user_row.append(row)
+        
+    print(f'END OF CODE\n\tresult = {result}\n\tfriendship = {friendship}\n\tf_id = {f_id}')    
+    return render_template('search_users.html', query_user_row=query_user_row, users=users, len_users=len_users, form=form, all_user_row=all_user_row, result=result, search_username=search_username, request_form=request_form, friendship=friendship, f_id=f_id)
+
+
+@app.route('/view_friends', methods=['GET', 'POST'])
+@login_required
+def view_friends():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+        
+        return render_template('friends.html', query_friend_row=query_friend_row)
+
+@app.route('/view_requests', methods=['GET', 'POST'])
+@login_required
+def view_requests():
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        query_requests_row = []
+
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 0:
+                query_requests_row.append(row)
+                                 
+        return render_template('requests.html', query_requests_row=query_requests_row)
+
+@app.route('/accept_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def accept_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            # friendship_for_user = Friend(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2)
+            # friendship_for_friend = Friend(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2)
+            # db.session.update(friendship_for_user)
+            # db.session.update(friendship_for_friend)
+            # 
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id).update({'status':2})
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/decline_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def decline_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=1).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
+            db.session.commit()
+    return render_template('requests.html')
+
+@app.route('/remove_friend/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def remove_friend(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        friend = Friend.query.filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).first()
+        if friend is not None:
+            db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2).delete()
+            db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2).delete()
+            db.session.commit()
+    return render_template('friends.html')
+
+@app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
+@login_required
+def friend_profile(friend_id):
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+        #f_id = friend_id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            row.first_name = name.fname
+            row.last_name = name.lname
+
+
+            friend_id = int(friend_id)
+
+            
+            if (row.status == 2) and (row.f_id == friend_id):
+                print("IN IF")
+                query_friend_row.append(row)
+                break
+        print(len(query_friend_row))
+        query_friend_row = query_friend_row[0]
+        return render_template('view_friend_profile.html', query_friend_row=query_friend_row)
+        
+        
 
 @app.route('/account_recovery', methods=['GET', 'POST'])
 def recover_account():
@@ -611,7 +944,7 @@ def add_food():
                 "message": str(error)
                 }
             return Response(json.dumps(response_data), status=500, mimetype='application/json')
-    
+        
 @app.route('/add_workout', methods=['POST'])
 @login_required
 def add_workout():
@@ -628,7 +961,7 @@ def add_workout():
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
-                            e_total_calories_per_hour = e_total_calories_per_hour,
+                            e_calories_per_hour = e_total_calories_per_hour,
                             e_duration_minutes = e_duration_minutes)
         
         try:
@@ -640,7 +973,7 @@ def add_workout():
                     "data": {
                         "name": exercise.e_name,
                         "calories": exercise.e_total_calories,
-                        "perHour": exercise.e_total_calories_per_hour,
+                        "perHour": exercise.e_calories_per_hour,
                         "duration": exercise.e_duration_minutes,
                         "id": exercise.id
                     }
@@ -684,7 +1017,7 @@ def graph():
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
 
     plt.xlabel("Date",  size = 20)
-    plt.ylabel("calories", size = 20)
+    plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
     user = current_user.id

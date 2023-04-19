@@ -41,6 +41,8 @@ class User(UserMixin, db.Model):
     fname = db.Column(db.String(64))
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
+    #is_confirmed = db.Column(Boolean, unique=True)
+    #confirmed_on = db.Column(db.Date)
     #tracks = db.relationship('Track', backref='fk_user_id')
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
     # primaryjoin='User.id==Friendship.user_id',
@@ -52,12 +54,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)      
 
-class UserInfo:
-    def __UserInfo__(user_id,username,email,role):
-        user_id = user_id
-        username = username
-        email = email
-        role = role
+
 
 class Track(db.Model):
     __tablename__ = 'track'
@@ -128,9 +125,18 @@ class ExInfo:
         e_name = e_name
 
 class FriendInfo:
-    def __FriendInfo__(row_id, user_id, f_id, f_name, status):
+    def __FriendInfo__(row_id, user_id, f_id, f_name, status, first_name, last_name):
         row_id = row_id
         user_id = user_id
         f_id = f_id
         f_name = f_name
         status = status
+        first_name = first_name
+        last_name = last_name
+
+class UserInfo:
+    def __UserInfo__(user_id,username,email,role):
+        user_id = user_id
+        username = username
+        email = email
+        role = role
