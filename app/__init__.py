@@ -101,21 +101,21 @@ def reset_db():
         #USER#
         user = User.query.filter_by(username='fm').first()
         if user is None:
-            user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='f', lname='m', email='fm@email.com', gender='m')
+            user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='f', lname='m', email='FMass3355@hotmail.com', gender='m')
             user_admin.set_password('csc400sp23')
             db.session.add(user_admin)
             db.session.commit()
 
         user = User.query.filter_by(username='kb').first()
         if user is None:
-            user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='k', lname='b', email='kb@email.com', gender='f')
+            user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='k', lname='b', email='k.bevis01@gmail.com', gender='f')
             user_regular_1.set_password('csc400sp23')
             db.session.add(user_regular_1)
             db.session.commit()
 
         user = User.query.filter_by(username='ej').first()
         if user is None:
-            user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='e', lname='j', email='ej@email.com', gender='f')
+            user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='e', lname='j', email='ejamieson747@gmail.com', gender='f')
             user_regular_2.set_password('csc400sp23')
             db.session.add(user_regular_2)
             db.session.commit()
