@@ -1,4 +1,5 @@
 #Imports
+
 from operator import methodcaller
 #from app import app as appl
 from app import API_KEY, app, otp, mail, s
@@ -995,6 +996,7 @@ def add_workout():
 @login_required
 def graph():
     plt.switch_backend('PDF')
+    plt.switch_backend('PDF')
     #connecting to the database 
     IP = environ.get('MYSQL_IP')
     USERNAME = environ.get('MYSQL_USER')
@@ -1005,16 +1007,15 @@ def graph():
     
     calories_df = pd.read_sql(
     text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
-    #calories_df.plot(x="c_input_date", y="c_total_calories", label="calories consumed")
 
     exercises_df = pd.read_sql(
     text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
-    #exercises_df.plot(x="e_input_date", y="e_total_calories", label="calories burned")
 
-    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed")
-    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned")
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
     plt.ylabel("Calories", size = 20)
