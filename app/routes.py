@@ -1130,7 +1130,6 @@ def graph():
 @login_required
 def friendGraph(friend_id):
     plt.switch_backend('PDF')
-    plt.switch_backend('PDF')
     #connecting to the database 
     IP = environ.get('MYSQL_IP')
     USERNAME = environ.get('MYSQL_USER')

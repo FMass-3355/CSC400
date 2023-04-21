@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
     # primaryjoin='User.id==Friendship.user_id',
     #Password Salting
-    def set_password(self, password, r):
+    def set_password(self, password, r=False):
         #Store hashed (encrypted) password in database
         self.password_hash = generate_password_hash(password)
         if r is True:
