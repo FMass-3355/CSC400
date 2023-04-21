@@ -147,6 +147,7 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
+    print(f'row_id={row_id}')
     db.session.query(Calorie).filter_by(id=row_id).delete()
     db.session.commit()
     return redirect(url_for('edit_tracker'))
@@ -901,6 +902,7 @@ def change_password(email):
                     # user.set_password(new_pass, False)
                     # db.session.add(user)
                     # db.session.commit()
+                    return redirect(url_for('login'))
                 else:
                     print("cannot use previous password")
             else:
