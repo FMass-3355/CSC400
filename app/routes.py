@@ -1120,11 +1120,14 @@ def graph():
 
     plt.xlabel("Date",  size = 20)
     plt.ylabel("Calories", size = 20)
+    plt.xticks(rotation=25)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
     user = current_user.id
     #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
     return render_template('graph.html', user=user)
+
+
 
 @app.route('/friendGraph/<friend_id>')
 @login_required
