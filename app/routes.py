@@ -242,7 +242,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             print('Login failed', file=sys.stderr)
             flash("Wrong username and/or password.")
-            return redirect(url_for('login'))
+            return redirect(url_for('login')), 401
         # login_user is a flask_login function that starts a session
         else:
             login_user(user)
