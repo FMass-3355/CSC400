@@ -2,4 +2,4 @@ __pycache__
 
 .flaskenv
 
-app/static/graphs/
+app/static/graphs/**
