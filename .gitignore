@@ -1,5 +1,5 @@
 __pycache__
 
-app/static/graphs/
-
 .flaskenv
+
+app/static/graphs/
