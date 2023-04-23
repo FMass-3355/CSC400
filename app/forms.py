@@ -48,10 +48,16 @@ class LoginForm(FlaskForm):
 
 #----------------------Account settings----------------------------------------------------#
 class ChangePasswordForm(FlaskForm):
-    old_pass = PasswordField('Old password', validators=[DataRequired(message="please enter your old password")])
-    new_pass = PasswordField('New password', validators=[DataRequired(message="please")])
-    new_pass_retype = PasswordField('Retype new password', validators=[DataRequired()])
+    new_pass = PasswordField('New Password', validators=[DataRequired(message="please enter your old password")])
+    new_pass_retype = PasswordField('Retype New Password', validators=[DataRequired(message="please")])
     submit = SubmitField('Change password')
+
+class AccountRecovery(FlaskForm):
+    # username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    # newPassword = PasswordField('New Password', validators=[DataRequired()])
+    # newPassword_retype = PasswordField('Retype New Password', validators=[DataRequired()])
+    submit = SubmitField('Recover Account')
 
     
 class CreateUserForm(FlaskForm):
@@ -101,14 +107,6 @@ class A_Friend_Request(FlaskForm):
 class D_Friend_Request(FlaskForm):
     Decline = SubmitField('Decline')
 
-
-
-class AccountRecovery(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired()])
-    newPassword = PasswordField('New Password', validators=[DataRequired()])
-    newPassword_retype = PasswordField('Retype New Password', validators=[DataRequired()])
-    submit = SubmitField('Recover Account')
 
 class RemoveUser(FlaskForm):
     # job_id = IntegerField('Enter Job ID number', validators=[DataRequired()])
