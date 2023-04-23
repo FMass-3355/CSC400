@@ -32,7 +32,8 @@ import pandas as pd
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from email_validator import validate_email,EmailNotValidError
-
+import re
+from email_validator import validate_email, EmailNotValidError
 # testEmail = "fitemail420@gmail.com"
 # emailObject = validate_email(testEmail)
 # print(emailObject.email)
@@ -146,6 +147,7 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
+    print(f'row_id={row_id}')
     db.session.query(Calorie).filter_by(id=row_id).delete()
     db.session.commit()
     return redirect(url_for('edit_tracker'))
@@ -328,34 +330,34 @@ def settings():
     return render_template('settings.html')
 
 #Change Password
-@app.route('/change_password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    if current_user.is_authenticated:
-        user = db.session.query(User).filter_by(username=current_user.username).first()
-        form = ChangePasswordForm()
-    if form.validate_on_submit():
-        old_pass = form.old_pass.data
-        new_pass = form.new_pass.data
-        new_pass_retype = form.new_pass_retype.data
+# @app.route('/change_password', methods=['GET', 'POST'])
+# @login_required
+# def change_password():
+#     if current_user.is_authenticated:
+#         user = db.session.query(User).filter_by(username=current_user.username).first()
+#         form = ChangePasswordForm()
+#     if form.validate_on_submit():
+#         old_pass = form.old_pass.data
+#         new_pass = form.new_pass.data
+#         new_pass_retype = form.new_pass_retype.data
         
-        if user.check_password(old_pass):
-            print('old password correct', file=sys.stderr)
-            if new_pass == new_pass_retype:
-                print('password & retype match', file=sys.stderr)
-                user.set_password(new_pass, False)
-                db.session.add(user)
-                db.session.commit()
-            else:
-                print('password & retype do not match', file=sys.stderr)
-        else:
-            print('old password incorrect', file=sys.stderr)
-        return redirect(url_for('index'))
-    '''
-    Implement this function for Activity 9.
-    Verify that old password matches and the new password and retype also match.
-    '''
-    return render_template('change_password.html', form = form)
+#         if user.check_password(old_pass):
+#             print('old password correct', file=sys.stderr)
+#             if new_pass == new_pass_retype:
+#                 print('password & retype match', file=sys.stderr)
+#                 user.set_password(new_pass, False)
+#                 db.session.add(user)
+#                 db.session.commit()
+#             else:
+#                 print('password & retype do not match', file=sys.stderr)
+#         else:
+#             print('old password incorrect', file=sys.stderr)
+#         return redirect(url_for('index'))
+#     '''
+#     Implement this function for Activity 9.
+#     Verify that old password matches and the new password and retype also match.
+#     '''
+#     return render_template('change_password.html', form = form)
 
 #Create user (User Method)
 @app.route('/create_user', methods=['GET', 'POST'])
@@ -368,27 +370,24 @@ def create_user():
         fname = form.fname.data
         lname = form.lname.data
         date_of_birth = form.date_of_birth.data
+        gender = form.gender.data
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
-
-
+        valid_email = check(email)
+        print(f'Valid Email? {valid_email}')
         if (email_exists is None) and (user_exists is None):
-            
-            message = str(otp)   
-            subject = 'OTP'
-            msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
-            # msg.body = str(otp)  
-            mail.send(msg) 
-            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
-            password = user.set_password(password, True)
-            # user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
-            # user.set_password(password)
-            # db.session.add(user)
-            # db.session.commit()       
-            
-            # return redirect(url_for('validate'))
-            return render_template('verify.html', username=username, password=password, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
+            if valid_email is True:
+                message = str(otp)   
+                subject = 'OTP'
+                msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+                mail.send(msg) 
+
+                user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, role='regular', gender=gender)
+                password = user.set_password(password, True)
+                return render_template('verify.html', username=username, password=password, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, role='regular', gender=gender)
+            else: 
+               flash("email is not valid") 
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
@@ -398,8 +397,8 @@ def create_user():
     return render_template('create_user.html', form=form)
 
 
-@app.route('/validate/<username>/<password>/<email>/<fname>/<lname>/<date_of_birth>',methods=["POST"])   
-def validate(username,password,email,fname,lname,date_of_birth):  
+@app.route('/validate/<username>/<password>/<email>/<fname>/<lname>/<date_of_birth>/<gender>/<role>',methods=["POST"])   
+def validate(username,password,email,fname,lname,date_of_birth,gender,role):  
     if request.method == "POST":
         # first_name = request.form.get("fname")
         username = username
@@ -414,13 +413,21 @@ def validate(username,password,email,fname,lname,date_of_birth):
         print(f"lname = {lname}")
         date_of_birth = date_of_birth
         print(f"date_of_birth = {date_of_birth}")
+        gender = gender
+        print(f"gender = {gender}")
+        if gender == 'Female':
+            gender = 'f'
+        elif gender == 'Male':
+            gender = 'm'
+        role = role
+        print(f"role = {role}")
         # fname=fname
         # print(f"fname = {fname}")
         #fname = v_form.fname.data
         #print(f"FIRST NAME: {fname}")
         user_otp = request.form['otp']  
         if otp == int(user_otp):  
-            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
+            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, gender=gender, role=role)
             user.set_password(password, False)
             db.session.add(user)
             db.session.commit()
@@ -450,13 +457,18 @@ def add_user():
 
             email_exists = db.session.query(User).filter_by(email=email).first()
             user_exists = db.session.query(User).filter_by(username=username).first()   
+            valid_email = check(email)
+            print(f'Valid Email? {valid_email}')
             if (email_exists is None) and (user_exists is None):
-                user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
-                user.set_password(password, False)
-                db.session.add(user)
-                
-                db.session.commit()
-                flash('User added successfully')
+                if valid_email is True:
+                    user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
+                    user.set_password(password, False)
+                    db.session.add(user)
+                    
+                    db.session.commit()
+                    flash('User added successfully')
+                else:
+                    flash("email is not valid") 
             else:
                 # print("user already exists", file=sys.stderr)
                 flash("user already exists")
@@ -823,23 +835,80 @@ def friend_profile(friend_id):
 def recover_account():
     form = AccountRecovery()
     if form.validate_on_submit():
-        username = form.username.data
+        # username = form.username.data
         email = form.email.data
-        newPassword = form.newPassword.data
-        newPassword_retype = form.newPassword_retype.data
-        if (db.session.query(User).filter_by(username=username).first()) and (db.session.query(User).filter_by(email=email).first()):
-            if newPassword == newPassword_retype:
-                user = db.session.query(User).filter_by(username=username).first()
-                password = db.session.query(User.password_hash).first()
-                print("TEST")
-                print(password)
-                user.set_password(newPassword, False)
-                db.session.add(user)
-                db.session.commit()
-                return redirect(url_for('login'))
+        valid_email = check(email)
+        # newPassword = form.newPassword.data
+        # newPassword_retype = form.newPassword_retype.data
+        if (db.session.query(User).filter_by(email=email).first()):
+            if valid_email is True:
+                # if newPassword == newPassword_retype:
+                #     user = db.session.query(User).filter_by(username=username).first()
+                #     password = db.session.query(User.password_hash).first()
+                #     print("TEST")
+                #     print(password)
+                #     user.set_password(newPassword, False)
+                #     db.session.add(user)
+                #     db.session.commit()
+                #     return redirect(url_for('login'))
+                message = str(otp)   
+                subject = 'OTP'
+                msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+                mail.send(msg)
+                return render_template('verify_recover.html', email=email)
+            else: 
+               print("email is not valid") 
+        else:
+            print("email is not associated with an account") 
+
     return render_template('account_recovery.html', form=form)
-    
-    
+
+@app.route('/validate_recovery/<email>',methods=["POST"])   
+def validate_recovery(email):  
+    if request.method == "POST":
+        form = ChangePasswordForm()
+        email = email
+        print(f"email = {email}")
+        
+        user_otp = request.form['otp']  
+        if otp == int(user_otp):  
+            # message = "Email  verification is  successful"
+            return render_template('change_pass.html', form=form)
+    return "<h3>failure, OTP does not match</h3>" 
+
+@app.route('/change_password/<email>',methods=["POST"])   
+def change_password(email):  
+    if request.method == "POST":
+        form = ChangePasswordForm()
+        email = email
+        print(f"email = {email}")
+        if form.validate_on_submit():
+            new_pass = form.new_pass.data
+            new_pass_retype = form.new_pass_retype.data
+            if new_pass == new_pass_retype:
+                
+                user = db.session.query(User).filter_by(email=email).first()
+                user.check_password(new_pass)
+                if not user.check_password(new_pass):
+                    #user = db.session.query(User).filter_by(email=email).first()
+                    password = user.set_password(new_pass, False)
+                    # update = update(User)
+                    # update = update.values({"password": })
+                    # update = User.query.filter_by(email=email).update(dict(password=password))
+                    db.session.add(user)
+                    db.session.commit()
+                    print("Password Changed")
+                    # print('password & retype match', file=sys.stderr)
+                    # user.set_password(new_pass, False)
+                    # db.session.add(user)
+                    # db.session.commit()
+                    return redirect(url_for('login'))
+                else:
+                    print("cannot use previous password")
+            else:
+                print("Passwords do not match")
+
+    return render_template('change_pass.html', form=form)
 #Edit
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -1192,9 +1261,31 @@ def is_regular():
         else:
             return False
 #---------------------------------------------------#
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+# def check(email):
+ 
+#     # pass the regular expression
+#     # and the string into the fullmatch() method
+#     if(re.fullmatch(regex, email)):
+#         return True
+#     else:
+#         return False
 
 
 
+ 
+def check(email):
+    try:
+      # validate and get info
+        v = validate_email(email)
+        # replace with normalized form
+        email = v["email"] 
+        return True
+    except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        print(str(e))
+        return False
 
 
 

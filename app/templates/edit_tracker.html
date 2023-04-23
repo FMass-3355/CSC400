@@ -65,11 +65,12 @@
                         <td>{{food.c_name}}</td>
                         <td>{{food.c_serving_size_g}}</td>
                         <td>{{food.c_total_calories}}</td>
-                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood(myVar = '{{ food.cal_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
-                            function deleteFood() {
+                            function deleteFood(myVar) {
                                 if (confirm("Delete Food?")) {
-                                    window.location.href = "/c_delete_row/{{ food.cal_id }}";
+                                    window.location.href = "/c_delete_row/"+myVar;
+                                    // window.alert(myVar);
                                 }
                                 else {
                                     window.location.href = "/edit_tracker";
@@ -107,11 +108,12 @@
                         <td>{{exercise.e_name}}</td>
                         <td>{{exercise.e_duration_minutes}}</td>
                         <td>{{exercise.e_total_calories}}</td>
-                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise(myVar = '{{ exercise.ex_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
-                            function deleteExercise() {
+                            function deleteExercise(myVar) {
                                 if (confirm("Delete Exercise?")) {
-                                    window.location.href = "/e_delete_row/{{ exercise.ex_id }}";
+                                    window.location.href =  "/e_delete_row/"+myVar;
+                                //     window.alert(myVar);
                                 }
                                 else {
                                     window.location.href = "/edit_tracker";
@@ -315,8 +317,8 @@
                     project to be used by fitness-oriented individuals.</div>
                 <div class="col-md-6 col-xs-6">
                     <p>Franklin Massimi: FMass3355@hotmail.com</p>
-                    <p>Emma Jamieson: ej@email.com</p>
-                    <p>Kari Bavis: kb@email.com</p>
+                    <p>Emma Jamieson: ejamieson747@gmail.com</p>
+                    <p>Kari Bavis: k.bevis01@gmail.com</p>
                 </div>
             </div>
         </div>

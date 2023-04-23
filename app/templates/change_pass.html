@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>OTP Verification</title>
+    </head>    
+    <body>
+      <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.new_pass.label(class="form-control-label") }}
+            {{ form.new_pass(class="form-control form-control-md", value=current_user.fname)}}
+        </p>
+        <p>
+            {{ form.new_pass_retype.label(class="form-control-label") }}
+            {{ form.new_pass_retype(class="form-control form-control-md", value=current_user.lname)}}
+        </p>
+        <button class="btn" style="width: fit-content; float: left;"><a href="/login">Back To Login</a></button>
+        <p href="/login" style="width: fit-content; margin: auto; float: right;">
+            {{ form.submit(class="form-control form-control-md btn btn-primary") }}</p>
+    </form>
+    </body>
+</html>
