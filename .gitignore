@@ -3,7 +3,3 @@ __pycache__
 app/static/graphs/
 
 .flaskenv
-
-
-.flaskenv
-app/static/graphs/
