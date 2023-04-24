@@ -80,14 +80,14 @@
                     <table id="table1" class="table-striped" style="margin: auto; width: 100%;">
                         <tr>
                             <th>Food</th>
-                            <th>Servings (in grams)</th>
+                            <th>Servings</th>
                             <th>Calories</th>
                         </tr>
                         {% for food in foods %}
                         <tr>
                             <td>{{food.c_name}}</td>
-                            <td>{{food.c_serving_size_g}}</td>
-                            <td>{{food.c_total_calories}}</td>
+                            <td>{{(food.c_serving_size_g)/100}}</td>
+                            <td>{{food.c_total_calories_NEW}}</td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -109,14 +109,14 @@
                     <table id="table2" class="table-striped" style="margin: auto; width: 100%;">
                         <tr>
                             <th>Exercise</th>
-                            <th>Reps/Time</th>
+                            <th>Reps/Time (hours)</th>
                             <th>Calories Burned</th>
                         </tr>
                         {% for exercise in workouts %}
                         <tr>
                             <td>{{exercise.e_name}}</td>
-                            <td>{{exercise.e_duration_minutes}}</td>
-                            <td>{{exercise.e_total_calories}}</td>
+                            <td>{{(exercise.e_duration_minutes)/60}}</td>
+                            <td>{{exercise.e_total_calories_NEW}}</td>
                         </tr>
                         {% endfor %}
                     </table>
