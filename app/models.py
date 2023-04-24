@@ -76,6 +76,7 @@ class Exercise(db.Model):
     e_calories_per_hour = db.Column(db.Float)
     e_duration_minutes = db.Column(db.Float)
     e_total_calories = db.Column(db.Float)
+    e_total_calories_NEW = db.Column(db.Float)
     
 
 class Calorie(db.Model):
@@ -85,6 +86,7 @@ class Calorie(db.Model):
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
     c_total_calories = db.Column(db.Float)
+    c_total_calories_NEW = db.Column(db.Float)
     c_serving_size_g = db.Column(db.Float)
     c_fat_saturated_g = db.Column(db.Float)
     c_protein_g = db.Column(db.Float)

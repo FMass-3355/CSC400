@@ -162,6 +162,138 @@ def e_deleteRow(row_id):
     db.session.commit()
     return redirect(url_for('edit_tracker'))
 
+@app.route('/serving_size_up_1/<s_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def serving_size_up_1(s_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+    query_cal_row = []
+    # print("in route")
+    print(f'user id: {user_id}')
+    print(f'row id: {row_id}')
+    # for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.c_input_date==databaseToday):
+    for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id):
+        print(f"in row {item}")
+        row = CalInfo()
+        row.cal_id = item.id
+        row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
+        row.c_name = item.c_name
+        row.c_total_calories_NEW = item.c_total_calories_NEW
+        query_cal_row.append(row)
+        new_c_serving_size_g = ((row.c_serving_size_g) + 100)/100
+        new_c_total_calories = ((row.c_total_calories))* new_c_serving_size_g #if serving size is not 100 it might not work
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_serving_size_g':new_c_serving_size_g*100})
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_total_calories_NEW':new_c_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_cal_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/serving_size_down_1/<s_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def serving_size_down_1(s_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+    query_cal_row = []
+    # print("in route")
+    print(f'user id: {user_id}')
+    print(f'row id: {row_id}')
+    # for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.c_input_date==databaseToday):
+    for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id):
+        print(f"in row {item}")
+        row = CalInfo()
+        row.cal_id = item.id
+        row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
+        row.c_name = item.c_name
+        row.c_total_calories_NEW = item.c_total_calories_NEW
+        query_cal_row.append(row)
+        new_c_serving_size_g = ((row.c_serving_size_g) - 100)/100
+        new_c_total_calories = ((row.c_total_calories))* new_c_serving_size_g #if serving size is not 100 it might not work
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_serving_size_g':new_c_serving_size_g*100})
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_total_calories_NEW':new_c_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_cal_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/duration_min_up_1/<d_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def duration_min_up_1(d_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+
+    query_ex_row = []
+    for item in db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id):
+        row = ExInfo()
+        row.ex_id = item.id
+        row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
+        row.e_name = item.e_name
+        row.e_total_calories_NEW = item.e_total_calories_NEW
+        query_ex_row.append(row)
+
+        new_e_duration_minutes = ((row.e_duration_minutes)+60)
+        new_e_total_calories = ((row.e_total_calories) + row.e_total_calories_NEW) #if serving size is not 100 it might not work
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_duration_minutes':new_e_duration_minutes})
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_total_calories_NEW':new_e_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_ex_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/duration_min_down_1/<d_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def duration_min_down_1(d_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+
+    query_ex_row = []
+    for item in db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id):
+        row = ExInfo()
+        row.ex_id = item.id
+        row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
+        row.e_name = item.e_name
+        row.e_total_calories_NEW = item.e_total_calories_NEW
+        query_ex_row.append(row)
+
+        new_e_duration_minutes = ((row.e_duration_minutes)-60)
+        new_e_total_calories = (row.e_total_calories_NEW - (row.e_total_calories)) #if serving size is not 100 it might not work
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_duration_minutes':new_e_duration_minutes})
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_total_calories_NEW':new_e_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_ex_row))
+    return redirect(url_for('edit_tracker'))
+
+
+
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
     global databaseToday
@@ -204,6 +336,7 @@ def edit_tracker():
         row.cal_id = item.id
         row.c_input_date = item.c_input_date
         row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories_NEW = item.c_total_calories_NEW
         row.c_total_calories = item.c_total_calories
         row.c_name = item.c_name
         query_cal_row.append(row)
@@ -214,6 +347,7 @@ def edit_tracker():
         row.ex_id = item.id
         row.e_input_date = item.e_input_date
         row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories_NEW = item.e_total_calories_NEW
         row.e_total_calories = item.e_total_calories
         row.e_name = item.e_name
         query_ex_row.append(row)
@@ -1069,6 +1203,7 @@ def add_food():
         if not c_name: raise "name missing"
 
         c_total_calories = form_data['calories']
+        c_total_calories_NEW = c_total_calories
         c_serving_size_g = form_data['serving_size_g']
         c_fat_saturated_g = form_data['fat_saturated_g']
         c_protein_g = form_data['protein_g']
@@ -1084,6 +1219,7 @@ def add_food():
                                 c_name =c_name,
                                 c_input_date=date.today(),
                                 c_total_calories = c_total_calories,
+                                c_total_calories_NEW = c_total_calories_NEW,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
                                 c_protein_g = c_protein_g,
@@ -1128,13 +1264,15 @@ def add_workout():
         e_total_calories_per_hour = form_data['calories_per_hour']
         e_duration_minutes = form_data['duration_minutes']
         e_total_calories = e_total_calories_per_hour * (e_duration_minutes/60)
+        e_total_calories_NEW = e_total_calories
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
                             e_calories_per_hour = e_total_calories_per_hour,
-                            e_duration_minutes = e_duration_minutes)
+                            e_duration_minutes = e_duration_minutes,
+                            e_total_calories_NEW=e_total_calories_NEW)
         
         try:
             db.session.add(exercise)
