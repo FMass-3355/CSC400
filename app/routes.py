@@ -32,7 +32,8 @@ import pandas as pd
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from email_validator import validate_email,EmailNotValidError
-
+import re
+from email_validator import validate_email, EmailNotValidError
 # testEmail = "fitemail420@gmail.com"
 # emailObject = validate_email(testEmail)
 # print(emailObject.email)
@@ -146,6 +147,7 @@ def c_deleteRow(row_id):
     global databaseToday
     global actualDay2
     global thisDay
+    print(f'row_id={row_id}')
     db.session.query(Calorie).filter_by(id=row_id).delete()
     db.session.commit()
     return redirect(url_for('edit_tracker'))
@@ -159,6 +161,138 @@ def e_deleteRow(row_id):
     db.session.query(Exercise).filter_by(id=row_id).delete()
     db.session.commit()
     return redirect(url_for('edit_tracker'))
+
+@app.route('/serving_size_up_1/<s_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def serving_size_up_1(s_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+    query_cal_row = []
+    # print("in route")
+    print(f'user id: {user_id}')
+    print(f'row id: {row_id}')
+    # for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.c_input_date==databaseToday):
+    for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id):
+        print(f"in row {item}")
+        row = CalInfo()
+        row.cal_id = item.id
+        row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
+        row.c_name = item.c_name
+        row.c_total_calories_NEW = item.c_total_calories_NEW
+        query_cal_row.append(row)
+        new_c_serving_size_g = ((row.c_serving_size_g) + 100)/100
+        new_c_total_calories = ((row.c_total_calories))* new_c_serving_size_g #if serving size is not 100 it might not work
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_serving_size_g':new_c_serving_size_g*100})
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_total_calories_NEW':new_c_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_cal_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/serving_size_down_1/<s_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def serving_size_down_1(s_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+    query_cal_row = []
+    # print("in route")
+    print(f'user id: {user_id}')
+    print(f'row id: {row_id}')
+    # for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.c_input_date==databaseToday):
+    for item in db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id):
+        print(f"in row {item}")
+        row = CalInfo()
+        row.cal_id = item.id
+        row.c_input_date = item.c_input_date
+        row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories = item.c_total_calories
+        row.c_name = item.c_name
+        row.c_total_calories_NEW = item.c_total_calories_NEW
+        query_cal_row.append(row)
+        new_c_serving_size_g = ((row.c_serving_size_g) - 100)/100
+        new_c_total_calories = ((row.c_total_calories))* new_c_serving_size_g #if serving size is not 100 it might not work
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_serving_size_g':new_c_serving_size_g*100})
+        db.session.query(Calorie).filter(Calorie.fk_user_id==user_id, Calorie.id==row_id).update({'c_total_calories_NEW':new_c_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_cal_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/duration_min_up_1/<d_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def duration_min_up_1(d_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+
+    query_ex_row = []
+    for item in db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id):
+        row = ExInfo()
+        row.ex_id = item.id
+        row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
+        row.e_name = item.e_name
+        row.e_total_calories_NEW = item.e_total_calories_NEW
+        query_ex_row.append(row)
+
+        new_e_duration_minutes = ((row.e_duration_minutes)+60)
+        new_e_total_calories = ((row.e_total_calories) + row.e_total_calories_NEW) #if serving size is not 100 it might not work
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_duration_minutes':new_e_duration_minutes})
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_total_calories_NEW':new_e_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_ex_row))
+    return redirect(url_for('edit_tracker'))
+
+@app.route('/duration_min_down_1/<d_var>/<row_id>', methods=['GET', 'POST'])
+@login_required
+def duration_min_down_1(d_var,row_id):
+    global databaseToday
+    global actualDay2
+    global thisDay
+    #db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
+    #user = db.session.query(User).filter_by(username=form.username.data).first()
+    user_id = current_user.id 
+
+    query_ex_row = []
+    for item in db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id):
+        row = ExInfo()
+        row.ex_id = item.id
+        row.e_input_date = item.e_input_date
+        row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories = item.e_total_calories
+        row.e_name = item.e_name
+        row.e_total_calories_NEW = item.e_total_calories_NEW
+        query_ex_row.append(row)
+
+        new_e_duration_minutes = ((row.e_duration_minutes)-60)
+        new_e_total_calories = (row.e_total_calories_NEW - (row.e_total_calories)) #if serving size is not 100 it might not work
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_duration_minutes':new_e_duration_minutes})
+        db.session.query(Exercise).filter(Exercise.fk_user_id==user_id, Exercise.id==row_id).update({'e_total_calories_NEW':new_e_total_calories})
+        #db.session.query(Calorie).filter_by(id=row_id).delete()
+        db.session.commit()
+        print('COMMITED')
+        print(len(query_ex_row))
+    return redirect(url_for('edit_tracker'))
+
+
 
 @app.route('/edit_tracker', methods=['GET', 'POST'])
 def edit_tracker():
@@ -202,6 +336,7 @@ def edit_tracker():
         row.cal_id = item.id
         row.c_input_date = item.c_input_date
         row.c_serving_size_g = item.c_serving_size_g
+        row.c_total_calories_NEW = item.c_total_calories_NEW
         row.c_total_calories = item.c_total_calories
         row.c_name = item.c_name
         query_cal_row.append(row)
@@ -212,6 +347,7 @@ def edit_tracker():
         row.ex_id = item.id
         row.e_input_date = item.e_input_date
         row.e_duration_minutes = item.e_duration_minutes
+        row.e_total_calories_NEW = item.e_total_calories_NEW
         row.e_total_calories = item.e_total_calories
         row.e_name = item.e_name
         query_ex_row.append(row)
@@ -227,8 +363,56 @@ def index():
     # msg.body = "testing"
     # mail.send(msg)
     return redirect(url_for('login'))
-    
+
+
+
 #Login Method
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     #Authenticated users are redirected to home page.
+#     if current_user.is_authenticated:
+#         return redirect(url_for('homepage'))
+        
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         # Query DB for user by username
+#         user = db.session.query(User).filter_by(username=form.username.data).first()
+#         # if user.is_confirmed == True:
+#         if user is None or not user.check_password(form.password.data):
+#             print('Login failed', file=sys.stderr)
+#             flash("Wrong username and/or password.")
+#             return redirect(url_for('login'))
+#         # login_user is a flask_login function that starts a session
+#         else:
+#             query_users = []
+#             for item in db.session.query(User).filter(User.username==form.username.data).all():
+#                 user = UserInfo()
+#                 user.user_id = item.id
+#                 user.username = item.username
+#                 user.email = item.email
+#                 user.role = item.role
+#                 user.is_confirmed = item.is_confirmed 
+#                 query_users.append(user)
+#                 print(user.email)
+#                 print(user.is_confirmed)
+#                 if user.is_confirmed == False:
+#                     email = user.email
+#                     print(email)
+#                     flash("Must enter OTP")
+#                     return redirect(url_for('get_email', email=email))
+#             if user.is_confirmed == True:
+#                 # email = item.email
+#                 login_user(user)
+#                 print('Login successful', file=sys.stderr)
+#                 return redirect(url_for('homepage'))
+#         # elif user.is_confirmed == False:
+
+#         #     email = current_user.email
+#         #     flash("Must enter OTP")
+#         #     return redirect(url_for('verify2'), email=email)
+#         #     # return render_template('v2.html', email=email)
+#     return render_template('login.html', form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     #Authenticated users are redirected to home page.
@@ -239,15 +423,32 @@ def login():
     if form.validate_on_submit():
         # Query DB for user by username
         user = db.session.query(User).filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            print('Login failed', file=sys.stderr)
-            flash("Wrong username and/or password.")
-            return redirect(url_for('login'))
-        # login_user is a flask_login function that starts a session
-        else:
-            login_user(user)
-            print('Login successful', file=sys.stderr)
-            return redirect(url_for('homepage'))
+        if user.is_confirmed == True:
+            if user is None or not user.check_password(form.password.data):
+                print('Login failed', file=sys.stderr)
+                flash("Wrong username and/or password.")
+                return redirect(url_for('login')), 401
+            # login_user is a flask_login function that starts a session
+            else:
+                login_user(user)
+                print('Login successful', file=sys.stderr)
+                return redirect(url_for('homepage'))
+        elif user.is_confirmed == False:
+            query_users = []
+            for item in db.session.query(User).filter(User.username==form.username.data).all():
+                user = UserInfo()
+                user.user_id = item.id
+                user.username = item.username
+                user.email = item.email
+                user.role = item.role
+                user.is_confirmed = item.is_confirmed 
+                query_users.append(user)
+                print(user.email)
+                print(user.is_confirmed)
+                email = user.email
+                print(email)
+                flash("Must enter OTP")
+                return redirect(url_for('get_email', email=email))
     return render_template('login.html', form=form)
 
 #Logging out
@@ -288,6 +489,52 @@ def logout():
 def test():
     return render_template("test.html") 
 
+
+@app.route('/get_email/<email>', methods=['GET', 'POST'])
+def get_email(email):
+    print(email)
+    # email = email
+    message = str(otp)   
+    subject = 'OTP'
+    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # msg.body = str(otp)  
+    mail.send(msg)
+    return redirect(url_for('verify2', email=email))
+
+@app.route('/verify2/<email>', methods=['GET', 'POST'])
+def verify2(email):
+    # print(email)
+    # # email = email
+    # message = str(otp)   
+    # subject = 'OTP'
+    # msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # # msg.body = str(otp)  
+    # mail.send(msg)  
+    
+    if request.method == "POST":
+        user_otp = request.form['otp']  
+        if otp == int(user_otp):
+            print(f'otp = {otp}')
+            print(f'user_otp = {user_otp}')
+            # message = "Email  verification is  successful"
+            # return redirect(url_for('homepage'))
+            db.session.query(User).filter_by(email=email).update({'is_confirmed':True})
+            db.session.commit()
+            return "<h3> Email  verification is  successful </h3>"  
+        return "<h3>failure, OTP does not match</h3>"
+
+    # email_exists = db.session.query(User).filter_by(email=email).first()
+    # user_exists = db.session.query(User).filter_by(username=username).first()   
+    # valid_email = check(email)
+
+    # with mail.connect() as conn:
+    #     email = request.form["email"]   
+    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
+    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
+    #     conn.send(msg)
+
+    return render_template('v2.html')
+
 @app.route('/verify', methods=['POST'])
 def verify():
 
@@ -298,6 +545,10 @@ def verify():
     # msg.body = str(otp)  
     mail.send(msg)  
 
+    # email_exists = db.session.query(User).filter_by(email=email).first()
+    # user_exists = db.session.query(User).filter_by(username=username).first()   
+    # valid_email = check(email)
+
     # with mail.connect() as conn:
     #     email = request.form["email"]   
     #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
@@ -306,12 +557,7 @@ def verify():
 
     return render_template('verify.html')  
 
-@app.route('/validate',methods=["POST"])   
-def validate():  
-    user_otp = request.form['otp']  
-    if otp == int(user_otp):  
-        return "<h3> Email  verification is  successful </h3>"  
-    return "<h3>failure, OTP does not match</h3>" 
+
 
 # @app.route('/confirm_email/<token>', methods=['GET', 'POST'])
 # def confirm_email(token):
@@ -333,34 +579,34 @@ def settings():
     return render_template('settings.html')
 
 #Change Password
-@app.route('/change_password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    if current_user.is_authenticated:
-        user = db.session.query(User).filter_by(username=current_user.username).first()
-        form = ChangePasswordForm()
-    if form.validate_on_submit():
-        old_pass = form.old_pass.data
-        new_pass = form.new_pass.data
-        new_pass_retype = form.new_pass_retype.data
+# @app.route('/change_password', methods=['GET', 'POST'])
+# @login_required
+# def change_password():
+#     if current_user.is_authenticated:
+#         user = db.session.query(User).filter_by(username=current_user.username).first()
+#         form = ChangePasswordForm()
+#     if form.validate_on_submit():
+#         old_pass = form.old_pass.data
+#         new_pass = form.new_pass.data
+#         new_pass_retype = form.new_pass_retype.data
         
-        if user.check_password(old_pass):
-            print('old password correct', file=sys.stderr)
-            if new_pass == new_pass_retype:
-                print('password & retype match', file=sys.stderr)
-                user.set_password(new_pass)
-                db.session.add(user)
-                db.session.commit()
-            else:
-                print('password & retype do not match', file=sys.stderr)
-        else:
-            print('old password incorrect', file=sys.stderr)
-        return redirect(url_for('index'))
-    '''
-    Implement this function for Activity 9.
-    Verify that old password matches and the new password and retype also match.
-    '''
-    return render_template('change_password.html', form = form)
+#         if user.check_password(old_pass):
+#             print('old password correct', file=sys.stderr)
+#             if new_pass == new_pass_retype:
+#                 print('password & retype match', file=sys.stderr)
+#                 user.set_password(new_pass, False)
+#                 db.session.add(user)
+#                 db.session.commit()
+#             else:
+#                 print('password & retype do not match', file=sys.stderr)
+#         else:
+#             print('old password incorrect', file=sys.stderr)
+#         return redirect(url_for('index'))
+#     '''
+#     Implement this function for Activity 9.
+#     Verify that old password matches and the new password and retype also match.
+#     '''
+#     return render_template('change_password.html', form = form)
 
 #Create user (User Method)
 @app.route('/create_user', methods=['GET', 'POST'])
@@ -373,18 +619,49 @@ def create_user():
         fname = form.fname.data
         lname = form.lname.data
         date_of_birth = form.date_of_birth.data
+        gender = form.gender.data
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
-
-
+        valid_email = check(email)
+        print(f'Valid Email? {valid_email}')
         if (email_exists is None) and (user_exists is None):
-            user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth)
-            user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
-            
-            return redirect(url_for('login'))
+            if valid_email is True:
+                message = str(otp)   
+                subject = 'OTP'
+                msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+                mail.send(msg) 
+
+                username = username
+                print(f"username = {username}")
+                password = password
+                print(f"password = {password}")
+                email = email
+                print(f"email = {email}")
+                fname = fname
+                print(f"fname = {fname}")
+                lname = lname
+                print(f"lname = {lname}")
+                date_of_birth = date_of_birth
+                print(f"date_of_birth = {date_of_birth}")
+                gender = gender
+                print(f"gender = {gender}")
+                if gender == 'Female':
+                    gender = 'f'
+                elif gender == 'Male':
+                    gender = 'm'
+                role = 'regular'
+                print(f"role = {role}")
+                user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, gender=gender, role='regular', is_confirmed=False)
+                user.set_password(password, False)
+                db.session.add(user)
+                db.session.commit()
+
+                # user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, role='regular', gender=gender)
+                # password = user.set_password(password, True)
+                return render_template('verify.html', email=email)
+            else: 
+               flash("email is not valid") 
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
@@ -393,6 +670,40 @@ def create_user():
     print(all_usernames, file=sys.stderr)
     return render_template('create_user.html', form=form)
 
+
+@app.route('/validate/<email>',methods=["POST"])   
+def validate(email):  
+    if request.method == "POST":
+        email = email
+        print(f"email = {email}")
+        # fname = fname
+        # print(f"fname = {fname}")
+        # lname = lname
+        # print(f"lname = {lname}")
+        # date_of_birth = date_of_birth
+        # print(f"date_of_birth = {date_of_birth}")
+        # gender = gender
+        # print(f"gender = {gender}")
+        # if gender == 'Female':
+        #     gender = 'f'
+        # elif gender == 'Male':
+        #     gender = 'm'
+        # role = role
+        # print(f"role = {role}")
+        # fname=fname
+        # print(f"fname = {fname}")
+        #fname = v_form.fname.data
+        #print(f"FIRST NAME: {fname}")
+        user_otp = request.form['otp']  
+        if otp == int(user_otp):  
+            # current_user_id = current_user.id
+            # user = User(is_confirmed=False)
+            db.session.query(User).filter_by(email=email).update({'is_confirmed':True})
+            # user.set_password(password, False)
+            # db.session.add(user)
+            db.session.commit()
+            return "<h3> Email  verification is  successful </h3>"  
+    return "<h3>failure, OTP does not match</h3>" 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
 
 
@@ -417,13 +728,18 @@ def add_user():
 
             email_exists = db.session.query(User).filter_by(email=email).first()
             user_exists = db.session.query(User).filter_by(username=username).first()   
+            valid_email = check(email)
+            print(f'Valid Email? {valid_email}')
             if (email_exists is None) and (user_exists is None):
-                user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
-                user.set_password(password)
-                db.session.add(user)
-                
-                db.session.commit()
-                flash('User added successfully')
+                if valid_email is True:
+                    user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
+                    user.set_password(password, False)
+                    db.session.add(user)
+                    
+                    db.session.commit()
+                    flash('User added successfully')
+                else:
+                    flash("email is not valid") 
             else:
                 # print("user already exists", file=sys.stderr)
                 flash("user already exists")
@@ -556,7 +872,24 @@ def profile():
             # print(f'friend name: {row.f_name}')
             # #print(f'friend name: {name.username}')
             # print(f'status: {row.status}')
-    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row, query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
+        if current_user.is_authenticated:
+            current_user_id = current_user.id
+        query_friend_row = []
+        for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+            row = FriendInfo()
+            row.row_id = item.id
+            row.user_id = current_user.id
+            row.f_id = item.fk_friend_id
+            f_id = row.f_id
+            name = db.session.query(User).filter_by(id=f_id).first()
+            row.f_name = name.username
+            row.status = item.status
+            
+            if row.status == 2:
+                query_friend_row.append(row)
+    return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob,
+                           query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
     #height=height, weight=weight
     #image_file=image_file
 
@@ -740,7 +1073,7 @@ def remove_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=2).delete()
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=2).delete()
             db.session.commit()
-    return render_template('friends.html')
+    return redirect(url_for('profile'))
 
 @app.route('/friend_profile/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -761,46 +1094,176 @@ def friend_profile(friend_id):
             row.first_name = name.fname
             row.last_name = name.lname
 
-
             friend_id = int(friend_id)
 
-            
             if (row.status == 2) and (row.f_id == friend_id):
-                print("IN IF")
                 query_friend_row.append(row)
                 break
-        print(len(query_friend_row))
         query_friend_row = query_friend_row[0]
-        return render_template('view_friend_profile.html', query_friend_row=query_friend_row)
+        return render_template('view_friend_profile.html', query_friend_row=query_friend_row, f_id=f_id)
         
-        
-
-@app.route('/account_recovery', methods=['GET', 'POST'])
+@app.route('/account_recovery', methods=['GET'])
 def recover_account():
-    form = AccountRecovery()
-    if form.validate_on_submit():
-        username = form.username.data
-        email = form.email.data
-        newPassword = form.newPassword.data
-        newPassword_retype = form.newPassword_retype.data
-        if (db.session.query(User).filter_by(username=username).first()) and (db.session.query(User).filter_by(email=email).first()):
-            if newPassword == newPassword_retype:
-                user = db.session.query(User).filter_by(username=username).first()
-                password = db.session.query(User.password_hash).first()
-                print("TEST")
-                print(password)
-                user.set_password(newPassword)
-                db.session.add(user)
-                db.session.commit()
-                return redirect(url_for('login'))
-    return render_template('account_recovery.html', form=form)
-    
-    
+    return render_template("account_recovery.html") 
+    # form = AccountRecovery()
+    # if form.validate_on_submit():
+    #     # username = form.username.data
+    #     email = form.email.data
+    #     valid_email = check(email)
+    #     # newPassword = form.newPassword.data
+    #     # newPassword_retype = form.newPassword_retype.data
+    #     if (db.session.query(User).filter_by(email=email).first()):
+    #         if valid_email is True:
+    #             # if newPassword == newPassword_retype:
+    #             #     user = db.session.query(User).filter_by(username=username).first()
+    #             #     password = db.session.query(User.password_hash).first()
+    #             #     print("TEST")
+    #             #     print(password)
+    #             #     user.set_password(newPassword, False)
+    #             #     db.session.add(user)
+    #             #     db.session.commit()
+    #             #     return redirect(url_for('login'))
+    #             message = str(otp)   
+    #             subject = 'OTP'
+    #             msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    #             mail.send(msg)
+    #             return render_template('verify_recover.html', email=email)
+    #             # return redirect(url_for('validate_recovery', email=email))
+    #         else: 
+    #            print("email is not valid") 
+    #     else:
+    #         print("email is not associated with an account") 
+
+    # return render_template('account_recovery.html', form=form)
+
+@app.route('/verify_recovery', methods=['POST'])
+def verify_recovery():
+
+    email = request.form["email"]
+    message = str(otp)   
+    subject = 'OTP'
+    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+    # msg.body = str(otp)  
+    mail.send(msg)  
+
+    # with mail.connect() as conn:
+    #     email = request.form["email"]   
+    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
+    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
+    #     conn.send(msg)
+
+    return render_template('verify_recover.html', email=email)
+
+@app.route('/validate_recovery/<email>',methods=["POST"])   
+def validate_recovery(email):  
+    if request.method == "POST":
+        form = ChangePasswordForm()
+        email = email
+        print(f"email = {email}")
+        
+        user_otp = request.form['otp']  
+        if otp == int(user_otp):
+            print(f'otp = {otp}')
+            print(f'user_otp = {user_otp}')
+            # message = "Email  verification is  successful"
+            return render_template('change_pass.html', form=form)
+    return "<h3>failure, OTP does not match</h3>" 
+
+@app.route('/change_password/<email>',methods=["POST"])   
+def change_password(email):  
+    if request.method == "POST":
+        form = ChangePasswordForm()
+        email = email
+        print(f"email = {email}")
+        if form.validate_on_submit():
+            new_pass = form.new_pass.data
+            new_pass_retype = form.new_pass_retype.data
+            if new_pass == new_pass_retype:
+                
+                user = db.session.query(User).filter_by(email=email).first()
+                user.check_password(new_pass)
+                if not user.check_password(new_pass):
+                    #user = db.session.query(User).filter_by(email=email).first()
+                    password = user.set_password(new_pass, False)
+                    # update = update(User)
+                    # update = update.values({"password": })
+                    # update = User.query.filter_by(email=email).update(dict(password=password))
+                    db.session.add(user)
+                    db.session.commit()
+                    print("Password Changed")
+                    # print('password & retype match', file=sys.stderr)
+                    # user.set_password(new_pass, False)
+                    # db.session.add(user)
+                    # db.session.commit()
+                    return redirect(url_for('login'))
+                else:
+                    print("cannot use previous password")
+            else:
+                print("Passwords do not match")
+
+    return render_template('change_pass.html', form=form)
 #Edit
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    user_id = current_user.id
     form = EditProfileForm()
+    friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
+    friends = friends.all()
+    requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
+    requests = requests.all()
+    sent = db.session.query(Friend).filter_by(fk_user_id=user_id, status=1)
+    sent = sent.all()
+    len_friends = len(friends)
+    len_requests = len(requests)
+    len_sent = len(sent)
+
+    #s2 = mutual friends
+    #s1 = user sent request
+    #s0 = friend sent request
+    query_friend_row = []
+    query_requests_row = []
+    query_sent_row = []
+    for item in db.session.query(Friend).filter(Friend.fk_user_id==user_id):
+        row = FriendInfo()
+        row.row_id = item.id
+        row.user_id = current_user.id
+        row.f_id = item.fk_friend_id
+        f_id = row.f_id
+        #user_id = User.id
+        name = db.session.query(User).filter_by(id=f_id).first()
+        # name = row.f_name
+        row.f_name = name.username
+        #db.session.query(User).filter_by(username=username).first()
+        row.status = item.status
+        
+        if row.status == 2:
+            query_friend_row.append(row)
+        elif row.status == 1:
+            query_sent_row.append(row)
+        elif row.status == 0:
+            query_requests_row.append
+        # print(f'row id: {row.row_id}')
+        # print(f'user id: {row.user_id}')
+        # print(f'friend id: {row.f_id}')
+        # print(f'friend name: {row.f_name}')
+        # #print(f'friend name: {name.username}')
+        # print(f'status: {row.status}')
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+    query_friend_row = []
+    for item in db.session.query(Friend).filter(Friend.fk_user_id==current_user_id):
+        row = FriendInfo()
+        row.row_id = item.id
+        row.user_id = current_user.id
+        row.f_id = item.fk_friend_id
+        f_id = row.f_id
+        name = db.session.query(User).filter_by(id=f_id).first()
+        row.f_name = name.username
+        row.status = item.status
+        
+        if row.status == 2:
+            query_friend_row.append(row)
     if form.validate_on_submit():
         #---------------------------# 
         fname = form.fname.data
@@ -833,7 +1296,8 @@ def edit_profile():
 
         return redirect(url_for('profile'))
     image_file = url_for('static', filename='images/' + 'profile.png')
-    return render_template('edit_profile.html', form=form, image_file=image_file)
+    return render_template('edit_profile.html', form=form, image_file=image_file, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
   
 
 #Workouts
@@ -898,6 +1362,7 @@ def add_food():
         if not c_name: raise "name missing"
 
         c_total_calories = form_data['calories']
+        c_total_calories_NEW = c_total_calories
         c_serving_size_g = form_data['serving_size_g']
         c_fat_saturated_g = form_data['fat_saturated_g']
         c_protein_g = form_data['protein_g']
@@ -913,6 +1378,7 @@ def add_food():
                                 c_name =c_name,
                                 c_input_date=date.today(),
                                 c_total_calories = c_total_calories,
+                                c_total_calories_NEW = c_total_calories_NEW,
                                 c_serving_size_g = c_serving_size_g,
                                 c_fat_saturated_g = c_fat_saturated_g,
                                 c_protein_g = c_protein_g,
@@ -957,13 +1423,15 @@ def add_workout():
         e_total_calories_per_hour = form_data['calories_per_hour']
         e_duration_minutes = form_data['duration_minutes']
         e_total_calories = e_total_calories_per_hour * (e_duration_minutes/60)
+        e_total_calories_NEW = e_total_calories
 
         exercise = Exercise(fk_user_id=current_user.id,
                             e_name = e_name,
                             e_input_date=date.today(),
                             e_total_calories = e_total_calories,
                             e_calories_per_hour = e_total_calories_per_hour,
-                            e_duration_minutes = e_duration_minutes)
+                            e_duration_minutes = e_duration_minutes,
+                            e_total_calories_NEW=e_total_calories_NEW)
         
         try:
             db.session.add(exercise)
@@ -996,6 +1464,7 @@ def add_workout():
 @login_required
 def graph():
     plt.switch_backend('PDF')
+    plt.switch_backend('PDF')
     #connecting to the database 
     IP = environ.get('MYSQL_IP')
     USERNAME = environ.get('MYSQL_USER')
@@ -1012,7 +1481,7 @@ def graph():
     text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
-    plt.plot("c_input_date", "c_calories_total", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
@@ -1023,7 +1492,36 @@ def graph():
     #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
     return render_template('graph.html', user=user)
 
+@app.route('/friendGraph/<friend_id>')
+@login_required
+def friendGraph(friend_id):
+    plt.switch_backend('PDF')
+    plt.switch_backend('PDF')
+    #connecting to the database 
+    IP = environ.get('MYSQL_IP')
+    USERNAME = environ.get('MYSQL_USER')
+    PASSWORD = environ.get('MYSQL_PASS')
+    DB_NAME = environ.get('MYSQL_DB')
+    DB_CONFIG_STR = f"mysql+mysqlconnector://{USERNAME}:{PASSWORD}@{IP}/{DB_NAME}"
+    engine = create_engine(DB_CONFIG_STR)
+    
+    calories_df = pd.read_sql(
+    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {friend_id}"),
+    con=engine.connect())
 
+    exercises_df = pd.read_sql(
+    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {friend_id}"),
+    con=engine.connect())
+
+    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
+
+    plt.xlabel("Date",  size = 20)
+    plt.ylabel("Calories", size = 20)
+    plt.legend()
+    plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{friend_id}-graph.png"))
+    #return f"<html><body><img src='/static/graphs/{current_user.id}-graph.png' /></body></html>"
+    return render_template('friendGraph.html', friend_id=friend_id)
 #---------------------App Error--------------------------------------------------------------------#
 
 #page not found
@@ -1060,9 +1558,31 @@ def is_regular():
         else:
             return False
 #---------------------------------------------------#
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+# def check(email):
+ 
+#     # pass the regular expression
+#     # and the string into the fullmatch() method
+#     if(re.fullmatch(regex, email)):
+#         return True
+#     else:
+#         return False
 
 
 
+ 
+def check(email):
+    try:
+      # validate and get info
+        v = validate_email(email)
+        # replace with normalized form
+        email = v["email"] 
+        return True
+    except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        print(str(e))
+        return False
 
 
 

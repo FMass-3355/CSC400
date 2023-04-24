@@ -4,25 +4,48 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
-
-        <style>
-         
-        body, html {
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: right top;
-            font-family: 'Lato', sans-serif;
-        }
-        </style>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
+
+    <style>
+        .profileBack {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://wallpapercosmos.com/w/full/d/6/7/1130981-1920x1080-desktop-full-hd-calisthenics-background-photo.jpg);
+        }
+
+        a, a:hover{
+            color: black;
+            text-decoration: none;
+        }
+
+        button {
+            transition: .5s;
+        }
+
+        button:hover {
+            text-decoration: none;
+            color: black;
+            background-color: aqua;
+            transition: .5s;
+        }
+
+        .friendDelete {
+            color: aliceblue;
+            float: right;
+        }
+
+        .friendDelete:hover {
+            color: aliceblue;
+        }
+    </style>
     
-    <body>
+    <body class="base profileBack" style="color:aliceblue">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -30,16 +53,47 @@
               <a href="/tracker">Tracker</a>
               <a href="/profile">Profile</a>
               <a href="/logout">Logout</a>
+              {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
             </div>
         </div>
     
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
     
-        <h1 style="text-align: center;">Profile</h1>
+        <br><br><h1 style="text-align: center;">{{query_friend_row.f_name}}'s Profile</h1><br><br>
+        <div class="col-md-6 col-md-offset-3">
+            <div class="row" style="text-align: center;">
+                <div class="col-md-6"><h2>First Name: {{query_friend_row.first_name}}</h2></div>
+                <div class="col-md-6"><h2>Last Name: {{query_friend_row.last_name}}</h2></div>
+            </div>
+
+            
+        </div>
+        <iframe src="/friendGraph/{{f_id}}" on onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' \
+        style="width:40%;border:none;margin:auto;"></iframe>
         
-        <h1>user: {{query_friend_row.f_name}}<br>first: {{query_friend_row.first_name}}<br>last: {{query_friend_row.last_name}}<br></h1>
+        <br><button class="btn" style="width: fit-content; margin: auto;"><a href="/profile" style="color:black">Back</a></button>
 
-        <button style="width: fit-content;"><a href="/profile">Back</a></button>
-
+        <footer class="titletext" style="text-align: center; margin-top: 2.5%;">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ejamieson747@gmail.com</p>
+                        <p>Kari Bavis: k.bevis01@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

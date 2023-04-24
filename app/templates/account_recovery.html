@@ -2,33 +2,16 @@
 {% extends "login.html" %}
 {% block content %}
 <div class="row m-0" style="height: 100%;">
+    
     <div class="col-md-4 offset-md-8" style="background-color: rgba(0,0,0, 0.6); color: aliceblue;">   
             <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 44pt;">Recover Account</h1>    
+           
         <div class="col-md-10 offset-md-1">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
-                    <form action="" method="POST">
-                        {{ form.hidden_tag() }}
-                        <p style="width: fit-content; margin: auto;">
-                            {{ form.username.label(class="form-control-label") }}<br>
-                            {{ form.username(class="form-control form-control-md") }}
-                        </p><br>
-
-                        <p style="width: fit-content; margin: auto;">
-                            {{ form.email.label(class="form-control-label") }}<br>
-                            {{ form.email(class="form-control form-control-md")}}
-                        </p><br>
-                                
-                        <p id="ptag">
-                            {{ form.newPassword.label(class="form-control-label") }}<br>
-                            {{ form.newPassword(class="form-control form-control-md") }}
-                        </p><br>
-
-                        <p id="ptag">
-                            {{ form.newPassword_retype.label(class="form-control-label") }}<br>
-                            {{ form.newPassword_retype(class="form-control form-control-md") }}
-                        </p><br>
-                        <p href="/login" style="display: flex; justify-content: center;" class="btn login_button"> {{ form.submit(class="btn") }} </p>
+                    <form action = "/verify_recovery" method = "POST" >  
+                        Email address: <input type="email" name="email" style="color: black">  
+                        <input type = "submit" value="Submit" style="color: black">  
                     </form>
                     <p style="padding-top: 2.5%;"></p><a class="btn" href="/login" \
                     style="display: flex; margin: auto; width: fit-content; background-color: pink;">Back</a>

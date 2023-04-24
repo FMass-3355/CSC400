@@ -15,6 +15,19 @@
     <link rel="stylesheet" href="../static/stylesheets/base.css">
 </head>
 
+<style>
+    button {
+        transition: .5s;
+    }
+
+    button:hover {
+        text-decoration: none;
+        color: black;
+        background-color: aqua;
+        transition: .5s;
+    }
+</style>
+
 <body class="background" style="color: aliceblue;">
     <div id="myNav" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -23,13 +36,18 @@
             <a href="/tracker">Tracker</a>
             <a href="/profile">Profile</a>
             <a href="/logout">Logout</a>
+            {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
         </div>
     </div>
 
     <span class="openNav" onclick="openNav()">&#9776; </span>
 
      
-        <br><br><h1 id="title" style="text-align: center;">{{actualDay2}}</h1>
+        <br><br><span class="dropbtn" style="text-align: center;">{{actualDay2}}</span>
         <br>
 
         <div class="col-md-4 col-md-offset-4">
@@ -39,23 +57,36 @@
                     <tr>
                         <th>Food</th>
                         <th>Servings</th>
+                        <th><span style="display: none;"></span></th>
+                        <th><span style="display: none;"></span></th>
                         <th>Calories</th>
                         <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
                     </tr>
                     {% for food in query_cal_row %}
                     <tr>
                         <td>{{food.c_name}}</td>
-                        <td>{{food.c_input_date}}</td>
-                        <td>{{food.c_calories_total}}</td>
-                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <td>{{(food.c_serving_size_g)/100}}</td>
+                        <td><button class="btn"><a href="/serving_size_up_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: black;">Add 1 Serving Size</a></button></td>
+                        {% if food.c_serving_size_g > 100 %}
+                            <td><button class="btn"><a href="/serving_size_down_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: black;">Take out 1 Serving Size</a></button></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td>{{food.c_total_calories_NEW}}</td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood(id_var = '{{ food.cal_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
-                            function deleteFood() {
+                            function deleteFood(id_var) {
                                 if (confirm("Delete Food?")) {
-                                    window.location.href = "/c_delete_row/{{ food.cal_id }}";
+                                    window.location.href = "/c_delete_row/"+id_var;
+                                    // window.alert(myVar);
                                 }
                                 else {
                                     window.location.href = "/edit_tracker";
                                 }}
+                            // function changeServing(s_var, id_var) {
+                            //     window.location.href = "/change_serving_size/"+s_var+id_var;
+                            // }
+                            
                         </script>
                     </tr>
                     {% endfor %}   
@@ -80,20 +111,29 @@
                 <table id="table2" class="table-striped" style="width: 100%; margin: auto;">
                     <tr>
                         <th>Exercise</th>
-                        <th>Reps/Time</th>
+                        <th>Reps/Time (hours)</th>
+                        <th><span style="display: none;"></span></th>
+                        <th><span style="display: none;"></span></th>
                         <th>Calories Burned</th>
                         <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
                     </tr>
                     {% for exercise in query_ex_row %}
                     <tr>
                         <td>{{exercise.e_name}}</td>
-                        <td>{{exercise.e_duration_minutes}}</td>
-                        <td>{{exercise.e_total_calories}}</td>
-                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise()" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
+                        <td>{{(exercise.e_duration_minutes)/60}}</td>
+                        <td><button class="btn"><a href="/duration_min_up_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: black;">Add 1 hour</a></button></td>
+                        {% if exercise.e_duration_minutes > 60 %}
+                            <td><button class="btn"><a href="/duration_min_down_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: black;">Take out 1 hour</a></button></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                        <td>{{exercise.e_total_calories_NEW}}</td>
+                        <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise(myVar = '{{ exercise.ex_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
-                            function deleteExercise() {
+                            function deleteExercise(myVar) {
                                 if (confirm("Delete Exercise?")) {
-                                    window.location.href = "/e_delete_row/{{ exercise.ex_id }}";
+                                    window.location.href =  "/e_delete_row/"+myVar;
+                                //     window.alert(myVar);
                                 }
                                 else {
                                     window.location.href = "/edit_tracker";
@@ -297,8 +337,8 @@
                     project to be used by fitness-oriented individuals.</div>
                 <div class="col-md-6 col-xs-6">
                     <p>Franklin Massimi: FMass3355@hotmail.com</p>
-                    <p>Emma Jamieson: ej@email.com</p>
-                    <p>Kari Bavis: kb@email.com</p>
+                    <p>Emma Jamieson: ejamieson747@gmail.com</p>
+                    <p>Kari Bavis: k.bevis01@gmail.com</p>
                 </div>
             </div>
         </div>

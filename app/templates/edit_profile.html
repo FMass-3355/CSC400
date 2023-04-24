@@ -4,38 +4,165 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
-
-        <style>
-         
-        body, html {
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: right top;
-            font-family: 'Lato', sans-serif;
-        }
-        </style>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
 
-    <body>
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.fname.label(class="form-control-label") }}
-                {{ form.fname(class="form-control form-control-md", value=current_user.fname)}}
-            </p>
-            <p>
-                {{ form.lname.label(class="form-control-label") }}
-                {{ form.lname(class="form-control form-control-md", value=current_user.lname)}}
-            </p>
-            <p href="/profile" style="width: fit-content; margin: auto; float: right;">
-                {{ form.submit(class="form-control form-control-md btn btn-primary") }}</p>
-        </form>
-        <button style="width: fit-content;"><a href="/profile">Back</a></button>
+    <style>
+        .profileBack {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://wallpapercosmos.com/w/full/d/6/7/1130981-1920x1080-desktop-full-hd-calisthenics-background-photo.jpg);
+        }
+
+        a, a:hover{
+            color: black;
+            text-decoration: none;
+        }
+
+        button {
+            transition: .5s;
+        }
+
+        button:hover {
+            text-decoration: none;
+            color: black;
+            background-color: aqua;
+            transition: .5s;
+        }
+
+        .friendDelete {
+            color: aliceblue;
+            float: right;
+        }
+
+        .friendDelete:hover {
+            color: aliceblue;
+        }
+    </style>
+    
+    <body class="base profileBack" style="color:aliceblue">
+        <div id="myNav" class="overlay">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+              <a href="/homepage">Home</a>
+              <a href="/tracker">Tracker</a>
+              <a href="/profile">Profile</a>
+              <a href="/logout">Logout</a>
+              {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
+            </div>
+        </div>
+    
+        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
+    
+        <br><br><h1 style="text-align: center;">Profile</h1><br><br>
+        
+        <div class="col-md-8 col-md-offset-2">
+            <div class="row">
+                <div class="col-md-6" style="border-right: solid 2px aliceblue;">
+                    <h2 style="text-align: center;">Edit Profile</h2>
+                    <form action="" method="post">
+                        {{ form.hidden_tag() }}
+                        <p>
+                            {{ form.fname.label(class="form-control-label") }}
+                            {{ form.fname(class="form-control form-control-md", value=current_user.fname)}}
+                        </p>
+                        <p>
+                            {{ form.lname.label(class="form-control-label") }}
+                            {{ form.lname(class="form-control form-control-md", value=current_user.lname)}}
+                        </p>
+                        <button class="btn" style="width: fit-content; float: left;"><a href="/profile">Back</a></button>
+                        <p href="/profile" style="width: fit-content; margin: auto; float: right;">
+                            {{ form.submit(class="form-control form-control-md btn btn-primary") }}</p>
+                    </form>
+                    
+                </div>
+            
+                <div class="col-md-6">
+                    <h2 style="text-align: center;">Friends</h2>
+                    <div style="text-align: center;">
+                        {% if len_requests != 0 %}
+                            <p>You have a new friend request!</p>
+                            <button class="btn notice" style="width: fit-content;"><a class="noticeText" href="/view_requests" class="buttonLink">View Friend Requests</a></button><br><br>               
+                        {% endif %}
+                    </div>
+                    
+                    <table class="table-striped" style="width: 100%;">
+                        <tr>
+                            <th>Username</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        {% for friend in query_friend_row %}
+                        <tr>
+                            <td>{{friend.f_name}}</td>
+                            <td><a class="friendDelete" href="/friend_profile/{{friend.f_id}}">View Profile</a></td>
+                            <td><a class="friendDelete" href="/remove_friend/{{ friend.f_id }}" style="padding-right: 3px;">Remove Friend</a></td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </table><br>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                    
+                    </div>
+                    
+                    <div class="col-md-6"><button class="btn" style="width: fit-content;"><a href="/search_users">Search Users</a></button></div>
+                </div>
+        </div>
+            
+        <br>
+        <!-- <p>How Many Requests Sent (1): {{len_sent}}</p> -->
+
+        <!-- <table id="friend_table">
+            
+            <tr>
+                <th>Row ID</th>
+                <th>Current User ID</th>
+                <th>Friends ID</th>
+                <th>Friends Username</th>
+                <th>Status of Friendship</th>
+            </tr>
+            {% for friend in query_friend_row %}
+            <tr>
+                <td>{{friend.row_id}}</td>
+                <td>{{friend.user_id}}</td>
+                <td>{{friend.f_id}}</td>
+                <td>{{friend.f_name}}</td>
+                <td>{{friend.status}}</td>
+            </tr>
+            {% endfor %}
+            
+        </table> -->
+
+        <footer class="titletext" style="text-align: center;">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ejamieson747@gmail.com</p>
+                        <p>Kari Bavis: k.bevis01@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

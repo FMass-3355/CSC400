@@ -67,6 +67,37 @@ h1{
     }
 }
 
+.notice {
+    animation: animateNotice 3s infinite;
+}
+@keyframes animateNotice{
+    0%{
+        background-color: aliceblue;
+    }
+    50%{
+        background-color: rgb(9, 64, 100, 0.85);
+    }
+    100%{
+        background-color: aliceblue;
+    }
+}
+
+.noticeText {
+    animation: animateText 3s infinite;
+}
+@keyframes animateText{
+    0%{
+        color: black;
+    }
+    50%{
+        color: aliceblue;
+    }
+    100%{
+        color: black;
+    }
+}
+
+
 .dateSwitch:hover, .dateSwitch:focus{
     color: aqua;
     transition: .3s;
@@ -129,11 +160,11 @@ h1{
             background-color: rgb(9, 64, 100);
         }
 
-        table {
-            font-size:medium;
-            width: 35%;
-            color: aliceblue;
-        }
+table {
+    font-size:medium;
+    width: 35%;
+    color: aliceblue;
+}
 
 
 

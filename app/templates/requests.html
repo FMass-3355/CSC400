@@ -4,25 +4,48 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="../static/js/navbar.js"></script>
-
-        <style>
-         
-        body, html {
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: right top;
-            font-family: 'Lato', sans-serif;
-        }
-        </style>
+        <link rel="stylesheet" href="../static/stylesheets/navbar.css">
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
     </head>
+
+    <style>
+        .profileBack {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://wallpapercosmos.com/w/full/d/6/7/1130981-1920x1080-desktop-full-hd-calisthenics-background-photo.jpg);
+        }
+
+        button {
+            transition: .5s;
+        }
+
+        a, a:hover{
+            color: aliceblue;
+            text-decoration: none;
+        }
+
+        button:hover {
+            text-decoration: none;
+            color: black;
+            background-color: aqua;
+            transition: .5s;
+        }
+
+        .friendDelete {
+            color: aliceblue;
+            float: right;
+        }
+
+        .friendDelete:hover {
+            color: aliceblue;
+        }
+    </style>
     
-    <body>
+    <body class="base profileBack" style="color:aliceblue">
         <div id="myNav" class="overlay">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -30,35 +53,59 @@
               <a href="/tracker">Tracker</a>
               <a href="/profile">Profile</a>
               <a href="/logout">Logout</a>
+              {% if current_user.role == 'admin' %}
+            <br><br><h3 style="text-decoration: underline;">Admin</h3>
+            <a href="/view_users">View Users</a>
+            <a href="/add_user">Add User</a>
+          {% endif %}
             </div>
         </div>
     
-        <span style="font-size:50px;cursor:pointer" onclick="openNav()">&#9776; </span>
+        <span class="openNav" onclick="openNav()" style="position: fixed;">&#9776;</span>
     
-        <h1 style="text-align: center;">Profile</h1>
-        <h3>FRIENDS</h3>
+        <br><br><h1 style="text-align: center;">Friend Requests</h1><br><br>
 
-        <table id="friend_table">
-            
-            <tr>
-                <th>Friends Username</th>
-                <th></th>
-                <th></th>
-            </tr>
-            {% if query_requests_row%}
-                {% for friend in query_requests_row %}
+        <div class="col-md-4 col-md-offset-4">
+            <table id="friend_table" class="table-striped" style="width: 100%;">
                 <tr>
-                    <td>{{friend.f_name}}</td>
-                    <td><a href="/accept_friend/{{ friend.f_id }}">Accept</a></td>
-                    <td><a href="/decline_friend/{{ friend.f_id }}">Decline</a></td>
+                    <th>Friends Username</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-                {% endfor %}
-            {% else %}
-                 <td>No More Friend Requests</td>
-            {% endif %}
-            
-            
-        </table>
-        <button style="width: fit-content;"><a href="/profile">Back</a></button>
+                {% if query_requests_row%}
+                    {% for friend in query_requests_row %}
+                    <tr>
+                        <td>{{friend.f_name}}</td>
+                        <td><a href="/accept_friend/{{ friend.f_id }}">Accept</a></td>
+                        <td><a href="/decline_friend/{{ friend.f_id }}">Decline</a></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                     <td>No More Friend Requests</td>
+                {% endif %}
+            </table><br><br>
+            <button class="btn" style="width: fit-content;"><a href="/profile" style="color:black">Back</a></button>
+        </div>
+        
+        
+        
+        <footer class="titletext" style="text-align: center;">
+            <div class="col-md-offset-2 col-md-8" style="color:aliceblue">
+                <hr style="background-color: aliceblue; height: 1px; border: none; margin: 0%;">
+                <div class="row">
+                    <div class="col-md-6 col-xs-6"><h3>About us</h3></div>
+                    <div class="col-md-6 col-xs-6"><h3>Contact us</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-6">We are Southern Connecticut State University students creating a capstone 
+                        project to be used by fitness-oriented individuals.</div>
+                    <div class="col-md-6 col-xs-6">
+                        <p>Franklin Massimi: FMass3355@hotmail.com</p>
+                        <p>Emma Jamieson: ejamieson747@gmail.com</p>
+                        <p>Kari Bavis: k.bevis01@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>
