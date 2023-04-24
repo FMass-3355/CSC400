@@ -702,8 +702,10 @@ def validate(email):
             # user.set_password(password, False)
             # db.session.add(user)
             db.session.commit()
-            return "<h3> Email  verification is  successful </h3>"  
-    return "<h3>failure, OTP does not match</h3>" 
+            result = "Email verification is successful"
+            return render_template('verifyResult.html', result=result)  
+    result = "Failure, OTP does not match"
+    return render_template('verifyResult.html', result=result) 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
 
 
@@ -1190,17 +1192,16 @@ def change_password(email):
                     # update = User.query.filter_by(email=email).update(dict(password=password))
                     db.session.add(user)
                     db.session.commit()
-                    print("Password Changed")
+                    flash("Password Changed")
                     # print('password & retype match', file=sys.stderr)
                     # user.set_password(new_pass, False)
                     # db.session.add(user)
                     # db.session.commit()
                     return redirect(url_for('login'))
                 else:
-                    print("cannot use previous password")
+                    flash("cannot use previous password")
             else:
-                print("Passwords do not match")
-
+                flash("Passwords do not match")
     return render_template('change_pass.html', form=form)
 #Edit
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -1559,18 +1560,6 @@ def is_regular():
             return False
 #---------------------------------------------------#
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
-# def check(email):
- 
-#     # pass the regular expression
-#     # and the string into the fullmatch() method
-#     if(re.fullmatch(regex, email)):
-#         return True
-#     else:
-#         return False
-
-
-
  
 def check(email):
     try:

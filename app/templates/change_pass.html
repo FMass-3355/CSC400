@@ -1,22 +1,38 @@
-<!DOCTYPE html>
-<html>
-    <head>
-      <title>OTP Verification</title>
-    </head>    
-    <body>
+{% extends "login.html" %}
+{% block content %}
+<body style="height: 100%;" class="homeBack"></body>
+<div class="row m-0" style="height: 100%;">
+    <div class="col-md-4 offset-md-8" style="background-color: rgba(0,0,0, 0.6); color: aliceblue;">
+      <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 44pt;">Recover Account</h1>
       <form action="" method="post">
         {{ form.hidden_tag() }}
-        <p>
+        <p id="ptag">
             {{ form.new_pass.label(class="form-control-label") }}
             {{ form.new_pass(class="form-control form-control-md", value=current_user.fname)}}
-        </p>
-        <p>
+        </p><br>
+        <p id="ptag">
             {{ form.new_pass_retype.label(class="form-control-label") }}
             {{ form.new_pass_retype(class="form-control form-control-md", value=current_user.lname)}}
-        </p>
-        <button class="btn" style="width: fit-content; float: left;"><a href="/login">Back To Login</a></button>
-        <p href="/login" style="width: fit-content; margin: auto; float: right;">
-            {{ form.submit(class="form-control form-control-md btn btn-primary") }}</p>
+        </p><br>
+        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger show"
+                                    role="alert" style="text-align: center;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+        <p style="padding-top: 2.5%;"></p><a class="btn" href="/login" \
+            style="background-color: pink;">Back to login</a>
+        <p class='btn login_button' href="/login" style="width: fit-content; margin: auto; float: right;"> {{ form.submit(class="btn") }} </p>
     </form>
-    </body>
-</html>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock %}

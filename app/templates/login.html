@@ -13,11 +13,18 @@
         <link rel="stylesheet" href="../static/stylesheets/carousel.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
     </head>
+    <style>
+        .homeBack {
+            background-image: 
+            linear-gradient(rgba(46, 46, 46, 0.85) 60%, rgb(9, 64, 100, 0.85)),
+            url(https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77702075129.jpg);
+            background-size: cover;
+        }
+    </style>
+    {% block content %}
     <body style="height: 100%;">
             {% include "carousel.html" %}
-            {% block content %}
             <div class="row m-0" style="height: 100%;">
                 <div class="col-md-4 offset-md-8" style="background-color: rgba(0,0,0, 0.6); color: aliceblue;">
                     <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 62pt;">FIT</h1>
@@ -54,6 +61,6 @@
                     <a class="btn create_user_button" href="/create_user">Create User</a>
                 </div>
             </div>
-            {% endblock %}
     </body>
+    {% endblock %}
 </html>

@@ -91,7 +91,6 @@ login.login_view = 'login'
 from app import routes, models
 from app.models import *
 
-
 #Drop Database to refresh (Comment out later once statisfied)
 def reset_db():
     with app.app_context():
