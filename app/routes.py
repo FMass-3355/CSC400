@@ -387,7 +387,7 @@ def create_user():
                 password = user.set_password(password, True)
                 return render_template('verify.html', username=username, password=password, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, role='regular', gender=gender)
             else: 
-               flash("email is not valid") 
+                flash("email is not valid") 
         else:
             # print("user already exists", file=sys.stderr)
             flash("user already exists")
@@ -431,8 +431,10 @@ def validate(username,password,email,fname,lname,date_of_birth,gender,role):
             user.set_password(password, False)
             db.session.add(user)
             db.session.commit()
-            return "<h3> Email  verification is  successful </h3>"  
-    return "<h3>failure, OTP does not match</h3>" 
+            result = "Email verification is successful"
+            return render_template('verifyResult.html', result=result)  
+    result = "Failure, OTP does not match"
+    return render_template('verifyResult.html', result=result) 
 #------------------------------------------------------------- Account Methods ----------------------------------------------------------------#
 
 
@@ -840,27 +842,27 @@ def recover_account():
         valid_email = check(email)
         # newPassword = form.newPassword.data
         # newPassword_retype = form.newPassword_retype.data
-        if (db.session.query(User).filter_by(email=email).first()):
-            if valid_email is True:
-                # if newPassword == newPassword_retype:
-                #     user = db.session.query(User).filter_by(username=username).first()
-                #     password = db.session.query(User.password_hash).first()
-                #     print("TEST")
-                #     print(password)
-                #     user.set_password(newPassword, False)
-                #     db.session.add(user)
-                #     db.session.commit()
-                #     return redirect(url_for('login'))
-                message = str(otp)   
-                subject = 'OTP'
-                msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
-                mail.send(msg)
-                return render_template('verify_recover.html', email=email)
-            else: 
-               print("email is not valid") 
-        else:
-            print("email is not associated with an account") 
-
+        if valid_email is True:
+            if (db.session.query(User).filter_by(email=email).first()):
+                
+                    # if newPassword == newPassword_retype:
+                    #     user = db.session.query(User).filter_by(username=username).first()
+                    #     password = db.session.query(User.password_hash).first()
+                    #     print("TEST")
+                    #     print(password)
+                    #     user.set_password(newPassword, False)
+                    #     db.session.add(user)
+                    #     db.session.commit()
+                    #     return redirect(url_for('login'))
+                    message = str(otp)   
+                    subject = 'OTP'
+                    msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
+                    mail.send(msg)
+                    return render_template('verify_recover.html', email=email)
+            else:
+                flash("email is not associated with an account") 
+        else: 
+            flash("email is not valid")
     return render_template('account_recovery.html', form=form)
 
 @app.route('/validate_recovery/<email>',methods=["POST"])   
@@ -897,17 +899,16 @@ def change_password(email):
                     # update = User.query.filter_by(email=email).update(dict(password=password))
                     db.session.add(user)
                     db.session.commit()
-                    print("Password Changed")
+                    flash("Password Changed")
                     # print('password & retype match', file=sys.stderr)
                     # user.set_password(new_pass, False)
                     # db.session.add(user)
                     # db.session.commit()
                     return redirect(url_for('login'))
                 else:
-                    print("cannot use previous password")
+                    flash("cannot use previous password")
             else:
-                print("Passwords do not match")
-
+                flash("Passwords do not match")
     return render_template('change_pass.html', form=form)
 #Edit
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -1262,18 +1263,6 @@ def is_regular():
             return False
 #---------------------------------------------------#
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
-# def check(email):
- 
-#     # pass the regular expression
-#     # and the string into the fullmatch() method
-#     if(re.fullmatch(regex, email)):
-#         return True
-#     else:
-#         return False
-
-
-
  
 def check(email):
     try:

@@ -91,7 +91,6 @@ login.login_view = 'login'
 from app import routes, models
 from app.models import *
 
-
 #Drop Database to refresh (Comment out later once statisfied)
 def reset_db():
     with app.app_context():
@@ -262,4 +261,4 @@ def reset_db():
         #status(1) = u  ->  f
         #status(2) = u <-> f
 
-# reset_db()
+reset_db()

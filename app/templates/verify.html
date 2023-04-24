@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-      <title>OTP Verification</title>
-    </head>    
-    <body>
-      <form action = "/validate/{{username}}/{{password}}/{{email}}/{{fname}}/{{lname}}/{{date_of_birth}}/{{gender}}/{{role}}" method="POST">
-        <h4>OTP has been sent to the email id. Please check the email for the confirmation.</h4>
-        Enter OTP(One-time password): <input type="text" name="otp">
-
-        <input type="submit" value="Submit">
-      </form>
-    </body>
-</html>
+{% extends "login.html" %}
+{% block content %}
+<body style="height: 100%;" class="homeBack"></body>
+<div class="row m-0" style="height: 100%;">
+    <div class="col-md-4 offset-md-8" style="background-color: rgba(0,0,0, 0.6); color: aliceblue;">
+      <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 44pt;">Create Account</h1>
+        <form action = "/validate/{{username}}/{{password}}/{{email}}/{{fname}}/{{lname}}/{{date_of_birth}}/{{gender}}/{{role}}" method="POST">
+          <p>Your code has been sent. Please check the email you provided for confirmation.</p>
+          Confirmation code: <input type="text" name="otp"><br><br>
+  
+          <input style="padding: 1%;" type="submit" class="btn login_button" value="Submit">
+        </form>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock %}
