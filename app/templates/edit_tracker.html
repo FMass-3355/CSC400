@@ -57,21 +57,22 @@
                     <tr>
                         <th>Food</th>
                         <th>Servings</th>
-                        <th><span style="display: none;"></span></th>
-                        <th><span style="display: none;"></span></th>
                         <th>Calories</th>
                         <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
                     </tr>
                     {% for food in query_cal_row %}
                     <tr>
                         <td>{{food.c_name}}</td>
-                        <td>{{(food.c_serving_size_g)/100}}</td>
-                        <td><button class="btn"><a href="/serving_size_up_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: black;">Add 1 Serving Size</a></button></td>
+                        <td>
                         {% if food.c_serving_size_g > 100 %}
-                            <td><button class="btn"><a href="/serving_size_down_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: black;">Take out 1 Serving Size</a></button></td>
+                            <a href="/serving_size_down_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: aliceblue; font-size: 20px;">-  </a>
                         {% else %}
-                            <td></td>
+                            <p style="display: none;">-</p>
                         {% endif %}
+                        {{(food.c_serving_size_g)/100}}
+                        <a href="/serving_size_up_1/{{food.c_serving_size_g}}/{{food.cal_id}}" style="padding: 0%; text-decoration: none; color: aliceblue; font-size: 20px;">  +</a></td>
+                            
+                        
                         <td>{{food.c_total_calories_NEW}}</td>
                         <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteFood(id_var = '{{ food.cal_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
@@ -112,21 +113,21 @@
                     <tr>
                         <th>Exercise</th>
                         <th>Reps/Time (hours)</th>
-                        <th><span style="display: none;"></span></th>
-                        <th><span style="display: none;"></span></th>
                         <th>Calories Burned</th>
                         <th><span class="glyphicon glyphicon-trash" style="display: none;"></span></th>
                     </tr>
                     {% for exercise in query_ex_row %}
                     <tr>
                         <td>{{exercise.e_name}}</td>
-                        <td>{{(exercise.e_duration_minutes)/60}}</td>
-                        <td><button class="btn"><a href="/duration_min_up_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: black;">Add 1 hour</a></button></td>
+                        <td>
                         {% if exercise.e_duration_minutes > 60 %}
-                            <td><button class="btn"><a href="/duration_min_down_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: black;">Take out 1 hour</a></button></td>
+                            <a href="/duration_min_down_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: aliceblue; font-size: 20px;">-  </a>
                         {% else %}
-                            <td></td>
+                            <p style="display: none;">-</p>
                         {% endif %}
+                        {{(exercise.e_duration_minutes)/60}}
+                        <a href="/duration_min_up_1/{{exercise.e_duration_minutes}}/{{exercise.ex_id}}" style="padding: 0%; text-decoration: none; color: aliceblue; font-size: 20px;">  +</a></td>
+                        
                         <td>{{exercise.e_total_calories_NEW}}</td>
                         <td style="text-align: right; padding-right: 3px; width: 22.84px;"><span onclick="deleteExercise(myVar = '{{ exercise.ex_id }}')" class="glyphicon glyphicon-trash" style="cursor: pointer; vertical-align: middle;"></span></td>
                         <script>
