@@ -1,22 +1,4 @@
-import pytest
-from os import environ
-
-from dotenv import load_dotenv
-from pathlib import Path
-dotenv_path = Path('.flaskenv')
-load_dotenv(dotenv_path=dotenv_path)
-
-from app import app
-
-@pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    app.config['WTF_CSRF_ENABLED'] = False
-    with app.test_client() as client:
-        with app.app_context():
-            pass
-        yield client
-
+from app.test.defaults import client
 
 def test_login_with_bad_credentials(client):
     response = client.post('/login', data=dict(
