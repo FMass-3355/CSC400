@@ -1277,19 +1277,19 @@ def graph():
     engine = create_engine(DB_CONFIG_STR)
     
     calories_df = pd.read_sql(
-    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {current_user.id}"),
+    text(f"SELECT c_input_date, c_total_calories_NEW FROM calorie WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
     exercises_df = pd.read_sql(
-    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {current_user.id}"),
+    text(f"SELECT e_input_date, e_total_calories_NEW FROM exercise WHERE fk_user_id = {current_user.id}"),
     con=engine.connect())
 
-    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
-    plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
+    plt.plot("c_input_date", "c_total_calories_NEW", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("e_input_date", "e_total_calories_NEW", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
     plt.ylabel("Calories", size = 20)
-    plt.xticks(rotation=25)
+    plt.tick_params(axis="x", labelrotation= 25)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
     user = current_user.id
@@ -1311,14 +1311,14 @@ def friendGraph(friend_id):
     engine = create_engine(DB_CONFIG_STR)
     
     calories_df = pd.read_sql(
-    text(f"SELECT c_input_date, c_total_calories FROM calorie WHERE fk_user_id = {friend_id}"),
+    text(f"SELECT c_input_date, c_total_calories_NEW FROM calorie WHERE fk_user_id = {friend_id}"),
     con=engine.connect())
 
     exercises_df = pd.read_sql(
-    text(f"SELECT e_input_date, e_total_calories FROM exercise WHERE fk_user_id = {friend_id}"),
+    text(f"SELECT e_input_date, e_total_calories_NEW FROM exercise WHERE fk_user_id = {friend_id}"),
     con=engine.connect())
 
-    plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
+    plt.plot("c_input_date", "c_total_calories_NEW", data=calories_df, label="calories consumed", color='#A469D8')
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
