@@ -123,7 +123,7 @@ def reset_db():
         #height maybe done in cm?
         track = Track.query.filter_by(fk_user_id=1).first()
         if track is None:
-            track_1 = Track(fk_user_id=1, height=169, weight=200)
+            track_1 = Track(fk_user_id=1, height=71, weight=165)
             db.session.add(track_1)
             db.session.commit()
 
@@ -261,4 +261,4 @@ def reset_db():
         #status(1) = u  ->  f
         #status(2) = u <-> f
 
-# reset_db()
+reset_db()

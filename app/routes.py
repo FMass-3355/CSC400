@@ -20,7 +20,7 @@ from wtforms.validators import DataRequired
 import sys
 import requests
 from io import BytesIO
-
+import math
 from datetime import date, datetime, timedelta
 from flask_wtf.file import FileField
 import json
@@ -503,7 +503,7 @@ def create_user():
         h_inches = form.height_inches.data
 
         h_feet = h_feet * 12 #putting into inches
-        height = (h_feet + h_inches) * 2.54 #adding both inches then putting into centimeters
+        height = (h_feet + h_inches) #adding both inches then putting into centimeters
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
@@ -718,7 +718,9 @@ def view_users():
 #----------------------------------------------------------- Administrator Methods ------------------------------------------------------------#
 
 
-
+def round_up(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
 #---------------------------------------------------------- Profiles --------------------------------------------------------------------------#
 #Profile
 @app.route('/profile/')
@@ -755,13 +757,13 @@ def profile():
             row.t_height = item.height
             weight = row.t_weight
             height = row.t_height
-            h_feet = ((height / 2.54)/12) // 1
+            h_cm = height*2.54
+            h_inch = height%12
+            h_feet = (height - h_inch)/12
             h_feet = int(h_feet)
-            h_inch = ((height / 2.54)/12) % 1
-            h_inch = round(h_inch, 1) 
-            h_inch *= 10
             h_inch = int(h_inch)
-
+            h_cm = int(h_cm)
+      
         friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
         friends = friends.all()
         requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
@@ -820,7 +822,8 @@ def profile():
                 query_friend_row.append(row)
     return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob,
                            query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
-                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent, weight=weight, height=height, h_feet=h_feet, h_inch=h_inch)
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent, weight=weight, 
+                           height=height, h_feet=h_feet, h_inch=h_inch, h_cm=h_cm)
     #height=height, weight=weight
     #image_file=image_file
 
