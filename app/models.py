@@ -74,7 +74,7 @@ class Track(db.Model):
     __tablename__ = 'track'
     id = db.Column(db.Integer, primary_key=True)
     fk_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    t_input_date = db.Column(db.Date)
+    # t_input_date = db.Column(db.Date)
     height = db.Column(db.Integer)
     weight = db.Column(db.Integer)
 
@@ -127,6 +127,12 @@ User.friends = relationship(User, secondary='friends', primaryjoin=User.id==Frie
 def load_user(id):
     return db.session.query(User).get(int(id))
 #===================================================================================================
+
+class TrackInfo:
+    def __TrackInfo__(track_id, t_weight, t_height):
+        track_id = track_id
+        t_weight = t_weight
+        t_height = t_height
 
 class CalInfo:
     def __CalInfo__(cal_id, c_input_date, c_name):

@@ -72,7 +72,7 @@
                     <th></th>
                     <th></th>
                 </tr>
-                {% if query_requests_row%}
+                {% if request_len != 0 %}
                     {% for friend in query_requests_row %}
                     <tr>
                         <td>{{friend.f_name}}</td>

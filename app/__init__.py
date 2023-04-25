@@ -121,39 +121,39 @@ def reset_db():
 
         #TRACK#
         #height maybe done in cm?
-        track = Track.query.filter_by(t_input_date='2021-02-02', fk_user_id=1).first()
+        track = Track.query.filter_by(fk_user_id=1).first()
         if track is None:
-            track_1 = Track(fk_user_id=1, height=169, weight=200, t_input_date='2021-02-02')
+            track_1 = Track(fk_user_id=1, height=169, weight=200)
             db.session.add(track_1)
             db.session.commit()
 
-        track = Track.query.filter_by(t_input_date='2022-12-22', fk_user_id=1).first()
-        if track is None:
-            track_2 = Track(fk_user_id=1, height=30, weight=60, t_input_date='2022-12-22')
-            db.session.add(track_2)
-            db.session.commit()
+        # track = Track.query.filter_by(t_input_date='2022-12-22', fk_user_id=1).first()
+        # if track is None:
+        #     track_2 = Track(fk_user_id=1, height=30, weight=60, t_input_date='2022-12-22')
+        #     db.session.add(track_2)
+        #     db.session.commit()
 
-        track = Track.query.filter_by(t_input_date='2023-01-12', fk_user_id=1).first()
-        if track is None:
-            track_3 = Track(fk_user_id=1, height=4, weight=300, t_input_date='2023-01-12')
-            db.session.add(track_3)
-            db.session.commit()
+        # track = Track.query.filter_by(t_input_date='2023-01-12', fk_user_id=1).first()
+        # if track is None:
+        #     track_3 = Track(fk_user_id=1, height=4, weight=300, t_input_date='2023-01-12')
+        #     db.session.add(track_3)
+        #     db.session.commit()
 
-        track = Track.query.filter_by(t_input_date='2022-02-02', fk_user_id=2).first()
+        track = Track.query.filter_by(fk_user_id=2).first()
         if track is None:
-            track_4 = Track(fk_user_id=2, height=180, weight=100, t_input_date='2022-02-02')
+            track_4 = Track(fk_user_id=2, height=180, weight=100)
             db.session.add(track_4)
             db.session.commit()
 
-        track = Track.query.filter_by(t_input_date='2023-02-06', fk_user_id=2).first()
-        if track is None:
-            track_5 = Track(fk_user_id=2, height=190, weight=100, t_input_date='2023-02-06')
-            db.session.add(track_5)
-            db.session.commit()
+        # track = Track.query.filter_by(t_input_date='2023-02-06', fk_user_id=2).first()
+        # if track is None:
+        #     track_5 = Track(fk_user_id=2, height=190, weight=100, t_input_date='2023-02-06')
+        #     db.session.add(track_5)
+        #     db.session.commit()
 
-        track = Track.query.filter_by(t_input_date='2023-01-29', fk_user_id=3).first()
+        track = Track.query.filter_by(fk_user_id=3).first()
         if track is None:
-            track_6 = Track(fk_user_id=3, height=167, weight=125, t_input_date='2023-01-29')
+            track_6 = Track(fk_user_id=3, height=167, weight=125)
             db.session.add(track_6)
             db.session.commit()
 
@@ -261,4 +261,4 @@ def reset_db():
         #status(1) = u  ->  f
         #status(2) = u <-> f
 
-reset_db()
+# reset_db()

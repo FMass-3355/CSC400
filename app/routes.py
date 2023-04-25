@@ -498,6 +498,12 @@ def create_user():
         lname = form.lname.data
         date_of_birth = form.date_of_birth.data
         gender = form.gender.data
+        weight = form.weight.data
+        h_feet = form.height_feet.data
+        h_inches = form.height_inches.data
+
+        h_feet = h_feet * 12 #putting into inches
+        height = (h_feet + h_inches) * 2.54 #adding both inches then putting into centimeters
         
         email_exists = db.session.query(User).filter_by(email=email).first()
         user_exists = db.session.query(User).filter_by(username=username).first()   
@@ -534,6 +540,22 @@ def create_user():
                 user.set_password(password, False)
                 db.session.add(user)
                 db.session.commit()
+
+                # Track
+                query_users = []
+                # db.session.query(User).filter_by(email=email).update({'is_confirmed':True})
+                for item in db.session.query(User).filter(User.email==email).all():
+                    user = UserInfo()
+                    user.user_id = item.id
+                    user.username = item.username
+                    user.email = item.email
+                    user.role = item.role
+                    query_users.append(user)
+         
+                    track = Track(fk_user_id=user.user_id, weight=weight, height=height)
+                    db.session.add(track)
+                    db.session.commit()
+
 
                 # user = User(username=username, email=email, fname=fname, lname=lname, date_of_birth=date_of_birth, role='regular', gender=gender)
                 # password = user.set_password(password, True)
@@ -582,6 +604,13 @@ def add_user():
             gender = form.gender.data
             date_of_birth = form.date_of_birth.data
             role = 'regular'
+
+            weight = form.weight.data
+            h_feet = form.height_feet.data
+            h_inches = form.height_inches.data
+
+            h_feet = h_feet * 12 #putting into inches
+            height = (h_feet + h_inches) * 2.54 #adding both inches then putting into centimeters
             
 
             email_exists = db.session.query(User).filter_by(email=email).first()
@@ -593,8 +622,23 @@ def add_user():
                     user = User(username=username, email=email, fname=fname, lname=lname, gender=gender, date_of_birth=date_of_birth, role=role)
                     user.set_password(password, False)
                     db.session.add(user)
-                    
                     db.session.commit()
+
+                    # Track
+                    query_users = []
+                    # db.session.query(User).filter_by(email=email).update({'is_confirmed':True})
+                    for item in db.session.query(User).filter(User.email==email).all():
+                        user = UserInfo()
+                        user.user_id = item.id
+                        user.username = item.username
+                        user.email = item.email
+                        user.role = item.role
+                        query_users.append(user)
+
+                        track = Track(fk_user_id=user.user_id, weight=weight, height=height)
+                        db.session.add(track)
+                        db.session.commit()
+
                     flash('User added successfully')
                 else:
                     flash("email is not valid") 
@@ -689,6 +733,34 @@ def profile():
         lname = current_user.lname
         email = current_user.email
         dob = current_user.date_of_birth
+
+        # if request.method == "GET":
+    #     foods = db.session.query(Calorie).filter_by(c_input_date=databaseToday, fk_user_id=user_id)
+    #     workouts = db.session.query(Exercise).filter_by(e_input_date=databaseToday, fk_user_id=user_id)
+    #     foods = foods.all()
+    #     workouts = workouts.all()
+    # return render_template('tracker.html', pdate=today, actualDay=actualDay2, workouts=workouts, foods=foods)
+    
+        # track = Track(fk_user_id=current_user.id)
+        # track = db.session.query(Track).filter_by(fk_user_id=current_user.id)
+        # track = track.all()
+
+        # db.session.add(track)
+        # db.session.commit()
+        # query_track_row = []
+        for item in db.session.query(Track).filter(Track.fk_user_id==user_id):
+            row = TrackInfo()
+            row.row_id = item.id
+            row.t_weight = item.weight
+            row.t_height = item.height
+            weight = row.t_weight
+            height = row.t_height
+            h_feet = ((height / 2.54)/12) // 1
+            h_feet = int(h_feet)
+            h_inch = (height / 2.54) % 1
+            h_inch = round(h_inch, 1) 
+            h_feet = h_feet + h_inch
+
         friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
         friends = friends.all()
         requests = db.session.query(Friend).filter_by(fk_user_id=user_id, status=0)
@@ -747,7 +819,7 @@ def profile():
                 query_friend_row.append(row)
     return render_template('profile.html', fname=fname, lname=lname, email=email, username=username, date_of_birth=dob,
                            query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
-                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
+                           query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent, weight=weight, height=height, h_feet=h_feet, h_inch=h_inch)
     #height=height, weight=weight
     #image_file=image_file
 
@@ -889,8 +961,10 @@ def view_requests():
             
             if row.status == 0:
                 query_requests_row.append(row)
+        
+        request_len = len(query_requests_row)
                                  
-        return render_template('requests.html', query_requests_row=query_requests_row)
+        return render_template('requests.html', query_requests_row=query_requests_row, request_len=request_len)
 
 @app.route('/accept_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -907,7 +981,8 @@ def accept_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id).update({'status':2})
             db.session.commit()
-    return render_template('requests.html')
+    # return render_template('requests.html')
+    return redirect(url_for('view_requests'))
 
 @app.route('/decline_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -919,7 +994,7 @@ def decline_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=1).delete()
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
             db.session.commit()
-    return render_template('requests.html')
+    return redirect(url_for('view_requests'))
 
 @app.route('/remove_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -1067,10 +1142,36 @@ def edit_profile():
         
         if row.status == 2:
             query_friend_row.append(row)
+
+    for item in db.session.query(Track).filter(Track.fk_user_id==user_id):
+        row = TrackInfo()
+        row.row_id = item.id
+        row.t_weight = item.weight
+        row.t_height = item.height
+        weight = row.t_weight
+        height = row.t_height
+        h_feet = ((height / 2.54)/12) // 1
+        h_feet = int(h_feet)
+        h_inch = (height / 2.54) % 1
+        h_inch = round(h_inch, 1)
+        h_inch *= 10
+        print(h_inch)
+        r_id = row.row_id
+        # h_feet = ((height / 2.54)/12) // 1
+        # h_feet = int(h_feet)
+        # h_inch = (height / 2.54) % 1
+        # h_inch = round(h_inch, 1) 
+        # h_feet = h_feet + h_inch
+
+
+
     if form.validate_on_submit():
         #---------------------------# 
         fname = form.fname.data
         lname = form.lname.data
+        weight_input = form.weight.data
+        h_feet_input = form.height_feet.data
+        h_inch_input = form.height_inches.data
         #height = form.height.data
         #weight = form.weight.data
         #---------------------------# 
@@ -1084,18 +1185,34 @@ def edit_profile():
         else:
             current_user.lname = lname
 
-        # if height == '':
-        #     current_user.height = current_user.height
-        # else:
-        #     current_user.height = height
+        if weight_input == '':
+            submit_weight = weight
+        else:
+            submit_weight = weight_input            
 
-        # if weight == '':
-        #     current_user.weight = current_user.weight
-        # else:
-        #     current_user.weight = weight
+        if h_feet_input == '':
+            submit_h_feet = h_feet
+        else:
+            submit_h_feet = h_feet_input
+
+        if h_inch_input == '':
+            submit_h_inch = h_inch
+        else:
+            submit_h_inch = h_inch_input
+     
 
         db.session.add(current_user)
         db.session.commit()
+        # Track
+        print(f'feet: {submit_h_feet}')
+        print(f'inches: {submit_h_inch}')
+        h_feet = submit_h_feet * 12 #putting into inches
+        height = (h_feet + submit_h_inch) * 2.54 #adding both inches then putting into centimeters
+        # track = Track(fk_user_id=current_user.id, weight=submit_weight, height=height)
+        db.session.query(Track).filter(Track.fk_user_id==current_user.id, Track.id==r_id).update({'weight':submit_weight, 'height':height})
+        # db.session.add(track)
+        db.session.commit()
+
 
         return redirect(url_for('profile'))
     image_file = url_for('static', filename='images/' + 'profile.png')
