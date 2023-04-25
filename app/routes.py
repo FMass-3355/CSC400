@@ -963,53 +963,15 @@ def friend_profile(friend_id):
 @app.route('/account_recovery', methods=['GET'])
 def recover_account():
     return render_template("account_recovery.html") 
-    # form = AccountRecovery()
-    # if form.validate_on_submit():
-    #     # username = form.username.data
-    #     email = form.email.data
-    #     valid_email = check(email)
-    #     # newPassword = form.newPassword.data
-    #     # newPassword_retype = form.newPassword_retype.data
-    #     if (db.session.query(User).filter_by(email=email).first()):
-    #         if valid_email is True:
-    #             # if newPassword == newPassword_retype:
-    #             #     user = db.session.query(User).filter_by(username=username).first()
-    #             #     password = db.session.query(User.password_hash).first()
-    #             #     print("TEST")
-    #             #     print(password)
-    #             #     user.set_password(newPassword, False)
-    #             #     db.session.add(user)
-    #             #     db.session.commit()
-    #             #     return redirect(url_for('login'))
-    #             message = str(otp)   
-    #             subject = 'OTP'
-    #             msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
-    #             mail.send(msg)
-    #             return render_template('verify_recover.html', email=email)
-    #             # return redirect(url_for('validate_recovery', email=email))
-    #         else: 
-    #            print("email is not valid") 
-    #     else:
-    #         print("email is not associated with an account") 
-
-    # return render_template('account_recovery.html', form=form)
 
 @app.route('/verify_recovery', methods=['POST'])
 def verify_recovery():
-
+    
     email = request.form["email"]
     message = str(otp)   
     subject = 'OTP'
     msg = Message(body=message,subject=subject,sender = 'fitemail420@gmail.com', recipients = [email])  
-    # msg.body = str(otp)  
     mail.send(msg)  
-
-    # with mail.connect() as conn:
-    #     email = request.form["email"]   
-    #     msg = Message('Password Reset Request',sender='fitemail420@gmail.com',recipients=[email])
-    #     msg.body = 'To reset your password, visit the following link: ' + "link" + '. If you did not make this request then simply ignore this email and no changes will be made.'
-    #     conn.send(msg)
-
     return render_template('verify_recover.html', email=email)
 
 @app.route('/validate_recovery/<email>',methods=["POST"])   
@@ -1025,7 +987,9 @@ def validate_recovery(email):
             print(f'user_otp = {user_otp}')
             # message = "Email  verification is  successful"
             return render_template('change_pass.html', form=form)
-    return render_template('change_pass.html', form=form)
+    result = 'Failure, OTP does not match'
+    return render_template('verifyResult.html', result=result)
+
 
 @app.route('/change_password/<email>',methods=["POST"])   
 def change_password(email):  
@@ -1041,18 +1005,10 @@ def change_password(email):
                 user = db.session.query(User).filter_by(email=email).first()
                 user.check_password(new_pass)
                 if not user.check_password(new_pass):
-                    #user = db.session.query(User).filter_by(email=email).first()
                     password = user.set_password(new_pass, False)
-                    # update = update(User)
-                    # update = update.values({"password": })
-                    # update = User.query.filter_by(email=email).update(dict(password=password))
                     db.session.add(user)
                     db.session.commit()
                     flash("Password Changed")
-                    # print('password & retype match', file=sys.stderr)
-                    # user.set_password(new_pass, False)
-                    # db.session.add(user)
-                    # db.session.commit()
                     return redirect(url_for('login'))
                 else:
                     flash("cannot use previous password")
@@ -1074,10 +1030,6 @@ def edit_profile():
     len_friends = len(friends)
     len_requests = len(requests)
     len_sent = len(sent)
-
-    #s2 = mutual friends
-    #s1 = user sent request
-    #s0 = friend sent request
     query_friend_row = []
     query_requests_row = []
     query_sent_row = []
@@ -1100,12 +1052,6 @@ def edit_profile():
             query_sent_row.append(row)
         elif row.status == 0:
             query_requests_row.append
-        # print(f'row id: {row.row_id}')
-        # print(f'user id: {row.user_id}')
-        # print(f'friend id: {row.f_id}')
-        # print(f'friend name: {row.f_name}')
-        # #print(f'friend name: {name.username}')
-        # print(f'status: {row.status}')
     if current_user.is_authenticated:
         current_user_id = current_user.id
     query_friend_row = []
