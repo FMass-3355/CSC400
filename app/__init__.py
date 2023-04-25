@@ -91,7 +91,6 @@ login.login_view = 'login'
 from app import routes, models
 from app.models import *
 
-
 #Drop Database to refresh (Comment out later once statisfied)
 def reset_db():
     with app.app_context():
@@ -101,21 +100,21 @@ def reset_db():
         #USER#
         user = User.query.filter_by(username='fm').first()
         if user is None:
-            user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='Franklin', lname='Massimi', email='FMass3355@hotmail.com', gender='m')
+            user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='Franklin', lname='Massimi', email='FMass3355@hotmail.com', gender='m', is_confirmed=True)
             user_admin.set_password('csc400sp23', False)
             db.session.add(user_admin)
             db.session.commit()
 
         user = User.query.filter_by(username='kb').first()
         if user is None:
-            user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='Kari', lname='Bevis', email='k.bevis01@gmail.com', gender='f')
+            user_regular_1 = User(username='kb', role='regular', date_of_birth='1998-05-07', fname='Kari', lname='Bevis', email='k.bevis01@gmail.com', gender='f', is_confirmed=True)
             user_regular_1.set_password('csc400sp23', False)
             db.session.add(user_regular_1)
             db.session.commit()
 
         user = User.query.filter_by(username='ej').first()
         if user is None:
-            user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='Emma', lname='Jamieson', email='ejamieson747@gmail.com', gender='f')
+            user_regular_2 = User(username='ej', role='regular', date_of_birth='2001-09-09', fname='Emma', lname='Jamieson', email='ejamieson747@gmail.com', gender='f', is_confirmed=True)
             user_regular_2.set_password('csc400sp23', False)
             db.session.add(user_regular_2)
             db.session.commit()
@@ -262,4 +261,4 @@ def reset_db():
         #status(1) = u  ->  f
         #status(2) = u <-> f
 
-# reset_db()
+reset_db()

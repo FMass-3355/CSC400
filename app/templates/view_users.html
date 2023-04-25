@@ -1,7 +1,23 @@
-
+{% extends 'add_user.html' %}
 {% block content %}
-    <h1><a href="/add_user">ADD USER</a></h1>
-    <table>
+<span class="openNav" onclick="openNav()">&#9776;</span>
+            <div id="myNav" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                <div class="overlay-content">
+                  <a href="/homepage">Home</a>
+                  <a href="/tracker">Tracker</a>
+                  <a href="/profile">Profile</a>
+                  <a href="/logout">Logout</a>
+                  {% if current_user.role == 'admin' %}
+                    <br><br><h3 style="text-decoration: underline;">Admin</h3>
+                    <a href="/view_users">View Users</a>
+                    <a href="/add_user">Add User</a>
+                  {% endif %}
+                </div>
+            </div>
+
+            <br><br><h1 style="text-align: center;">View Users</h1>
+    <table class="table-striped">
         <thead>
             <th>ID</th>
             <th>Username</th>
@@ -15,7 +31,7 @@
                 <td>{{ info.username }}</td>
                 <td>{{ info.email }}</td>
                 <td>{{ info.role }}</td>
-                <td><button onclick="deleteUser()">Delete User</button></td>
+                <td style="color: black;"><button onclick="deleteUser()">Delete User</button></td>
                 <script>
                     function deleteUser() {
                         if (confirm("Delete User?")) {
@@ -29,5 +45,4 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="/homepage"><button>Back</button></a>
 {% endblock %}

@@ -41,7 +41,8 @@ class User(UserMixin, db.Model):
     fname = db.Column(db.String(64))
     lname = db.Column(db.String(64))
     date_of_birth = db.Column(db.Date)
-    # is_confirmed = db.Column(Boolean, unique=True)
+    is_confirmed = db.Column(Boolean)
+    is_active= db.Column(db.Boolean, default=True, nullable=False)
     #confirmed_on = db.Column(db.Date)
     #tracks = db.relationship('Track', backref='fk_user_id')
     #friendships = relationship('Friend', collection_class=set, cascade='all, delete', backref="users")
@@ -55,7 +56,17 @@ class User(UserMixin, db.Model):
  
     #Password Checking
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)      
+        return check_password_hash(self.password_hash, password)     
+
+    # def is_active(self):
+    #     """True, as all users are active."""
+    #     return True 
+
+    
+# @receiver(post_save, sender=User)
+# def user_to_inactive(sender, instance, created, update_fields, **kwargs):
+#     if created:
+#         instance.is_active = False
 
 
 
@@ -76,6 +87,7 @@ class Exercise(db.Model):
     e_calories_per_hour = db.Column(db.Float)
     e_duration_minutes = db.Column(db.Float)
     e_total_calories = db.Column(db.Float)
+    e_total_calories_NEW = db.Column(db.Float)
     
 
 class Calorie(db.Model):
@@ -85,6 +97,7 @@ class Calorie(db.Model):
     c_input_date = db.Column(db.Date)
     c_name = db.Column(db.String(64))
     c_total_calories = db.Column(db.Float)
+    c_total_calories_NEW = db.Column(db.Float)
     c_serving_size_g = db.Column(db.Float)
     c_fat_saturated_g = db.Column(db.Float)
     c_protein_g = db.Column(db.Float)
@@ -143,3 +156,10 @@ class UserInfo:
         username = username
         email = email
         role = role
+
+# from flask_sqlalchemy import SQLAlchemy
+# from app import login_manager
+
+# @login_manager.user_loader
+# def get_user(ident):
+#   return User.query.get(int(ident))
