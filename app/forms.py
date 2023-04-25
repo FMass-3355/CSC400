@@ -22,6 +22,11 @@ class AddUserForm(FlaskForm):
     #profile_pic = FileField('Profile Picture')
     date_of_birth = DateField('Date of Birth (YYYY/MM/DD) (In Progress)')
     gender = SelectField('Gender', choices=['', 'Male', 'Female'])
+
+    weight = IntegerField('Current Weight')
+    height_feet = IntegerField('Current Height (feet)')
+    height_inches = IntegerField('Current Height (inches)')
+
     submit = SubmitField('Create Account')
 
     # def validate_username(self, username):
@@ -35,14 +40,14 @@ class AddUserForm(FlaskForm):
 #----------------------New User Creation--------------------------------------------------#
 
 
-#------------------Logging into Shrimpedin--------------------#
+#------------------Logging into site--------------------#
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(message="Require a login input")])
     password = PasswordField('Password', validators=[DataRequired(message="Require a password")])
     submit = SubmitField('Sign In')
     #add the create account button
     #add the account recovery button
-#------------------Logging into Shrimpedin--------------------#
+#------------------Logging into site--------------------#
 
 
 
@@ -68,6 +73,11 @@ class CreateUserForm(FlaskForm):
     lname = StringField('Last Name', validators=[DataRequired()])
     gender = SelectField('Gender', choices=['', 'Male', 'Female'])
     date_of_birth = DateField('Date of Birth')
+
+    weight = IntegerField('Current Weight')
+    height_feet = IntegerField('Current Height (feet)')
+    height_inches = IntegerField('Current Height (inches)')
+
     submit = SubmitField('Create Account')
     # def validate_username(self, username):
     #     user = User.query.filter_by(username=username.data).first()
@@ -89,6 +99,9 @@ class EditProfileForm(FlaskForm):
     # mname = StringField('Middle Initial')
     # user_bio = StringField('User Bio', widget=TextArea())
     lname = StringField('Last Name')
+    weight = IntegerField('Current Weight')
+    height_feet = IntegerField('Current Height (feet)')
+    height_inches = IntegerField('Current Height (inches)')
     #height = StringField('Height')
     #weight = StringField('Weight')
     # profile_pic = FileField('Profile Picture')

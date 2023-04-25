@@ -62,6 +62,21 @@
                 {{ form.date_of_birth(class="form-control form-control-md") }}
             </p><br><br>
 
+            <p id="ptag">
+                {{ form.weight.label(class="form-control-label") }}<br>
+                {{ form.weight(class="form-control form-control-md") }}
+            </p><br><br>
+
+            <p id="ptag">
+                {{ form.height_feet.label(class="form-control-label") }}<br>
+                {{ form.height_feet(class="form-control form-control-md") }}
+            </p><br><br>
+
+            <p id="ptag">
+                {{ form.height_inches.label(class="form-control-label") }}<br>
+                {{ form.height_inches(class="form-control form-control-md") }}
+            </p><br><br>
+
             <p  style="display: flex; justify-content: center;" class="btn login_button"> {{ form.submit(class="btn") }} </p>
             
         </form>
