@@ -1052,7 +1052,7 @@ def verify_recovery():
 @app.route('/validate_recovery/<email>',methods=["POST"])   
 def validate_recovery(email):  
     if request.method == "POST":
-        form = ChangePasswordForm()
+        # form = ChangePasswordForm()
         email = email
         print(f"email = {email}")
         
@@ -1061,34 +1061,35 @@ def validate_recovery(email):
             print(f'otp = {otp}')
             print(f'user_otp = {user_otp}')
             # message = "Email  verification is  successful"
-            return render_template('change_pass.html', form=form)
+            # return render_template('change_pass.html', form=form)
+            return redirect(url_for('change_password',email=email))
     result = 'Failure, OTP does not match'
     return render_template('verifyResult.html', result=result)
 
 
-@app.route('/change_password/<email>',methods=["POST"])   
+@app.route('/change_password/<email>',methods=["POST", "GET"])   
 def change_password(email):  
-    if request.method == "POST":
-        form = ChangePasswordForm()
-        email = email
-        print(f"email = {email}")
-        if form.validate_on_submit():
-            new_pass = form.new_pass.data
-            new_pass_retype = form.new_pass_retype.data
-            if new_pass == new_pass_retype:
-                
-                user = db.session.query(User).filter_by(email=email).first()
-                user.check_password(new_pass)
-                if not user.check_password(new_pass):
-                    password = user.set_password(new_pass, False)
-                    db.session.add(user)
-                    db.session.commit()
-                    flash("Password Changed")
-                    return redirect(url_for('login'))
-                else:
-                    flash("cannot use previous password")
+    # if request.method == "POST":
+    form = ChangePasswordForm()
+    email = email
+    print(f"email = {email}")
+    if form.validate_on_submit():
+        new_pass = form.new_pass.data
+        new_pass_retype = form.new_pass_retype.data
+        if new_pass == new_pass_retype:
+            
+            user = db.session.query(User).filter_by(email=email).first()
+            user.check_password(new_pass)
+            if not user.check_password(new_pass):
+                password = user.set_password(new_pass, False)
+                db.session.add(user)
+                db.session.commit()
+                flash("Password Changed")
+                return redirect(url_for('login'))
             else:
-                flash("Passwords do not match")
+                flash("cannot use previous password")
+        else:
+            flash("Passwords do not match")
     return render_template('change_pass.html', form=form)
 #Edit
 @app.route('/edit_profile', methods=['GET', 'POST'])
