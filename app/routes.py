@@ -961,8 +961,10 @@ def view_requests():
             
             if row.status == 0:
                 query_requests_row.append(row)
+        
+        request_len = len(query_requests_row)
                                  
-        return render_template('requests.html', query_requests_row=query_requests_row)
+        return render_template('requests.html', query_requests_row=query_requests_row, request_len=request_len)
 
 @app.route('/accept_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -979,7 +981,8 @@ def accept_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id).update({'status':2})
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id).update({'status':2})
             db.session.commit()
-    return render_template('requests.html')
+    # return render_template('requests.html')
+    return redirect(url_for('view_requests'))
 
 @app.route('/decline_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
@@ -991,7 +994,7 @@ def decline_friend(friend_id):
             db.session.query(Friend).filter_by(fk_user_id=friend_id, fk_friend_id=current_user_id, status=1).delete()
             db.session.query(Friend).filter_by(fk_user_id=current_user_id, fk_friend_id=friend_id, status=0).delete()
             db.session.commit()
-    return render_template('requests.html')
+    return redirect(url_for('view_requests'))
 
 @app.route('/remove_friend/<friend_id>', methods=['GET', 'POST'])
 @login_required
