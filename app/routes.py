@@ -757,9 +757,10 @@ def profile():
             height = row.t_height
             h_feet = ((height / 2.54)/12) // 1
             h_feet = int(h_feet)
-            h_inch = (height / 2.54) % 1
+            h_inch = ((height / 2.54)/12) % 1
             h_inch = round(h_inch, 1) 
-            h_feet = h_feet + h_inch
+            h_inch *= 10
+            h_inch = int(h_inch)
 
         friends = db.session.query(Friend).filter_by(fk_user_id=user_id, status=2)
         friends = friends.all()
