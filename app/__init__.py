@@ -328,4 +328,4 @@ def reset_db():
         #status(1) = u  ->  f
         #status(2) = u <-> f
 
-#reset_db()
+reset_db()
