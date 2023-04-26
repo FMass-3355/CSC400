@@ -1224,7 +1224,6 @@ def edit_profile():
     return render_template('edit_profile.html', form=form, image_file=image_file, query_friend_row=query_friend_row, friends=friends, len_friends=len_friends, query_sent_row=query_sent_row,
                            query_requests_row=query_requests_row, len_requests=len_requests, len_sent=len_sent)
   
-
 #Workouts
 @app.route('/workouts', methods=['GET', 'POST'])
 @login_required
@@ -1297,7 +1296,6 @@ def add_food():
         c_carbohydrates_total_g = form_data['carbohydrates_total_g']
         c_fiber_g = form_data['fiber_g']
         c_sugar_g = form_data['sugar_g']
-
 
         calorie = Calorie(fk_user_id=current_user.id,
                                 c_name =c_name,
@@ -1410,6 +1408,7 @@ def graph():
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
     plt.xlabel("Date",  size = 20)
+    plt.tick_params(axis="x", labelrotation= 25)
     plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
