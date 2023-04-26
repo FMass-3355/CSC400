@@ -1407,8 +1407,10 @@ def graph():
     plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
+    plt.gcf().subplots_adjust(bottom=0.18)
+    #plt.figure(figsize=(20,10))
     plt.xlabel("Date",  size = 20)
-    plt.tick_params(axis="x", labelrotation= 25)
+    plt.tick_params(axis="x", labelrotation= 20)
     plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{current_user.id}-graph.png"))
@@ -1440,7 +1442,10 @@ def friendGraph(friend_id):
     plt.plot("c_input_date", "c_total_calories", data=calories_df, label="calories consumed", color='#A469D8')
     plt.plot("e_input_date", "e_total_calories", data=exercises_df, label="calories burned", color='#000000')
 
+    plt.gcf().subplots_adjust(bottom=0.18)
+    #plt.figure(figsize=(20,10))
     plt.xlabel("Date",  size = 20)
+    plt.tick_params(axis="x", labelrotation= 20)
     plt.ylabel("Calories", size = 20)
     plt.legend()
     plt.savefig(path.join(app.root_path, 'static', 'graphs', f"{friend_id}-graph.png"))

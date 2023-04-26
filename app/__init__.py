@@ -100,7 +100,7 @@ def reset_db():
         #USER#
         user = User.query.filter_by(username='fm').first()
         if user is None:
-            user_admin = User(username='fm', role='admin', date_of_birth='1960-12-12', fname='Franklin', lname='Massimi', email='FMass3355@hotmail.com', gender='m', is_confirmed=True)
+            user_admin = User(username='fm', role='admin', date_of_birth='1999-03-03', fname='Franklin', lname='Massimi', email='FMass3355@hotmail.com', gender='m', is_confirmed=True)
             user_admin.set_password('csc400sp23', False)
             db.session.add(user_admin)
             db.session.commit()
@@ -160,21 +160,36 @@ def reset_db():
         #EXERCISE#
         exercise = Exercise.query.filter_by(e_input_date='2021-02-02', fk_user_id=1).first()
         if exercise is None:
-            exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2021-02-02', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=110.6)
+            exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-04-02', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=130.6)
             db.session.add(exercise_1)
             db.session.commit()
+        
+        exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-04-05', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=145.6)
+        db.session.add(exercise_1)
+        db.session.commit()
 
-        exercise = Exercise.query.filter_by(e_input_date='2022-12-22', fk_user_id=1).first()
-        if exercise is None:
-            exercise_2 = Exercise(fk_user_id=1, e_name = 'push ups', e_input_date='2022-12-22')
-            db.session.add(exercise_2)
-            db.session.commit()
+        exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-04-14', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=150.6)
+        db.session.add(exercise_1)
+        db.session.commit()
 
-        exercise = Exercise.query.filter_by(e_input_date='2023-01-12', fk_user_id=1).first()
-        if exercise is None:
-            exercise_3 = Exercise(fk_user_id=1, e_name = 'running', e_input_date='2023-01-12')
-            db.session.add(exercise_3)
-            db.session.commit()
+        exercise_1 = Exercise(fk_user_id=1, e_name = 'rowing', e_input_date='2023-04-19', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=142.6)
+        db.session.add(exercise_1)
+        db.session.commit()
+
+
+
+        exercise_1 = Exercise(fk_user_id=2, e_name = 'rowing', e_input_date='2023-04-05', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=145.6)
+        db.session.add(exercise_1)
+        db.session.commit()
+
+        exercise_1 = Exercise(fk_user_id=2, e_name = 'rowing', e_input_date='2023-04-14', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=150.6)
+        db.session.add(exercise_1)
+        db.session.commit()
+
+        exercise_1 = Exercise(fk_user_id=2, e_name = 'rowing', e_input_date='2023-04-19', e_calories_per_hour=10.5, e_duration_minutes=60, e_total_calories=142.6)
+        db.session.add(exercise_1)
+        db.session.commit()
+
 
         exercise = Exercise.query.filter_by(e_input_date='2022-02-02', fk_user_id=2).first()
         if exercise is None:
@@ -196,11 +211,61 @@ def reset_db():
 
         #CALORIE#
 
-        calorie = Calorie.query.filter_by(c_input_date='2021-02-02', fk_user_id=1).first()
+        calorie = Calorie.query.filter_by(c_input_date='2023-04-02', fk_user_id=1).first()
         if calorie is None:
-            calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2021-02-02')
+            calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-19')
             db.session.add(calorie_1)
             db.session.commit()
+        
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-19', c_total_calories='130')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-15', c_total_calories='145')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-13', c_total_calories='135')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-08', c_total_calories='150')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-05', c_total_calories='130')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=1, c_name = 'pancakes', c_input_date='2023-04-01', c_total_calories='145')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-19', c_total_calories='130')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-15', c_total_calories='145')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-13', c_total_calories='135')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-08', c_total_calories='150')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-05', c_total_calories='130')
+        db.session.add(calorie_1)
+        db.session.commit()
+
+        calorie_1 = Calorie(fk_user_id=2, c_name = 'pancakes', c_input_date='2023-04-01', c_total_calories='145')
+        db.session.add(calorie_1)
+        db.session.commit()
 
         calorie = Calorie.query.filter_by(c_input_date='2022-12-22', fk_user_id=1).first()
         if calorie is None:
@@ -231,6 +296,8 @@ def reset_db():
             calorie_6= Calorie(fk_user_id=3, c_name = 'cereal', c_input_date='2023-01-29')
             db.session.add(calorie_6)
             db.session.commit()
+
+        
 
         #FRIEND#
         friend = Friend.query.filter_by(fk_user_id=1, fk_friend_id=2).first()
