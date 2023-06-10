@@ -1,10 +1,4 @@
-# CSC400
-#If ran from local host
-Project for capstone class of Spring 2023
-REMEMBER TO CHANGE THE PASSWORD IN FLASKENV AFTER PULLING FRESH FROM REPOSITORY
-Database MUST match what is in the .env change accordingly in the .env if not
-
-#Server will be turned off unless stated other wise
+FIT is our capstone project: a calorie tracking website utilizing a couple different API's to calculate the calorie intake and output of the user, and providing a customized graph the user can view.
 
 #Pips that were used
 pip install sqlalchemy
